@@ -7,5 +7,6 @@ For project principles, technology standards, and governance, read
 `.specify/memory/constitution.md`.
 
 For feature-specific structure, shell commands, and implementation details, read
-the current plan under `specs/` when available.
+`specs/001-product-primitives-v0/plan.md` (active plan), with supporting artifacts:
+`research.md`, `data-model.md`, `quickstart.md`, and `contracts/` in the same directory.
 <!-- SPECKIT END -->
