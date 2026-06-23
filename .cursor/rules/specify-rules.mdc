@@ -1,0 +1,11 @@
+---
+alwaysApply: true
+---
+
+<!-- SPECKIT START -->
+For project principles, technology standards, and governance, read
+`.specify/memory/constitution.md`.
+
+For feature-specific structure, shell commands, and implementation details, read
+the current plan under `specs/` when available.
+<!-- SPECKIT END -->
