@@ -54,6 +54,10 @@ References are either:
 - string ID (`actor: actor-coach`), or
 - object `{ id: actor-coach, role: Primary }`
 
+These IDs are canonical primitive IDs. At decode time they become branded `PrimitiveId`
+values in `@specable/domain`; they are not storage-backend IDs such as Notion page IDs,
+SQL row IDs, or Confluence page IDs.
+
 Role required where Primary Actor rules apply (`Persona.primaryActors`, `Workflow.primaryActors`).
 
 ## Bundled examples

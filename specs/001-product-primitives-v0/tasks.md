@@ -74,21 +74,21 @@ description: "Task list for SpecAble v0 — Product Primitive Graph"
 
 ### Domain schemas (`@specable/domain` — Schema-only, no native `enum`)
 
-- [ ] T029 Create Schema literal unions in `packages/domain/src/unions/` (`Status`, `ActorCategory`, `ConceptRole`, `ConceptImportance`, `PersonaConfidence`, `ReferenceRole`) using `Schema.Literal` — no native TypeScript `enum`
-- [ ] T030 [P] Create reference schema in `packages/domain/src/Reference.ts` (id + optional role) with Schema annotations
-- [ ] T031 [P] Create `FixtureDecodeError` in `packages/domain/src/errors.ts` (domain YAML/Schema decode boundary only)
-- [ ] T032 [P] Create base primitive schema in `packages/domain/src/PrimitiveBase.ts` (`id`, `name`, `status`, shared fields) with Schema annotations for semantic meaning
-- [ ] T033 [P] Create Objective schema in `packages/domain/src/primitives/Objective.ts`
-- [ ] T034 [P] Create Actor schema in `packages/domain/src/primitives/Actor.ts`
-- [ ] T035 [P] Create Persona schema in `packages/domain/src/primitives/Persona.ts`
-- [ ] T036 [P] Create DomainConcept schema in `packages/domain/src/primitives/DomainConcept.ts`
-- [ ] T037 [P] Create Capability schema in `packages/domain/src/primitives/Capability.ts`
-- [ ] T038 [P] Create CapabilityConceptLink schema in `packages/domain/src/primitives/CapabilityConceptLink.ts`
-- [ ] T039 [P] Create ExpectedResult schema in `packages/domain/src/primitives/ExpectedResult.ts`
-- [ ] T040 [P] Create Workflow schema in `packages/domain/src/primitives/Workflow.ts`
-- [ ] T041 [P] Create Story schema in `packages/domain/src/primitives/Story.ts`
-- [ ] T042 Create primitive union and type exports in `packages/domain/src/primitives/index.ts`
-- [ ] T043 Run `@effect/build-utils` codegen in `packages/domain/package.json` and generate exports via `pnpm --filter @specable/domain run codegen`
+- [X] T029 Create Schema literal unions in `packages/domain/src/unions/` (`Status`, `ActorCategory`, `ConceptRole`, `ConceptImportance`, `PersonaConfidence`, `ReferenceRole`) using `Schema.Literal` — no native TypeScript `enum`
+- [X] T030 [P] Create reference schema in `packages/domain/src/Reference.ts` (id + optional role) with Schema annotations
+- [X] T031 [P] Create `FixtureDecodeError` in `packages/domain/src/errors.ts` (domain YAML/Schema decode boundary only)
+- [X] T032 [P] Create base primitive schema in `packages/domain/src/PrimitiveBase.ts` (`id`, `name`, `status`, shared fields) with Schema annotations for semantic meaning
+- [X] T033 [P] Create Objective schema in `packages/domain/src/primitives/Objective.ts`
+- [X] T034 [P] Create Actor schema in `packages/domain/src/primitives/Actor.ts`
+- [X] T035 [P] Create Persona schema in `packages/domain/src/primitives/Persona.ts`
+- [X] T036 [P] Create DomainConcept schema in `packages/domain/src/primitives/DomainConcept.ts`
+- [X] T037 [P] Create Capability schema in `packages/domain/src/primitives/Capability.ts`
+- [X] T038 [P] Create CapabilityConceptLink schema in `packages/domain/src/primitives/CapabilityConceptLink.ts`
+- [X] T039 [P] Create ExpectedResult schema in `packages/domain/src/primitives/ExpectedResult.ts`
+- [X] T040 [P] Create Workflow schema in `packages/domain/src/primitives/Workflow.ts`
+- [X] T041 [P] Create Story schema in `packages/domain/src/primitives/Story.ts`
+- [X] T042 Create primitive union and type exports in `packages/domain/src/primitives/index.ts`
+- [X] T043 Run `@effect/build-utils` codegen in `packages/domain/package.json` and generate exports via `pnpm --filter @specable/domain run codegen`
 
 ### CLI graph layer (`@specable/cli` — consumes domain schemas)
 

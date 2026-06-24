@@ -26,7 +26,7 @@ const config = defineConfig({
 
 export default [
   {
-    ignores: ["**/dist", "**/build", "**/docs", "**/*.md", "packages/*/src/index.ts"]
+    ignores: ["**/dist", "**/build", "**/docs", "**/*.md", "packages/*/src/index.ts", "packages/*/src/.index.ts"]
   },
   ...config,
   ...effectEslint.configs.dprint,
