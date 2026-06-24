@@ -31,6 +31,7 @@ v0 uses a **single workspace package** (`@specable/cli`) with internal library m
 - `scripts/`: Repository maintenance scripts (e.g. `clean.mjs`).
 - `.github/workflows`: Pull request checks, Fallow analysis, snapshot previews, and release automation.
 - `specs/`: Feature specifications, plans, contracts, and quickstart guides.
+- `.specify/`: Spec Kit workflow tooling and scripts.
 
 Executable entrypoint:
 
@@ -201,3 +202,46 @@ Before declaring work complete:
 - no sensitive content is logged;
 - typecheck, lint, tests, build, and Fallow checks pass;
 - publishable changes include an appropriate Changeset.
+
+## Cursor Cloud specific instructions
+
+### What this repo is
+
+This is a **Spec Kit (spec-driven development) repository** implementing **SpecAble v0**
+(`@specable/cli`, an offline CLI). Product specs live under `specs/001-product-primitives-v0/`
+— start with `spec.md`, `plan.md`, `quickstart.md`, and `tasks.md`. The monorepo is
+scaffolded at the repository root (`package.json`, `pnpm-workspace.yaml`, `packages/cli/`).
+
+For end-to-end CLI behavior (`specable check <dir>`), see `specs/001-product-primitives-v0/quickstart.md`
+as features land in later phases.
+
+### Toolchain
+
+Node 20+ and pnpm 11.x (pinned via `packageManager` in root `package.json`). Corepack fetches
+the correct pnpm version. `jq`, `python3`, `git`, and `bash` are used by Spec Kit scripts.
+
+### Spec Kit workflow tooling
+
+The spec-driven workflow is driven by `speckit-*` skills which call bash scripts in
+`.specify/scripts/bash/` (e.g. `check-prerequisites.sh`, `create-new-feature.sh`,
+`setup-plan.sh`, `setup-tasks.sh`).
+
+Non-obvious caveats:
+
+- These scripts resolve the repo root by searching **upward from the current working
+  directory** for the nearest `.specify/` dir. Run them from the repo root (the directory
+  that contains `.specify/`), or set `SPECIFY_INIT_DIR` to that path. Running from a temp dir
+  that contains a copied `.specify/` will silently resolve to that copy instead.
+- Active feature context comes from `.specify/feature.json` (`feature_directory`) or the
+  `SPECIFY_FEATURE_DIRECTORY` env var. It currently points at
+  `specs/001-product-primitives-v0`. The scripts persist this file, so prefer running
+  destructive/scaffolding scripts (like `create-new-feature.sh`) in a throwaway copy if you
+  do not intend to change repo state.
+- `python3` and `jq` are optional fallbacks the scripts use for JSON/YAML parsing; both are
+  installed in Cursor Cloud, so JSON output paths are exercised.
+
+### Product development
+
+Run `pnpm install --frozen-lockfile` from the repository root, then use the **Commands**
+section above for codegen, lint, test, and build. Guard any automated startup scripts to
+no-op when `package.json` is missing (relevant for forks or partial checkouts).
