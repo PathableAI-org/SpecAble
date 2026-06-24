@@ -1,0 +1,34 @@
+name: Release
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  version:
+    name: Version Packages
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        uses: ./.github/actions/setup
+      # Accumulate changesets into a Version Packages PR. No npm publish until MVP.
+      # See .changeset/README.md for alpha prerelease workflow.
+      - name: Create or update Version Packages pull request
+        uses: changesets/action@v1
+        with:
+          version: pnpm changeset-version
+          title: "Version Packages"
+          commit: "Version packages"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

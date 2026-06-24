@@ -1,0 +1,29 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+  "entry": [
+    "src/index.{ts,tsx,js,jsx}",
+    "src/main.{ts,tsx,js,jsx}",
+    "src/bin.{ts,tsx,js,jsx}",
+    "setupTests.ts",
+    "eslint.config.mjs"
+  ],
+  "workspaces": {
+    "packages": [
+      "packages/cli"
+    ]
+  },
+  "ignorePatterns": [
+    ".github/*"
+  ],
+  "ignoreDependencies": [
+    "@babel/plugin-transform-export-namespace-from",
+    "@babel/plugin-transform-modules-commonjs",
+    "babel-plugin-annotate-pure-calls"
+  ],
+  "duplicates": {
+    "minOccurrences": 3
+  },
+  "rules": {
+    "unused-dependencies": "warn"
+  }
+}
