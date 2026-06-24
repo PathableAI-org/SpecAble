@@ -29,28 +29,28 @@ description: "Task list for SpecAble v0 — Product Primitive Graph"
 
 **Purpose**: Bootstrap Effect TypeScript template conventions for a one-package monorepo (`packages/cli` only).
 
-- [ ] T001 Create root `pnpm-workspace.yaml` with `packages/*` workspace glob
-- [ ] T002 Create root `package.json` with scripts (`codegen`, `check`, `typecheck` alias, `lint`, `lint-fix`, `test`, `coverage`, `build`, `clean`) per `specs/001-product-primitives-v0/plan.md`
-- [ ] T003 [P] Create root `tsconfig.base.json` with strict settings, `@effect/language-service` plugin, and `@specable/cli` path alias
-- [ ] T004 [P] Create root `tsconfig.json` referencing only `packages/cli`
-- [ ] T005 [P] Create root `tsconfig.build.json` for publishable build graph
-- [ ] T006 [P] Create root `vitest.config.ts` for monorepo test discovery
-- [ ] T007 [P] Create root `eslint.config.mjs` with `@effect/eslint-plugin` flat config
-- [ ] T008 [P] Create `scripts/clean.mjs` for generated output cleanup
-- [ ] T009 Create `packages/cli/package.json` for `@specable/cli` with Effect dependencies, build-utils scripts, and bin entry
-- [ ] T010 [P] Create `packages/cli/tsconfig.json` referencing `tsconfig.src.json` and `tsconfig.test.json`
-- [ ] T011 [P] Create `packages/cli/tsconfig.src.json` for `src/` compilation
-- [ ] T012 [P] Create `packages/cli/tsconfig.test.json` for `test/` compilation
-- [ ] T013 [P] Create `packages/cli/tsconfig.build.json` for package build output
-- [ ] T014 [P] Create `.fallowrc.json` scoped to `packages/cli` only
-- [ ] T015 [P] Create `.changeset/config.json` with repo `PathableAI-org/SpecAble`
-- [ ] T016 [P] Create `.github/actions/setup/action.yml` with pnpm frozen lockfile install
-- [ ] T017 [P] Create `.github/workflows/check.yml` (codegen, build, source-state, check, lint, test)
-- [ ] T018 [P] Create `.github/workflows/fallow-audit.yml` for PR audit and dupes jobs
-- [ ] T019 [P] Create `.github/workflows/release.yml` with Changesets publish flow
-- [ ] T020 [P] Create `.github/workflows/snapshot.yml` with pkg.pr.new skip-on-missing-app pattern
-- [ ] T021 [P] Create `AGENTS.md` adapted from effect-typescript-template for single-package SpecAble layout
-- [ ] T022 Create root `README.md` with commands, package layout, Effect guidance, publishing, and template adaptation sections
+- [x] T001 Create root `pnpm-workspace.yaml` with `packages/*` workspace glob
+- [x] T002 Create root `package.json` with scripts (`codegen`, `check`, `typecheck` alias, `lint`, `lint-fix`, `test`, `coverage`, `build`, `clean`) per `specs/001-product-primitives-v0/plan.md`
+- [x] T003 [P] Create root `tsconfig.base.json` with strict settings, `@effect/language-service` plugin, and `@specable/cli` path alias
+- [x] T004 [P] Create root `tsconfig.json` referencing only `packages/cli`
+- [x] T005 [P] Create root `tsconfig.build.json` for publishable build graph
+- [x] T006 [P] Create root `vitest.config.ts` for monorepo test discovery
+- [x] T007 [P] Create root `eslint.config.mjs` with `@effect/eslint-plugin` flat config
+- [x] T008 [P] Create `scripts/clean.mjs` for generated output cleanup
+- [x] T009 Create `packages/cli/package.json` for `@specable/cli` with Effect dependencies, build-utils scripts, and bin entry
+- [x] T010 [P] Create `packages/cli/tsconfig.json` referencing `tsconfig.src.json` and `tsconfig.test.json`
+- [x] T011 [P] Create `packages/cli/tsconfig.src.json` for `src/` compilation
+- [x] T012 [P] Create `packages/cli/tsconfig.test.json` for `test/` compilation
+- [x] T013 [P] Create `packages/cli/tsconfig.build.json` for package build output
+- [x] T014 [P] Create `.fallowrc.json` scoped to `packages/cli` only
+- [x] T015 [P] Create `.changeset/config.json` with repo `PathableAI-org/SpecAble`
+- [x] T016 [P] Create `.github/actions/setup/action.yml` with pnpm frozen lockfile install
+- [x] T017 [P] Create `.github/workflows/check.yml` (codegen, build, source-state, check, lint, test)
+- [x] T018 [P] Create `.github/workflows/fallow-audit.yml` for PR audit and dupes jobs
+- [x] T019 [P] Create `.github/workflows/release.yml` with Changesets publish flow
+- [x] T020 [P] Create `.github/workflows/snapshot.yml` with pkg.pr.new skip-on-missing-app pattern
+- [x] T021 [P] Create `AGENTS.md` adapted from effect-typescript-template for single-package SpecAble layout
+- [x] T022 Create root `README.md` with commands, package layout, Effect guidance, publishing, and template adaptation sections
 
 **Checkpoint**: `pnpm install`, `pnpm check`, and `pnpm lint` run (may be empty package).
 
