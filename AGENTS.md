@@ -86,12 +86,13 @@ Run commands from the repository root.
 - Build packages: `pnpm build`
 - Clean generated output: `pnpm clean`
 
-Use the `@specable/cli` filter for focused package work:
+Use the `@specable/cli` filter for focused package work (`pnpm build` required before `specable`):
 
 ```sh
 pnpm --filter @specable/cli test
 pnpm --filter @specable/cli coverage
 pnpm --filter @specable/cli run codegen
+pnpm build
 pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid
 ```
 

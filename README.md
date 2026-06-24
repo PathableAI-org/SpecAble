@@ -30,10 +30,11 @@ Run from the repository root:
 | `pnpm build` | Build publishable output |
 | `pnpm clean` | Remove generated build artifacts |
 
-Focused package commands:
+Focused package commands (run `pnpm build` before using the `specable` binary):
 
 ```sh
 pnpm --filter @specable/cli test
+pnpm build
 pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid
 ```
 
