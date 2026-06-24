@@ -75,4 +75,4 @@ Changesets [documents](https://github.com/changesets/changesets/blob/main/docs/p
 
 ## Snapshot releases (optional)
 
-For one-off CI installs without semver bumps, Changesets [snapshot releases](https://github.com/changesets/changesets/blob/main/docs/snapshot-releases.md) (`changeset version --snapshot`) are available. Prefer **pkg.pr.new** (`.github/workflows/snapshot.yml`) for PR previews; do not merge snapshot version bumps to `main`.
+For one-off CI installs without semver bumps, Changesets [snapshot releases](https://github.com/changesets/changesets/blob/main/docs/snapshot-releases.md) (`changeset version --snapshot`) are available. Do not merge snapshot version bumps to `main`.
