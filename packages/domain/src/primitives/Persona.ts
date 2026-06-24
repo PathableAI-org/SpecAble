@@ -1,7 +1,7 @@
 import { Schema } from "@effect/schema"
 
 import { graphJsonSchema, graphNode, primitiveTypeLiteral, relationship } from "../GraphAnnotations.js"
-import { PrimitiveBaseFields } from "../PrimitiveBase.js"
+import { makePrimitiveId, PrimitiveBaseFields } from "../PrimitiveBase.js"
 import { ReferenceArray } from "../Reference.js"
 
 export const Persona = Schema.Struct({
@@ -38,9 +38,9 @@ export const Persona = Schema.Struct({
     {
       confidence: "Validated",
       goalsOrPainPoints: "Needs reliable session coordination without extra administrative work.",
-      id: "persona-busy-coach",
+      id: makePrimitiveId("persona-busy-coach"),
       name: "Busy coach",
-      primaryActors: [{ id: "actor-care-coach", role: "Primary" }],
+      primaryActors: [{ id: makePrimitiveId("actor-care-coach"), role: "Primary" }],
       status: "Active",
       type: "Persona"
     }

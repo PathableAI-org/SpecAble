@@ -1,7 +1,7 @@
 import { Schema } from "@effect/schema"
 
 import { graphJsonSchema, graphNode, primitiveTypeLiteral } from "../GraphAnnotations.js"
-import { PrimitiveBaseFields } from "../PrimitiveBase.js"
+import { makePrimitiveId, PrimitiveBaseFields } from "../PrimitiveBase.js"
 import { ActorCategory } from "../unions/ActorCategory.js"
 
 export const Actor = Schema.Struct({
@@ -23,7 +23,7 @@ export const Actor = Schema.Struct({
     {
       category: "Human",
       description: "Coach responsible for preparing and running coaching sessions.",
-      id: "actor-care-coach",
+      id: makePrimitiveId("actor-care-coach"),
       name: "Care coach",
       status: "Active",
       type: "Actor"

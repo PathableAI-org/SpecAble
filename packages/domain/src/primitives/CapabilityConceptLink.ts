@@ -1,7 +1,7 @@
 import { Schema } from "@effect/schema"
 
 import { graphJsonSchema, graphNode, primitiveTypeLiteral, relationship } from "../GraphAnnotations.js"
-import { PrimitiveBaseFields } from "../PrimitiveBase.js"
+import { makePrimitiveId, PrimitiveBaseFields } from "../PrimitiveBase.js"
 import { Reference } from "../Reference.js"
 import { ConceptImportance } from "../unions/ConceptImportance.js"
 import { ConceptRole } from "../unions/ConceptRole.js"
@@ -59,9 +59,9 @@ export const CapabilityConceptLink = Schema.Struct({
     "Use this primitive when the relationship between a capability and domain concept needs operation-level semantics.",
   examples: [
     {
-      capability: "cap-schedule-session",
-      domainConcept: "concept-session",
-      id: "link-schedule-session-creates-session",
+      capability: makePrimitiveId("cap-schedule-session"),
+      domainConcept: makePrimitiveId("concept-session"),
+      id: makePrimitiveId("link-schedule-session-creates-session"),
       importance: "Primary",
       name: "Schedule session creates session",
       role: "Creates",

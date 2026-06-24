@@ -1,7 +1,7 @@
 import { Schema } from "@effect/schema"
 
 import { graphJsonSchema, graphNode, primitiveTypeLiteral, relationship } from "../GraphAnnotations.js"
-import { PrimitiveBaseFields } from "../PrimitiveBase.js"
+import { makePrimitiveId, PrimitiveBaseFields } from "../PrimitiveBase.js"
 import { ReferenceArray } from "../Reference.js"
 
 export const Capability = Schema.Struct({
@@ -67,15 +67,15 @@ export const Capability = Schema.Struct({
     "Capabilities describe reusable product abilities. They link who participates, what domain concepts are touched, which workflows use them, and what results they produce.",
   examples: [
     {
-      actors: ["actor-care-coach"],
+      actors: [makePrimitiveId("actor-care-coach")],
       description: "Let coaches create, update, and confirm coaching sessions.",
-      domainConcepts: ["concept-session"],
-      expectedResults: ["result-less-manual-scheduling"],
-      id: "cap-schedule-session",
+      domainConcepts: [makePrimitiveId("concept-session")],
+      expectedResults: [makePrimitiveId("result-less-manual-scheduling")],
+      id: makePrimitiveId("cap-schedule-session"),
       name: "Schedule coaching session",
       status: "Active",
       type: "Capability",
-      workflows: ["workflow-session-scheduling"]
+      workflows: [makePrimitiveId("workflow-session-scheduling")]
     }
   ],
   identifier: "Capability",

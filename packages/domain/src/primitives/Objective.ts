@@ -1,7 +1,7 @@
 import { Schema } from "@effect/schema"
 
 import { graphJsonSchema, graphNode, primitiveTypeLiteral, relationship } from "../GraphAnnotations.js"
-import { PrimitiveBaseFields } from "../PrimitiveBase.js"
+import { makePrimitiveId, PrimitiveBaseFields } from "../PrimitiveBase.js"
 import { ReferenceArray } from "../Reference.js"
 
 export const Objective = Schema.Struct({
@@ -50,13 +50,13 @@ export const Objective = Schema.Struct({
   examples: [
     {
       description: "Improve how coaches coordinate and prepare for recurring client sessions.",
-      expectedResults: ["result-less-manual-scheduling"],
-      id: "obj-improve-coach-utilization",
+      expectedResults: [makePrimitiveId("result-less-manual-scheduling")],
+      id: makePrimitiveId("obj-improve-coach-utilization"),
       name: "Improve coach utilization",
       status: "Active",
       successCriteria: "Coaches spend less time coordinating sessions and more time preparing.",
       type: "Objective",
-      workflows: ["workflow-session-scheduling"]
+      workflows: [makePrimitiveId("workflow-session-scheduling")]
     }
   ],
   identifier: "Objective",

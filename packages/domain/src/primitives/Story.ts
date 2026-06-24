@@ -1,7 +1,7 @@
 import { Schema } from "@effect/schema"
 
 import { graphJsonSchema, graphNode, primitiveTypeLiteral, relationship } from "../GraphAnnotations.js"
-import { PrimitiveBaseFields } from "../PrimitiveBase.js"
+import { makePrimitiveId, PrimitiveBaseFields } from "../PrimitiveBase.js"
 import { Reference, ReferenceArray } from "../Reference.js"
 
 export const Story = Schema.Struct({
@@ -80,15 +80,15 @@ export const Story = Schema.Struct({
     "Stories provide a deterministic human artifact over graph links. The actor-capability-expected result triple is the source of generated text.",
   examples: [
     {
-      actor: "actor-care-coach",
-      capability: "cap-schedule-session",
-      expectedResult: "result-less-manual-scheduling",
-      id: "story-coach-schedules-session",
+      actor: makePrimitiveId("actor-care-coach"),
+      capability: makePrimitiveId("cap-schedule-session"),
+      expectedResult: makePrimitiveId("result-less-manual-scheduling"),
+      id: makePrimitiveId("story-coach-schedules-session"),
       name: "Coach schedules session",
       status: "Active",
       text: "As a Care coach, I can schedule a coaching session so that session coordination takes less manual work.",
       type: "Story",
-      workflows: ["workflow-session-scheduling"]
+      workflows: [makePrimitiveId("workflow-session-scheduling")]
     }
   ],
   identifier: "Story",

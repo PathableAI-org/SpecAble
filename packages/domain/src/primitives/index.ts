@@ -1,6 +1,7 @@
 import { Schema } from "@effect/schema"
 
 import { valueDescriptionsJsonSchema } from "../GraphAnnotations.js"
+import { makePrimitiveId } from "../PrimitiveBase.js"
 import { Actor } from "./Actor.js"
 import { Capability } from "./Capability.js"
 import { CapabilityConceptLink } from "./CapabilityConceptLink.js"
@@ -59,17 +60,17 @@ export const Primitive = Schema.Union(
     "Use this schema when decoding a primitive after the loader has selected a candidate object with a `type` discriminator.",
   examples: [
     {
-      expectedResults: ["result-less-manual-scheduling"],
-      id: "obj-improve-coach-utilization",
+      expectedResults: [makePrimitiveId("result-less-manual-scheduling")],
+      id: makePrimitiveId("obj-improve-coach-utilization"),
       name: "Improve coach utilization",
       status: "Active",
       type: "Objective"
     },
     {
-      actor: "actor-care-coach",
-      capability: "cap-schedule-session",
-      expectedResult: "result-less-manual-scheduling",
-      id: "story-coach-schedules-session",
+      actor: makePrimitiveId("actor-care-coach"),
+      capability: makePrimitiveId("cap-schedule-session"),
+      expectedResult: makePrimitiveId("result-less-manual-scheduling"),
+      id: makePrimitiveId("story-coach-schedules-session"),
       name: "Coach schedules session",
       status: "Active",
       type: "Story"

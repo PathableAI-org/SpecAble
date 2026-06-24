@@ -1,7 +1,7 @@
 import { Schema } from "@effect/schema"
 
 import { graphJsonSchema, graphNode, primitiveTypeLiteral, relationship } from "../GraphAnnotations.js"
-import { PrimitiveBaseFields } from "../PrimitiveBase.js"
+import { makePrimitiveId, PrimitiveBaseFields } from "../PrimitiveBase.js"
 import { ReferenceArray } from "../Reference.js"
 
 export const ExpectedResult = Schema.Struct({
@@ -49,11 +49,11 @@ export const ExpectedResult = Schema.Struct({
     "Expected results make objectives observable. They can link back to the capabilities that produce them.",
   examples: [
     {
-      capabilities: ["cap-schedule-session"],
+      capabilities: [makePrimitiveId("cap-schedule-session")],
       definition: "Coaches confirm session details without manual back-and-forth coordination.",
-      id: "result-less-manual-scheduling",
+      id: makePrimitiveId("result-less-manual-scheduling"),
       name: "Less manual scheduling",
-      objectives: ["obj-improve-coach-utilization"],
+      objectives: [makePrimitiveId("obj-improve-coach-utilization")],
       status: "Active",
       type: "ExpectedResult"
     }

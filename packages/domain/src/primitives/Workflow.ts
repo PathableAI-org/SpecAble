@@ -1,7 +1,7 @@
 import { Schema } from "@effect/schema"
 
 import { graphJsonSchema, graphNode, primitiveTypeLiteral, relationship } from "../GraphAnnotations.js"
-import { PrimitiveBaseFields } from "../PrimitiveBase.js"
+import { makePrimitiveId, PrimitiveBaseFields } from "../PrimitiveBase.js"
 import { ReferenceArray } from "../Reference.js"
 
 export const Workflow = Schema.Struct({
@@ -103,16 +103,16 @@ export const Workflow = Schema.Struct({
     "Workflows show how objectives become coordinated behavior. They should link primary actors, sequenced capabilities, and resulting stories.",
   examples: [
     {
-      capabilities: ["cap-schedule-session"],
-      domainConcepts: ["concept-session"],
-      expectedResults: ["result-less-manual-scheduling"],
-      id: "workflow-session-scheduling",
+      capabilities: [makePrimitiveId("cap-schedule-session")],
+      domainConcepts: [makePrimitiveId("concept-session")],
+      expectedResults: [makePrimitiveId("result-less-manual-scheduling")],
+      id: makePrimitiveId("workflow-session-scheduling"),
       name: "Session scheduling",
-      objectives: ["obj-improve-coach-utilization"],
-      primaryActors: [{ id: "actor-care-coach", role: "Primary" }],
+      objectives: [makePrimitiveId("obj-improve-coach-utilization")],
+      primaryActors: [{ id: makePrimitiveId("actor-care-coach"), role: "Primary" }],
       sequenceNotes: "Coach creates a session, confirms details, and checks readiness.",
       status: "Active",
-      stories: ["story-coach-schedules-session"],
+      stories: [makePrimitiveId("story-coach-schedules-session")],
       type: "Workflow"
     }
   ],

@@ -1,7 +1,7 @@
 import { Schema } from "@effect/schema"
 
 import { graphJsonSchema, graphNode, primitiveTypeLiteral } from "../GraphAnnotations.js"
-import { PrimitiveBaseFields } from "../PrimitiveBase.js"
+import { makePrimitiveId, PrimitiveBaseFields } from "../PrimitiveBase.js"
 
 export const DomainConcept = Schema.Struct({
   type: primitiveTypeLiteral("DomainConcept"),
@@ -23,7 +23,7 @@ export const DomainConcept = Schema.Struct({
   examples: [
     {
       definition: "A scheduled coaching appointment between a coach and one or more clients.",
-      id: "concept-session",
+      id: makePrimitiveId("concept-session"),
       name: "Session",
       status: "Active",
       type: "DomainConcept"

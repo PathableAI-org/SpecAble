@@ -9,10 +9,14 @@ export const PrimitiveId = Schema.String.annotations({
   documentation:
     "Primitive IDs are the durable link targets used by references. Prefer lowercase, stable IDs such as `cap-schedule-session` over display names.",
   examples: ["obj-improve-coach-utilization", "cap-schedule-session"],
-  identifier: "PrimitiveId",
+  identifier: "PrimitiveIdString",
   jsonSchema: graphJsonSchema(graphField("PrimitiveBase", "identity")),
   title: "Primitive ID"
-})
+}).pipe(Schema.brand("PrimitiveId"))
+
+export type PrimitiveId = typeof PrimitiveId.Type
+
+export const makePrimitiveId = (value: string): PrimitiveId => PrimitiveId.make(value)
 
 export const PrimitiveName = Schema.String.annotations({
   description: "Display name used in summaries and story templates",
@@ -94,7 +98,7 @@ export const PrimitiveBase = Schema.Struct(PrimitiveBaseFields).annotations({
   examples: [
     {
       description: "Reduce manual schedule coordination for coaches.",
-      id: "cap-schedule-session",
+      id: makePrimitiveId("cap-schedule-session"),
       name: "Schedule coaching session",
       status: "Active",
       tags: ["scheduling"]
