@@ -2,7 +2,7 @@
   "name": "@specable/cli",
   "version": "0.0.0",
   "type": "module",
-  "license": "MIT",
+  "license": "Unlicense",
   "description": "SpecAble CLI — local-first product primitive graph validation",
   "repository": {
     "type": "git",
