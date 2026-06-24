@@ -4,7 +4,8 @@ import shared from "./vitest.shared.js"
 
 const config: UserConfigExport = {
   test: {
-    include: ["packages/*/test/**/*.test.ts"]
+    include: ["packages/*/test/**/*.test.ts"],
+    passWithNoTests: true
   }
 }
 
