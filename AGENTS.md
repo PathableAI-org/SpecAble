@@ -29,7 +29,7 @@ v0 uses a **single workspace package** (`@specable/cli`) with internal library m
   - `test/`: `@effect/vitest` suites and synthetic fixtures.
   - `examples/`: Bundled graph projects (`generic/`, `coachbridge-synthetic/`).
 - `scripts/`: Repository maintenance scripts (e.g. `clean.mjs`).
-- `.github/workflows`: Pull request checks, Fallow analysis, snapshot previews, and release automation.
+- `.github/workflows`: Pull request checks, Fallow analysis, and release automation.
 - `specs/`: Feature specifications, plans, contracts, and quickstart guides.
 - `.specify/`: Spec Kit workflow tooling and scripts.
 
