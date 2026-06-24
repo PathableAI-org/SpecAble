@@ -4,6 +4,8 @@
 **Plan**: [plan.md](./plan.md)  
 **Contracts**: [cli-commands.md](./contracts/cli-commands.md), [fixture-format.md](./contracts/fixture-format.md), [output-artifacts.md](./contracts/output-artifacts.md)
 
+> **Layout**: v0 uses two packages — `@specable/domain` (schemas) and `@specable/cli` (graph, validation, CLI). Commands below target `@specable/cli`.
+
 ## Prerequisites
 
 - Node.js 24.x (CI pin; local 20+ acceptable during development)

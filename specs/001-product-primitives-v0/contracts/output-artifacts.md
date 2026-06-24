@@ -36,7 +36,7 @@ Default command without `--out` writes **no files**.
 }
 ```
 
-Finding codes (non-exhaustive): `missing-field`, `missing-relationship`, `broken-reference`, `duplicate-id`, `duplicate-story-triple`, `invalid-enum`, `fixture-decode`.
+Finding codes (non-exhaustive): `missing-field`, `missing-relationship`, `broken-reference`, `duplicate-id`, `duplicate-story-triple`, `invalid-literal`, `fixture-decode`.
 
 ## `integrity-report.json`
 

@@ -20,7 +20,8 @@ description: "Task list for SpecAble v0 — Product Primitive Graph"
 
 ## Path Conventions
 
-- **v0 workspace**: `packages/cli/src/` (library modules), `packages/cli/test/` (tests), `packages/cli/examples/` (bundled graphs)
+- **Domain package**: `packages/domain/src/` (schemas, Schema literal unions, domain decode errors), `packages/domain/test/` (minimal encode/decode tests)
+- **CLI package**: `packages/cli/src/` (graph, validation, integrity, summary, CLI), `packages/cli/test/` (comprehensive tests), `packages/cli/examples/` (bundled graphs)
 - **Repository root**: CI, TS configs, ESLint, scripts, docs
 
 ---
@@ -58,34 +59,53 @@ description: "Task list for SpecAble v0 — Product Primitive Graph"
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
-**Purpose**: Core schemas, graph loading, and test harness — MUST complete before user story work.
+**Purpose**: `@specable/domain` package (Schema-only primitive models), `@specable/cli` graph loading, and test harness — MUST complete before user story work.
 
 **⚠️ CRITICAL**: No user story implementation until this phase is complete.
 
-- [ ] T023 Create shared enums in `packages/cli/src/domain/enums.ts` (`Status`, `ActorCategory`, `ConceptRole`, `ConceptImportance`, `PersonaConfidence`)
-- [ ] T024 [P] Create reference schema in `packages/cli/src/domain/Reference.ts` (id + optional role)
-- [ ] T025 [P] Create tagged errors in `packages/cli/src/domain/errors.ts` (`FixtureDecodeError`, `GraphProjectNotFoundError`, `DuplicateIdError`, `BrokenReferenceError`, `ValidationFailedError`, `OutputWriteError`)
-- [ ] T026 [P] Create base primitive schema in `packages/cli/src/domain/PrimitiveBase.ts` (`id`, `name`, `status`, shared fields)
-- [ ] T027 [P] Create Objective schema in `packages/cli/src/domain/primitives/Objective.ts`
-- [ ] T028 [P] Create Actor schema in `packages/cli/src/domain/primitives/Actor.ts`
-- [ ] T029 [P] Create Persona schema in `packages/cli/src/domain/primitives/Persona.ts`
-- [ ] T030 [P] Create DomainConcept schema in `packages/cli/src/domain/primitives/DomainConcept.ts`
-- [ ] T031 [P] Create Capability schema in `packages/cli/src/domain/primitives/Capability.ts`
-- [ ] T032 [P] Create CapabilityConceptLink schema in `packages/cli/src/domain/primitives/CapabilityConceptLink.ts`
-- [ ] T033 [P] Create ExpectedResult schema in `packages/cli/src/domain/primitives/ExpectedResult.ts`
-- [ ] T034 [P] Create Workflow schema in `packages/cli/src/domain/primitives/Workflow.ts`
-- [ ] T035 [P] Create Story schema in `packages/cli/src/domain/primitives/Story.ts`
-- [ ] T036 Create primitive union and type exports in `packages/cli/src/domain/primitives/index.ts`
-- [ ] T037 Create `ProductGraph` and `GraphIndex` types in `packages/cli/src/graph/ProductGraph.ts`
-- [ ] T038 Create fixture filename registry in `packages/cli/src/graph/FixtureFiles.ts` per `specs/001-product-primitives-v0/contracts/fixture-format.md`
-- [ ] T039 Create YAML decode helpers in `packages/cli/src/graph/YamlDecode.ts` (parse + Schema decode with file paths)
-- [ ] T040 Implement `GraphLoader` service Layer in `packages/cli/src/graph/GraphLoader.ts` (load per-type files, missing file → empty, build index)
-- [ ] T041 Create `FileSystem`/`GraphLoaderLive` Layer wiring in `packages/cli/src/services/Layers.ts` using `@effect/platform-node`
-- [ ] T042 [P] Add schema decode tests in `packages/cli/test/domain/schema-decode.test.ts` for each primitive type
-- [ ] T043 [P] Add loader tests in `packages/cli/test/graph/graph-loader.test.ts` (missing type file, broken YAML, duplicate IDs at load if pre-checked)
-- [ ] T044 Run `@effect/build-utils` codegen config in `packages/cli/package.json` and generate exports via `pnpm codegen`
+### Domain package scaffolding
 
-**Checkpoint**: Graph loads synthetic test fixtures; schema and loader tests pass.
+- [ ] T023 Create `packages/domain/package.json` for `@specable/domain` with `effect`/`@effect/schema` and `@effect/build-utils` scripts (no CLI, platform, or YAML dependencies)
+- [ ] T024 [P] Create `packages/domain/tsconfig.json`, `packages/domain/tsconfig.src.json`, `packages/domain/tsconfig.test.json`, and `packages/domain/tsconfig.build.json`
+- [ ] T025 Update root `tsconfig.base.json` with `@specable/domain` path alias alongside `@specable/cli`
+- [ ] T026 Update root `tsconfig.json` and `tsconfig.build.json` to reference `packages/domain` and `packages/cli` (cli references domain)
+- [ ] T027 Add `@specable/domain` workspace dependency to `packages/cli/package.json`
+- [ ] T028 Update `.fallowrc.json` to scope both `packages/domain` and `packages/cli`
+
+### Domain schemas (`@specable/domain` — Schema-only, no native `enum`)
+
+- [ ] T029 Create Schema literal unions in `packages/domain/src/unions/` (`Status`, `ActorCategory`, `ConceptRole`, `ConceptImportance`, `PersonaConfidence`, `ReferenceRole`) using `Schema.Literal` — no native TypeScript `enum`
+- [ ] T030 [P] Create reference schema in `packages/domain/src/Reference.ts` (id + optional role) with Schema annotations
+- [ ] T031 [P] Create `FixtureDecodeError` in `packages/domain/src/errors.ts` (domain YAML/Schema decode boundary only)
+- [ ] T032 [P] Create base primitive schema in `packages/domain/src/PrimitiveBase.ts` (`id`, `name`, `status`, shared fields) with Schema annotations for semantic meaning
+- [ ] T033 [P] Create Objective schema in `packages/domain/src/primitives/Objective.ts`
+- [ ] T034 [P] Create Actor schema in `packages/domain/src/primitives/Actor.ts`
+- [ ] T035 [P] Create Persona schema in `packages/domain/src/primitives/Persona.ts`
+- [ ] T036 [P] Create DomainConcept schema in `packages/domain/src/primitives/DomainConcept.ts`
+- [ ] T037 [P] Create Capability schema in `packages/domain/src/primitives/Capability.ts`
+- [ ] T038 [P] Create CapabilityConceptLink schema in `packages/domain/src/primitives/CapabilityConceptLink.ts`
+- [ ] T039 [P] Create ExpectedResult schema in `packages/domain/src/primitives/ExpectedResult.ts`
+- [ ] T040 [P] Create Workflow schema in `packages/domain/src/primitives/Workflow.ts`
+- [ ] T041 [P] Create Story schema in `packages/domain/src/primitives/Story.ts`
+- [ ] T042 Create primitive union and type exports in `packages/domain/src/primitives/index.ts`
+- [ ] T043 Run `@effect/build-utils` codegen in `packages/domain/package.json` and generate exports via `pnpm --filter @specable/domain run codegen`
+
+### CLI graph layer (`@specable/cli` — consumes domain schemas)
+
+- [ ] T044 [P] Create CLI-layer tagged errors in `packages/cli/src/errors.ts` (`GraphProjectNotFoundError`, `DuplicateIdError`, `BrokenReferenceError`, `ValidationFailedError`, `OutputWriteError`)
+- [ ] T045 Create `ProductGraph` and `GraphIndex` types in `packages/cli/src/graph/ProductGraph.ts` using decoded `@specable/domain` types
+- [ ] T046 Create fixture filename registry in `packages/cli/src/graph/FixtureFiles.ts` per `specs/001-product-primitives-v0/contracts/fixture-format.md`
+- [ ] T047 Create YAML decode helpers in `packages/cli/src/graph/YamlDecode.ts` (parse + Schema decode with file paths via domain schemas)
+- [ ] T048 Implement `GraphLoader` service Layer in `packages/cli/src/graph/GraphLoader.ts` (load per-type files, missing file → empty, build index)
+- [ ] T049 Create `FileSystem`/`GraphLoaderLive` Layer wiring in `packages/cli/src/services/Layers.ts` using `@effect/platform-node`
+
+### Tests and CLI codegen
+
+- [ ] T050 [P] Add minimal schema encode/decode tests in `packages/domain/test/schema-decode.test.ts` (complex compositions only per FR-059)
+- [ ] T051 [P] Add loader integration tests in `packages/cli/test/graph/graph-loader.test.ts` (missing type file, broken YAML, fixture decode via domain schemas)
+- [ ] T052 Run `@effect/build-utils` codegen in `packages/cli/package.json`, update root `package.json` scripts for both packages, and generate exports via `pnpm codegen`
+
+**Checkpoint**: `@specable/domain` builds and exports schemas; graph loads synthetic test fixtures in `@specable/cli`; domain decode tests and loader tests pass.
 
 ---
 
@@ -97,21 +117,21 @@ description: "Task list for SpecAble v0 — Product Primitive Graph"
 
 ### Tests for User Story 1
 
-- [ ] T045 [P] [US1] Add validation fixture helpers in `packages/cli/test/fixtures/validation/` (valid, draft-warn, active-fail, broken-ref)
-- [ ] T046 [P] [US1] Add structural validation tests in `packages/cli/test/validation/structural-validation.test.ts`
-- [ ] T047 [P] [US1] Add status-aware rule tests in `packages/cli/test/validation/status-aware-rules.test.ts` covering Draft warnings vs Active failures
+- [ ] T053 [P] [US1] Add validation fixture helpers in `packages/cli/test/fixtures/validation/` (valid, draft-warn, active-fail, broken-ref)
+- [ ] T054 [P] [US1] Add structural validation tests in `packages/cli/test/validation/structural-validation.test.ts`
+- [ ] T055 [P] [US1] Add status-aware rule tests in `packages/cli/test/validation/status-aware-rules.test.ts` covering Draft warnings vs Active failures
 
 ### Implementation for User Story 1
 
-- [ ] T048 [US1] Create finding types in `packages/cli/src/validation/ValidationFinding.ts` (severity, code, primitiveType, primitiveId, field, message)
-- [ ] T049 [US1] Implement structural checks in `packages/cli/src/validation/StructuralValidation.ts` (duplicate IDs, broken refs, missing required fields)
-- [ ] T050 [US1] Implement per-type Active rules in `packages/cli/src/validation/rules/` (split files per primitive type per FR-010–FR-026)
-- [ ] T051 [US1] Implement status-aware evaluator in `packages/cli/src/validation/StatusAwareValidation.ts` (Draft→warning, Active→failure, Deprecated exemptions)
-- [ ] T052 [US1] Compose `ValidationService` in `packages/cli/src/validation/ValidationService.ts` returning `ValidationResult`
-- [ ] T053 [US1] Add validation JSON encoder in `packages/cli/src/validation/ValidationReport.ts` matching `specs/001-product-primitives-v0/contracts/output-artifacts.md`
-- [ ] T054 [US1] Implement stdout validation renderer in `packages/cli/src/cli/render/ValidationOutput.ts`
-- [ ] T055 [US1] Wire `--validate-only` path in `packages/cli/src/cli/CheckCommand.ts` using `@effect/cli`
-- [ ] T056 [US1] Create Node entrypoint in `packages/cli/src/bin.ts` running `CheckCommand` via `@effect/platform-node`
+- [ ] T056 [US1] Create finding types in `packages/cli/src/validation/ValidationFinding.ts` (severity, code, primitiveType, primitiveId, field, message)
+- [ ] T057 [US1] Implement structural checks in `packages/cli/src/validation/StructuralValidation.ts` (duplicate IDs, broken refs, missing required fields)
+- [ ] T058 [US1] Implement per-type Active rules in `packages/cli/src/validation/rules/` (split files per primitive type per FR-010–FR-026)
+- [ ] T059 [US1] Implement status-aware evaluator in `packages/cli/src/validation/StatusAwareValidation.ts` (Draft→warning, Active→failure, Deprecated exemptions)
+- [ ] T060 [US1] Compose `ValidationService` in `packages/cli/src/validation/ValidationService.ts` returning `ValidationResult`
+- [ ] T061 [US1] Add validation JSON encoder in `packages/cli/src/validation/ValidationReport.ts` matching `specs/001-product-primitives-v0/contracts/output-artifacts.md`
+- [ ] T062 [US1] Implement stdout validation renderer in `packages/cli/src/cli/render/ValidationOutput.ts`
+- [ ] T063 [US1] Wire `--validate-only` path in `packages/cli/src/cli/CheckCommand.ts` using `@effect/cli`
+- [ ] T064 [US1] Create Node entrypoint in `packages/cli/src/bin.ts` running `CheckCommand` via `@effect/platform-node`
 
 **Checkpoint**: `specable check <fixture> --validate-only` prints status, failures, and warnings; exit code 1 on Active failures.
 
@@ -125,22 +145,22 @@ description: "Task list for SpecAble v0 — Product Primitive Graph"
 
 ### Tests for User Story 2
 
-- [ ] T057 [P] [US2] Add integrity fixtures in `packages/cli/test/fixtures/integrity/` (orphan, duplicate-name, duplicate-triple, advisory)
-- [ ] T058 [P] [US2] Add integrity report tests in `packages/cli/test/integrity/integrity-report.test.ts`
-- [ ] T059 [P] [US2] Add workflow derivation warning tests in `packages/cli/test/integrity/workflow-derivation.test.ts`
+- [ ] T065 [P] [US2] Add integrity fixtures in `packages/cli/test/fixtures/integrity/` (orphan, duplicate-name, duplicate-triple, advisory)
+- [ ] T066 [P] [US2] Add integrity report tests in `packages/cli/test/integrity/integrity-report.test.ts`
+- [ ] T067 [P] [US2] Add workflow derivation warning tests in `packages/cli/test/integrity/workflow-derivation.test.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T060 [US2] Create integrity finding types in `packages/cli/src/integrity/IntegrityFinding.ts`
-- [ ] T061 [US2] Implement duplicate name and likely-duplicate detection in `packages/cli/src/integrity/DuplicateDetection.ts`
-- [ ] T062 [US2] Implement duplicate Active story triple detection in `packages/cli/src/integrity/StoryTripleDetection.ts`
-- [ ] T063 [US2] Implement orphan/under-linked detection in `packages/cli/src/integrity/OrphanDetection.ts`
-- [ ] T064 [US2] Implement advisory heuristics in `packages/cli/src/integrity/AdvisoryRules.ts` (capability breadth, domain concept implementation-shaped names, vague expected results, persona evidence)
-- [ ] T065 [US2] Implement workflow Expected Result / Domain Concept derivability checks in `packages/cli/src/integrity/WorkflowDerivation.ts`
-- [ ] T066 [US2] Compose `IntegrityService` in `packages/cli/src/integrity/IntegrityService.ts`
-- [ ] T067 [US2] Add integrity JSON/Markdown encoders in `packages/cli/src/integrity/IntegrityReport.ts`
-- [ ] T068 [US2] Implement stdout integrity renderer in `packages/cli/src/cli/render/IntegrityOutput.ts`
-- [ ] T069 [US2] Wire `--integrity-only` mode in `packages/cli/src/cli/CheckCommand.ts`
+- [ ] T068 [US2] Create integrity finding types in `packages/cli/src/integrity/IntegrityFinding.ts`
+- [ ] T069 [US2] Implement duplicate name and likely-duplicate detection in `packages/cli/src/integrity/DuplicateDetection.ts`
+- [ ] T070 [US2] Implement duplicate Active story triple detection in `packages/cli/src/integrity/StoryTripleDetection.ts`
+- [ ] T071 [US2] Implement orphan/under-linked detection in `packages/cli/src/integrity/OrphanDetection.ts`
+- [ ] T072 [US2] Implement advisory heuristics in `packages/cli/src/integrity/AdvisoryRules.ts` (capability breadth, domain concept implementation-shaped names, vague expected results, persona evidence)
+- [ ] T073 [US2] Implement workflow Expected Result / Domain Concept derivability checks in `packages/cli/src/integrity/WorkflowDerivation.ts`
+- [ ] T074 [US2] Compose `IntegrityService` in `packages/cli/src/integrity/IntegrityService.ts`
+- [ ] T075 [US2] Add integrity JSON/Markdown encoders in `packages/cli/src/integrity/IntegrityReport.ts`
+- [ ] T076 [US2] Implement stdout integrity renderer in `packages/cli/src/cli/render/IntegrityOutput.ts`
+- [ ] T077 [US2] Wire `--integrity-only` mode in `packages/cli/src/cli/CheckCommand.ts`
 
 **Checkpoint**: `--integrity-only` reports triple duplicates and advisory warnings with correct severity.
 
@@ -154,20 +174,20 @@ description: "Task list for SpecAble v0 — Product Primitive Graph"
 
 ### Tests for User Story 3
 
-- [ ] T070 [P] [US3] Add story text template tests in `packages/cli/test/story/story-text.test.ts`
-- [ ] T071 [P] [US3] Add summary determinism tests in `packages/cli/test/summary/summary-generator.test.ts`
-- [ ] T072 [P] [US3] Add CLI output artifact tests in `packages/cli/test/cli/check-output.test.ts` (`--out` files, stdout preview, exit codes)
+- [ ] T078 [P] [US3] Add story text template tests in `packages/cli/test/story/story-text.test.ts`
+- [ ] T079 [P] [US3] Add summary determinism tests in `packages/cli/test/summary/summary-generator.test.ts`
+- [ ] T080 [P] [US3] Add CLI output artifact tests in `packages/cli/test/cli/check-output.test.ts` (`--out` files, stdout preview, exit codes)
 
 ### Implementation for User Story 3
 
-- [ ] T073 [US3] Implement deterministic story text generator in `packages/cli/src/story/StoryText.ts` (`As a {Actor}, I can {Capability} so that {Expected Result}.`)
-- [ ] T074 [US3] Implement summary section builders in `packages/cli/src/summary/SummarySections.ts` (objectives, workflows, actors/personas, capabilities, domain concepts, expected results, stories, gaps)
-- [ ] T075 [US3] Implement `SummaryGenerator` in `packages/cli/src/summary/SummaryGenerator.ts` with failure/warning gap sections
-- [ ] T076 [US3] Implement summary preview truncation in `packages/cli/src/summary/SummaryPreview.ts` for stdout
-- [ ] T077 [US3] Implement artifact writers in `packages/cli/src/cli/output/ArtifactWriter.ts` (`summary.md`, `validation.json`, `integrity-report.json`, `integrity-report.md`, `check-result.json`)
-- [ ] T078 [US3] Implement combined stdout orchestration in `packages/cli/src/cli/render/CheckOutput.ts` (deterministic section order)
-- [ ] T079 [US3] Complete default `check` command and flags (`--summary-only`, `--out`) in `packages/cli/src/cli/CheckCommand.ts` per `specs/001-product-primitives-v0/contracts/cli-commands.md`
-- [ ] T080 [US3] Export public library APIs from generated `packages/cli/src/index.ts` via `pnpm codegen`
+- [ ] T081 [US3] Implement deterministic story text generator in `packages/cli/src/story/StoryText.ts` (`As a {Actor}, I can {Capability} so that {Expected Result}.`)
+- [ ] T082 [US3] Implement summary section builders in `packages/cli/src/summary/SummarySections.ts` (objectives, workflows, actors/personas, capabilities, domain concepts, expected results, stories, gaps)
+- [ ] T083 [US3] Implement `SummaryGenerator` in `packages/cli/src/summary/SummaryGenerator.ts` with failure/warning gap sections
+- [ ] T084 [US3] Implement summary preview truncation in `packages/cli/src/summary/SummaryPreview.ts` for stdout
+- [ ] T085 [US3] Implement artifact writers in `packages/cli/src/cli/output/ArtifactWriter.ts` (`summary.md`, `validation.json`, `integrity-report.json`, `integrity-report.md`, `check-result.json`)
+- [ ] T086 [US3] Implement combined stdout orchestration in `packages/cli/src/cli/render/CheckOutput.ts` (deterministic section order)
+- [ ] T087 [US3] Complete default `check` command and flags (`--summary-only`, `--out`) in `packages/cli/src/cli/CheckCommand.ts` per `specs/001-product-primitives-v0/contracts/cli-commands.md`
+- [ ] T088 [US3] Export public library APIs from generated `packages/cli/src/index.ts` via `pnpm codegen`
 
 **Checkpoint**: Default `specable check` prints validation + integrity + preview; `--out` writes artifacts; SC-007 determinism tests pass.
 
@@ -181,16 +201,16 @@ description: "Task list for SpecAble v0 — Product Primitive Graph"
 
 ### Tests for User Story 4
 
-- [ ] T081 [P] [US4] Add example graph integration tests in `packages/cli/test/examples/examples.test.ts` (generic + coachbridge valid/invalid)
+- [ ] T089 [P] [US4] Add example graph integration tests in `packages/cli/test/examples/examples.test.ts` (generic + coachbridge valid/invalid)
 
 ### Implementation for User Story 4
 
-- [ ] T082 [P] [US4] Create generic valid graph fixtures in `packages/cli/examples/generic/valid/` (all nine type YAML files + optional `graph.yaml`)
-- [ ] T083 [P] [US4] Create generic invalid graph fixtures in `packages/cli/examples/generic/invalid/` demonstrating Draft warnings and Active failures
-- [ ] T084 [P] [US4] Create CoachBridge-inspired valid fixtures in `packages/cli/examples/coachbridge-synthetic/valid/` using fictional data only
-- [ ] T085 [P] [US4] Create CoachBridge-inspired invalid fixtures in `packages/cli/examples/coachbridge-synthetic/invalid/`
-- [ ] T086 [US4] Write comprehension checklist and usage notes in `packages/cli/examples/generic/README.md` for SC-005
-- [ ] T087 [US4] Write synthetic-data disclaimer and scenario notes in `packages/cli/examples/coachbridge-synthetic/README.md`
+- [ ] T090 [P] [US4] Create generic valid graph fixtures in `packages/cli/examples/generic/valid/` (all nine type YAML files + optional `graph.yaml`)
+- [ ] T091 [P] [US4] Create generic invalid graph fixtures in `packages/cli/examples/generic/invalid/` demonstrating Draft warnings and Active failures
+- [ ] T092 [P] [US4] Create CoachBridge-inspired valid fixtures in `packages/cli/examples/coachbridge-synthetic/valid/` using fictional data only
+- [ ] T093 [P] [US4] Create CoachBridge-inspired invalid fixtures in `packages/cli/examples/coachbridge-synthetic/invalid/`
+- [ ] T094 [US4] Write comprehension checklist and usage notes in `packages/cli/examples/generic/README.md` for SC-005
+- [ ] T095 [US4] Write synthetic-data disclaimer and scenario notes in `packages/cli/examples/coachbridge-synthetic/README.md`
 
 **Checkpoint**: Quickstart commands in `specs/001-product-primitives-v0/quickstart.md` succeed against bundled examples.
 
@@ -200,13 +220,14 @@ description: "Task list for SpecAble v0 — Product Primitive Graph"
 
 **Purpose**: Build pipeline, docs, and quality gates across all stories.
 
-- [ ] T088 [P] Configure package build pipeline in `packages/cli/package.json` (`build-esm`, `build-cjs`, `build-annotate`, `pack-v2`) and verify `pnpm build`
-- [ ] T089 Run full root validation suite and fix issues (`pnpm codegen && pnpm check && pnpm lint && pnpm test && pnpm build`)
-- [ ] T090 [P] Add coverage thresholds or smoke run documenting `pnpm coverage` in `README.md`
-- [ ] T091 Validate quickstart scenarios documented in `specs/001-product-primitives-v0/quickstart.md`
-- [ ] T092 [P] Update `README.md` with installed CLI usage (`pnpm --filter @specable/cli exec specable check ...`)
-- [ ] T093 Run `pnpm exec fallow audit --base main --format json --quiet` and resolve actionable findings
-- [ ] T094 Add initial Changeset for `@specable/cli` v0 in `.changeset/` if publishing is enabled
+- [ ] T096 [P] Configure package build pipeline in `packages/domain/package.json` (`build-esm`, `build-cjs`, `build-annotate`, `pack-v2`) and verify domain build
+- [ ] T097 [P] Configure package build pipeline in `packages/cli/package.json` (`build-esm`, `build-cjs`, `build-annotate`, `pack-v2`) and verify `pnpm build`
+- [ ] T098 Run full root validation suite and fix issues (`pnpm codegen && pnpm check && pnpm lint && pnpm test && pnpm build`)
+- [ ] T099 [P] Add coverage thresholds or smoke run documenting `pnpm coverage` in `README.md`
+- [ ] T100 Validate quickstart scenarios documented in `specs/001-product-primitives-v0/quickstart.md`
+- [ ] T101 [P] Update `README.md` and `AGENTS.md` for two-package layout (`@specable/domain` + `@specable/cli`)
+- [ ] T102 Run `pnpm exec fallow audit --base main --format json --quiet` and resolve actionable findings
+- [ ] T103 Add initial Changeset for `@specable/domain` and `@specable/cli` v0 in `.changeset/` if publishing is enabled
 
 ---
 
@@ -242,12 +263,12 @@ description: "Task list for SpecAble v0 — Product Primitive Graph"
 ### Parallel Opportunities
 
 - **Phase 1**: T003–T013, T014–T021 can run in parallel after T001–T002
-- **Phase 2**: Primitive schema tasks T027–T035 in parallel; test tasks T042–T043 in parallel after loader exists
-- **US1**: Test fixture tasks T045–T047 in parallel; rule files inside T050 can split by primitive type
-- **US2**: T057–T059 in parallel; T061–T065 in parallel after T060
-- **US3**: T070–T072 in parallel
-- **US4**: T082–T085 in parallel
-- **Phase 7**: T088, T090, T092 in parallel
+- **Phase 2**: Domain scaffolding T024–T028 in parallel after T023; primitive schemas T033–T041 in parallel after T032; T050–T051 in parallel after T049
+- **US1**: Test fixture tasks T053–T055 in parallel; rule files inside T058 can split by primitive type
+- **US2**: T065–T067 in parallel; T069–T073 in parallel after T068
+- **US3**: T078–T080 in parallel
+- **US4**: T090–T093 in parallel
+- **Phase 7**: T096, T097, T099, T101 in parallel
 
 ---
 
@@ -255,11 +276,11 @@ description: "Task list for SpecAble v0 — Product Primitive Graph"
 
 ```bash
 # Parallel test setup (after foundational loader exists):
-T045 → packages/cli/test/fixtures/validation/
-T046 → packages/cli/test/validation/structural-validation.test.ts
-T047 → packages/cli/test/validation/status-aware-rules.test.ts
+T053 → packages/cli/test/fixtures/validation/
+T054 → packages/cli/test/validation/structural-validation.test.ts
+T055 → packages/cli/test/validation/status-aware-rules.test.ts
 
-# Parallel rule implementation (after T048):
+# Parallel rule implementation (after T056):
 packages/cli/src/validation/rules/objective-rules.ts
 packages/cli/src/validation/rules/story-rules.ts
 packages/cli/src/validation/rules/capability-rules.ts
@@ -288,7 +309,7 @@ packages/cli/src/validation/rules/capability-rules.ts
 
 ### Suggested MVP Scope
 
-**Phases 1–3 (T001–T056)** deliver the constitution-aligned MVP: local fixture validation with status-aware canonical rules and CLI `--validate-only`.
+**Phases 1–3 (T001–T064)** deliver the constitution-aligned MVP: local fixture validation with status-aware canonical rules and CLI `--validate-only`.
 
 ---
 
@@ -297,12 +318,12 @@ packages/cli/src/validation/rules/capability-rules.ts
 | Phase | Task IDs | Count |
 |-------|----------|-------|
 | Setup | T001–T022 | 22 |
-| Foundational | T023–T044 | 22 |
-| US1 Validate | T045–T056 | 12 |
-| US2 Integrity | T057–T069 | 13 |
-| US3 Summary | T070–T080 | 11 |
-| US4 Examples | T081–T087 | 7 |
-| Polish | T088–T094 | 7 |
-| **Total** | **T001–T094** | **94** |
+| Foundational | T023–T052 | 30 |
+| US1 Validate | T053–T064 | 12 |
+| US2 Integrity | T065–T077 | 13 |
+| US3 Summary | T078–T088 | 11 |
+| US4 Examples | T089–T095 | 7 |
+| Polish | T096–T103 | 8 |
+| **Total** | **T001–T103** | **103** |
 
 **Format validation**: All tasks use `- [ ]`, sequential IDs, story labels on story phases, and explicit file paths.

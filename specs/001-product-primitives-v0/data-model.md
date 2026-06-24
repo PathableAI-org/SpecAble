@@ -1,7 +1,16 @@
 # Data Model: SpecAble v0 — Product Primitive Graph
 
 **Feature**: `001-product-primitives-v0`  
-**Date**: 2026-06-23
+**Date**: 2026-06-23 (updated 2026-06-24)
+
+## Package boundaries
+
+| Concern | Package | Location |
+|---------|---------|----------|
+| Primitive schemas, Schema literal unions, references | `@specable/domain` | `packages/domain/src/` |
+| `ProductGraph`, loaders, validation, integrity, summary, CLI | `@specable/cli` | `packages/cli/src/` |
+
+Closed-set fields (`status`, `category`, `role`, `importance`, `confidence`, etc.) are **Schema literal unions** in `@specable/domain` — not native TypeScript `enum`. Field semantics and Schema-supported validation use Effect Schema annotations (FR-058).
 
 ## Overview
 
@@ -13,7 +22,7 @@ All primitives share common metadata:
 |-------|------|----------|-------|
 | `id` | string | yes | Stable, globally unique within project |
 | `name` | string | yes | Display name for summaries and story template |
-| `status` | `Draft` \| `Active` \| `Deprecated` | yes | Controls validation strictness |
+| `status` | `Draft` \| `Active` \| `Deprecated` (Schema literal union) | yes | Controls validation strictness |
 | `description` | string | conditional | Required per-type rules below |
 
 Optional cross-cutting fields (when applicable): `notes`, `tags`, `evidence`, `confidence`.
@@ -154,6 +163,8 @@ Missing type file → empty collection.
 
 ## In-memory structures
 
+*`ProductGraph` and downstream report types live in `@specable/cli`; primitive decoded types come from `@specable/domain`.*
+
 ```text
 ProductGraph
 ├── metadata: GraphMetadata | null
@@ -190,15 +201,22 @@ ProductSummary
 
 ## Tagged errors (Effect)
 
+**`@specable/domain`**
+
 | Error | When |
 |-------|------|
 | `FixtureDecodeError` | YAML/Schema decode failure with path |
+
+**`@specable/cli`**
+
+| Error | When |
+|-------|------|
 | `GraphProjectNotFoundError` | Missing project directory |
-| `DuplicateIdError` | Duplicate primitive IDs |
-| `BrokenReferenceError` | Unknown target ID |
+| `DuplicateIdError` | Duplicate primitive IDs at load/index |
+| `BrokenReferenceError` | Unknown target ID (validation) |
 | `ValidationFailedError` | Active failures present (CLI exit code) |
 | `OutputWriteError` | `--out` directory not writable |
 
-## Future split boundary
+## Schema module boundary
 
-Modules under `packages/cli/src/domain`, `graph`, `validation`, and `summary` are the extraction surface for a future `@specable/domain` package. No CLI or Node platform imports inside `domain` schemas besides Effect core/Schema.
+`@specable/domain` MUST NOT import `@specable/cli`, Node platform modules, or YAML parsers. Only Effect core/Schema and domain-local types. Cross-primitive graph rules, status-aware severity, and integrity heuristics are implemented in `@specable/cli` consuming decoded domain types.

@@ -1,17 +1,17 @@
 # Research: SpecAble v0 — Product Primitive Graph
 
 **Feature**: `001-product-primitives-v0`  
-**Date**: 2026-06-23
+**Date**: 2026-06-23 (updated 2026-06-24)
 
 ## R1 — Monorepo layout for v0
 
-**Decision**: Single publishable workspace package `@specable/cli` at `packages/cli` with internal module boundaries (`domain/`, `graph/`, `validation/`, `summary/`, `cli/`).
+**Decision**: Two workspace packages: `@specable/domain` at `packages/domain` (primitive schemas, Schema literal unions, references, domain decode errors) and `@specable/cli` at `packages/cli` (graph, validation, integrity, summary, CLI). CLI depends on domain.
 
-**Rationale**: User requested a one-package v0 workspace adapted from `PathableAI-org/effect-typescript-template`. Domain behavior remains library-testable inside the package and can split into `packages/domain` later without changing public CLI semantics.
+**Rationale**: Clarified in spec session 2026-06-24 (FR-056). Aligns with constitution Principle V (library-first). Domain schemas are reusable by future MCP adapters without coupling to CLI/I/O. Phase 1 bootstrap used a single CLI package; Phase 2 adds the domain package before foundational schema work.
 
 **Alternatives considered**:
-- `packages/domain` + `packages/cli` (template default) — rejected for v0 scope; adds cross-package wiring before first vertical slice is proven.
-- Flat single-folder repo without workspaces — rejected; loses template CI/codegen/build conventions.
+- Single `@specable/cli` with internal `domain/` module — rejected after 2026-06-24 clarification; deferred extraction no longer matches spec.
+- Three+ packages (domain + graph + cli) — rejected; graph and validation are not independently published in v0.
 
 ## R2 — Effect ecosystem and tooling
 
@@ -25,12 +25,13 @@
 
 ## R3 — Schema system
 
-**Decision**: `@effect/schema` (Effect Schema) for all primitive types, relationship payloads, CLI output DTOs, and fixture decoding at the adapter boundary.
+**Decision**: `@effect/schema` (Effect Schema) for all primitive types, closed-set values, relationship payloads, CLI output DTOs, and fixture decoding. Closed-set domain values use `Schema.Literal` unions — native TypeScript `enum` is prohibited (FR-057). Semantic meaning and field-level validation use Schema annotations and built-in filters/refinements wherever practical (FR-058).
 
-**Rationale**: Constitution requires explicit schemas; Effect Schema integrates with tagged errors and `@effect/cli` decoding. Internal graph logic operates on decoded types, not raw YAML strings.
+**Rationale**: Constitution requires explicit schemas; Effect Schema integrates with tagged errors and `@effect/cli` decoding. Annotation-first approach keeps validation logic in Schema for simple constraints; cross-primitive rules stay in `@specable/cli`.
 
 **Alternatives considered**:
 - Zod only — acceptable per constitution but splits validation stack away from Effect errors/services.
+- Native TypeScript `enum` — rejected; Schema literal unions are preferred for decode/encode symmetry and annotation support.
 
 ## R4 — Fixture serialization format
 
@@ -77,7 +78,7 @@
 
 ## R9 — Publishing and CI extras
 
-**Decision**: Include Changesets config and release workflow for public OSS publishing of `@specable/cli`. Include snapshot workflow file gated to skip gracefully when pkg.pr.new app is not installed (template pattern). Include Fallow audit workflow scoped to `packages/cli`.
+**Decision**: Include Changesets config and release workflow for public OSS publishing of `@specable/domain` and `@specable/cli`. Include snapshot workflow file gated to skip gracefully when pkg.pr.new app is not installed (template pattern). Include Fallow audit workflow scoped to `packages/domain` and `packages/cli`.
 
 **Rationale**: User requested release boilerplate for OSS v0; snapshot is optional until GitHub app is configured.
 
@@ -101,6 +102,22 @@
 
 ## R12 — Package exports/codegen
 
-**Decision**: Use `@effect/build-utils` `prepare-v2` / `pack-v2` pipeline with generated `index.ts` exports for public modules under `packages/cli/src/` (exclude `bin.ts` and internal test helpers).
+**Decision**: Use `@effect/build-utils` `prepare-v2` / `pack-v2` pipeline with generated `index.ts` exports in **both** `@specable/domain` and `@specable/cli`. Domain exports schemas and inferred types only; CLI exports graph/validation/summary modules and excludes `bin.ts`.
 
-**Rationale**: Template convention; prevents manual export drift.
+**Rationale**: Template convention; prevents manual export drift. Domain package is independently versioned/publishable for agent and library consumers.
+
+## R13 — Domain package scope boundary
+
+**Decision**: `@specable/domain` contains primitive schemas, Schema literal unions (`packages/domain/src/unions/`), `Reference`, `PrimitiveBase`, nine primitive schemas, and `FixtureDecodeError`. No graph types, loaders, validation engines, or Node platform imports.
+
+**Rationale**: FR-056, FR-058. Only logic embedded in Effect Schema lives in domain; downstream packages consume decoded types.
+
+**Alternatives considered**:
+- Include `ProductGraph` in domain — rejected; graph indexing is not a domain model concern.
+- Include validation rules in domain — rejected; status-aware cross-primitive rules exceed Schema-only boundary.
+
+## R14 — Domain package testing
+
+**Decision**: Minimal tests in `@specable/domain` — encode/decode round-trips for complex or non-obvious schema compositions only. Comprehensive behavioral tests in `@specable/cli`.
+
+**Rationale**: FR-059. Domain package is declarative; behavioral coverage belongs with consuming packages.
