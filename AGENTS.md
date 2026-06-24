@@ -86,6 +86,19 @@ Run commands from the repository root.
 - Build packages: `pnpm build`
 - Clean generated output: `pnpm clean`
 
+Git hooks (installed via `pnpm install` → `prepare` → Husky):
+
+- **lint-staged**: `eslint --fix` on staged `*.{ts,mjs}` under `packages/cli/{src,test,examples,scripts}/` and `scripts/`
+- **typecheck**: `pnpm check`
+- **codegen drift**: when `packages/cli/src/` changes (except `index.ts`), verifies `pnpm codegen` output is staged
+- **fallow audit**: `fallow audit --base <merge-base>` (falls back to `main`; skip with `git commit --no-verify`)
+
+Reinstall the fallow block after editing `.husky/pre-commit`:
+
+```sh
+pnpm exec fallow hooks install --target git --branch main --force
+```
+
 Use the `@specable/cli` filter for focused package work (`pnpm build` required before `specable`):
 
 ```sh

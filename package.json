@@ -17,7 +17,11 @@
     "changeset-version": "changeset version",
     "changeset-pre-enter-alpha": "changeset pre enter alpha",
     "changeset-pre-exit": "changeset pre exit",
-    "changeset-publish": "pnpm build && TEST_DIST= pnpm vitest && changeset publish"
+    "changeset-publish": "pnpm build && TEST_DIST= pnpm vitest && changeset publish",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "{packages/cli/{src,test,examples,scripts},scripts}/**/*.{ts,mjs}": "eslint --fix"
   },
   "devDependencies": {
     "@babel/cli": "^8.0.1",
@@ -38,6 +42,8 @@
     "eslint-plugin-perfectionist": "^5.9.1",
     "fallow": "^2.100.0",
     "glob": "^13.0.6",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.8",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.61.1",
