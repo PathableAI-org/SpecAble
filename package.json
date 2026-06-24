@@ -12,7 +12,10 @@
     "lint-fix": "pnpm lint --fix",
     "test": "vitest --config vitest.config.ts",
     "coverage": "vitest --config vitest.config.ts --coverage",
+    "changeset": "changeset",
     "changeset-version": "changeset version",
+    "changeset-pre-enter-alpha": "changeset pre enter alpha",
+    "changeset-pre-exit": "changeset pre exit",
     "changeset-publish": "pnpm build && TEST_DIST= pnpm vitest && changeset publish"
   },
   "devDependencies": {

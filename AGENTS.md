@@ -144,6 +144,9 @@ Placeholder tests do not count as coverage for new behavior.
 - Do not manually edit generated export files (`packages/cli/src/index.ts`).
 - Keep package metadata, repository URLs, licenses, and publish settings valid.
 - Add a Changeset for changes to `@specable/cli` unless explicitly exempt.
+- **Pre-MVP**: changesets accumulate on `main`; do not merge the bot's **Version Packages** PR until maintainers enter alpha prerelease mode (`pnpm changeset-pre-enter-alpha`). See `.changeset/README.md`.
+- **Alpha releases**: while `.changeset/pre.json` exists, versions are `x.y.z-alpha.N` and npm publishes use the `alpha` dist-tag.
+- **Stable releases**: run `pnpm changeset-pre-exit` before the first non-prerelease publish.
 - Keep Effect ecosystem dependencies compatible and update them as a group.
 - Effect dependency updates require review and must not auto-merge.
 - Do not change the repository license without an explicit project decision.

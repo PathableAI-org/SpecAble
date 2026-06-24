@@ -88,13 +88,26 @@ See [AGENTS.md](./AGENTS.md) for full architecture rules, testing requirements, 
 
 ## Publishing
 
-`@specable/cli` is configured for public npm publishing through [Changesets](https://github.com/changesets/changesets).
+`@specable/cli` is configured for public npm publishing through [Changesets](https://github.com/changesets/changesets). **We are pre-MVP**: changesets accumulate on `main`, but nothing is published to npm until maintainers start the alpha line.
 
-- Add a changeset for publishable API or CLI behavior changes: `pnpm changeset`
-- Version packages: `pnpm changeset-version`
-- Publish: `pnpm changeset-publish` (builds, tests, then publishes)
+| Phase | What happens |
+|-------|----------------|
+| **Pre-MVP (now)** | Add `pnpm changeset` with publishable PRs. CI opens a **Version Packages** PR — do **not** merge it until MVP. |
+| **First alpha (MVP)** | Run `pnpm changeset-pre-enter-alpha`, merge Version Packages PR, then trigger **Publish to npm** in Actions. |
+| **Stable** | Run `pnpm changeset-pre-exit`, version, publish to `latest`. |
 
-Release automation runs via `.github/workflows/release.yml`. Changelog entries are generated against `PathableAI-org/SpecAble` on GitHub.
+See [`.changeset/README.md`](./.changeset/README.md) for the full workflow, prerelease mode, and snapshot alternatives.
+
+| Command | Description |
+|---------|-------------|
+| `pnpm changeset` | Record a changeset for the current PR |
+| `pnpm changeset-version` | Apply pending changesets locally |
+| `pnpm changeset-pre-enter-alpha` | Enter alpha prerelease mode (`0.x.x-alpha.N`) |
+| `pnpm changeset-pre-exit` | Exit prerelease mode before a stable release |
+| `pnpm changeset-publish` | Build, test, and publish to npm |
+
+- **Version PRs**: `.github/workflows/release.yml` (no automatic publish)
+- **npm publish**: `.github/workflows/publish.yml` (manual `workflow_dispatch` until post-alpha automation)
 
 ## Template Adaptation
 
