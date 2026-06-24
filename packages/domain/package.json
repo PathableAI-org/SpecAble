@@ -28,7 +28,11 @@
       ]
     },
     "generateIndex": {
-      "include": []
+      "include": [
+        "*.ts",
+        "unions/*.ts",
+        "primitives/*.ts"
+      ]
     }
   }
 }
