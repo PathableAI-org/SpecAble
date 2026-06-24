@@ -30,6 +30,17 @@ Run from the repository root:
 | `pnpm build` | Build publishable output |
 | `pnpm clean` | Remove generated build artifacts |
 
+### Git hooks
+
+`pnpm install` enables [Husky](https://typicode.github.io/husky/) pre-commit hooks:
+
+1. **lint-staged** — ESLint with `--fix` on staged TypeScript and `.mjs` files
+2. **typecheck** — `pnpm check`
+3. **codegen** — ensures `packages/cli/src/index.ts` is current when other `src/` files change
+4. **fallow audit** — dead-code and duplication gate against the branch merge-base (default `main`)
+
+Bypass once: `git commit --no-verify`
+
 Focused package commands (run `pnpm build` before using the `specable` binary):
 
 ```sh
