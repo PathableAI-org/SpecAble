@@ -166,7 +166,9 @@ SpecAble/
 ### Schema conventions (`@specable/domain`)
 
 - **Closed-set values**: `Schema.Literal("Draft", "Active", "Deprecated")` style unions exported as named schemas and inferred types — never `enum`.
-- **Annotations**: Use Effect Schema annotations (`Schema.annotations`, `title`, `description`, `identifier`, filters/refinements) to encode semantic meaning and field-level validation supported by Schema.
+- **Annotations**: Use Effect Schema built-in annotations (`title`, `description`, `documentation`, `examples`, `identifier`, filters/refinements) to encode semantic meaning and field-level validation supported by Schema. Do **not** add custom `jsonSchema`/metadata objects unless a consuming tool exists and the metadata is tested.
+- **Relationships**: Model canonical primitive relationships as primitive fields (`Capability.actors`, `Story.expectedResult`, etc.) with field-level annotations. Do **not** introduce a parallel `Graph*`/edge metadata model inside `@specable/domain`; physical link representation belongs to storage adapters.
+- **Branded types**: Use `Schema.brand` for opaque values that are semantically distinct despite sharing a representation, especially canonical primitive IDs (`PrimitiveId`). Do not brand human prose/labels such as names, descriptions, notes, evidence, story text, or tags. Adapter-specific IDs (for example Notion page IDs, SQL row IDs, Confluence page IDs) must be separate adapter-layer brands, not aliases of `PrimitiveId`.
 - **Logic boundary**: Cross-primitive graph rules, status-aware severity, integrity heuristics, and artifact generation are **not** in `@specable/domain`; they consume decoded domain types in `@specable/cli`.
 
 ## Phase 0 — Research

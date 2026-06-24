@@ -121,3 +121,23 @@
 **Decision**: Minimal tests in `@specable/domain` — encode/decode round-trips for complex or non-obvious schema compositions only. Comprehensive behavioral tests in `@specable/cli`.
 
 **Rationale**: FR-059. Domain package is declarative; behavioral coverage belongs with consuming packages.
+
+## R15 — Schema annotations and relationship semantics
+
+**Decision**: Effect Schema annotations in `@specable/domain` should use built-in annotation fields (`title`, `description`, `documentation`, `examples`, `identifier`) to document primitive and field semantics. Canonical relationships are represented by the primitive fields themselves (`Capability.actors`, `Workflow.capabilities`, `Story.expectedResult`, etc.), not by separate `Graph*` edge/node metadata or custom `jsonSchema` objects.
+
+**Rationale**: Primitive fields are the durable ontology contract consumed by validation, summaries, story generation, and future MCP/adapters. A second graph-metadata model can drift from the schemas and blurs the line between domain semantics and graph/index/storage implementation. Storage backends may use SQL joins, Notion relations, Confluence links, YAML IDs, or other mechanisms; adapters translate those physical links into the same canonical primitive fields.
+
+**Alternatives considered**:
+- Custom `GraphEdge` / `GraphNode` annotation metadata — rejected because it creates a parallel relationship model without a current consumer.
+- Treat all relationships as storage-adapter concerns — rejected because the physical link representation is adapter-specific, but relationship meaning is part of the shared domain ontology.
+
+## R16 — Branded domain identifiers
+
+**Decision**: Use `Schema.brand` for opaque semantically distinct strings, starting with canonical `PrimitiveId`. Reuse `PrimitiveId` for primitive identity and reference targets. Do not brand human-authored prose or labels (`name`, `description`, `notes`, `evidence`, `Story.text`, `tags`). Future adapter-specific identifiers must use separate adapter-layer brands (for example `NotionPageId`, `SqlRowId`, `ConfluencePageId`) and must not leak into domain schemas.
+
+**Rationale**: Branded IDs prevent accidental mixing of opaque string domains while preserving fixture ergonomics: raw YAML strings decode into branded IDs at the schema boundary. Over-branding descriptive strings creates friction without improving semantic safety.
+
+**Alternatives considered**:
+- Leave all strings unbranded — rejected for opaque identifiers because accidental ID/string mixing is likely as adapters and graph indexing expand.
+- Brand every string-like field — rejected because prose and display labels are not opaque identity domains and should remain easy to author and transform.

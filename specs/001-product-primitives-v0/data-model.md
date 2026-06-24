@@ -12,6 +12,8 @@
 
 Closed-set fields (`status`, `category`, `role`, `importance`, `confidence`, etc.) are **Schema literal unions** in `@specable/domain` — not native TypeScript `enum`. Field semantics and Schema-supported validation use Effect Schema annotations (FR-058).
 
+Opaque canonical primitive IDs are branded as `PrimitiveId` in `@specable/domain`. Human-authored prose and display strings remain unbranded. Adapter-specific IDs (for example SQL row IDs, Notion page IDs, Confluence page IDs) are adapter-layer concerns and must not leak into domain primitive schemas.
+
 ## Overview
 
 A **graph project** is a directory of YAML fixture files representing product primitives and typed references. The in-memory **ProductGraph** indexes primitives by `id` and `type`, materializes reference edges, and feeds validation, integrity analysis, and summary generation.
@@ -20,12 +22,22 @@ All primitives share common metadata:
 
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
-| `id` | string | yes | Stable, globally unique within project |
+| `id` | `PrimitiveId` (branded string) | yes | Stable, globally unique within project; raw fixture strings decode into branded IDs |
 | `name` | string | yes | Display name for summaries and story template |
 | `status` | `Draft` \| `Active` \| `Deprecated` (Schema literal union) | yes | Controls validation strictness |
 | `description` | string | conditional | Required per-type rules below |
 
 Optional cross-cutting fields (when applicable): `notes`, `tags`, `evidence`, `confidence`.
+
+## Relationship semantics and storage adapters
+
+Canonical relationships are modeled by primitive fields, not by separate graph metadata:
+
+- `Capability.actors` references Actor primitives.
+- `Workflow.capabilities` references Capability primitives.
+- `Story.actor`, `Story.capability`, and `Story.expectedResult` form the story triple.
+
+The physical representation of those links is storage-specific. YAML uses primitive ID references, SQL may use foreign keys or join tables, Notion may use relation properties, and Confluence may use page links. Each adapter translates its storage-specific links into the canonical primitive fields before validation, integrity analysis, summaries, or MCP/query surfaces consume the model.
 
 ## Primitive types
 
@@ -138,6 +150,8 @@ Duplicate Active triple `(actorId, capabilityId, expectedResultId)` → validati
 - id: actor-coach
   role: Primary   # optional; required where Primary Actor rules apply
 ```
+
+Reference `id` values are canonical `PrimitiveId` values after Schema decode. They are not backend object identifiers.
 
 Broken refs (unknown ID) → **failure** regardless of status.
 
