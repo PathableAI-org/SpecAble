@@ -9,6 +9,7 @@
   ],
   "workspaces": {
     "packages": [
+      "packages/domain",
       "packages/cli"
     ]
   },

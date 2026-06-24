@@ -6,6 +6,8 @@
     "composite": true,
     "moduleResolution": "bundler",
     "paths": {
+      "@specable/domain": ["./packages/domain/src/index.ts"],
+      "@specable/domain/*": ["./packages/domain/src/*"],
       "@specable/cli": ["./packages/cli/src/index.ts"],
       "@specable/cli/*": ["./packages/cli/src/*"]
     },

@@ -65,12 +65,12 @@ description: "Task list for SpecAble v0 — Product Primitive Graph"
 
 ### Domain package scaffolding
 
-- [ ] T023 Create `packages/domain/package.json` for `@specable/domain` with `effect`/`@effect/schema` and `@effect/build-utils` scripts (no CLI, platform, or YAML dependencies)
-- [ ] T024 [P] Create `packages/domain/tsconfig.json`, `packages/domain/tsconfig.src.json`, `packages/domain/tsconfig.test.json`, and `packages/domain/tsconfig.build.json`
-- [ ] T025 Update root `tsconfig.base.json` with `@specable/domain` path alias alongside `@specable/cli`
-- [ ] T026 Update root `tsconfig.json` and `tsconfig.build.json` to reference `packages/domain` and `packages/cli` (cli references domain)
-- [ ] T027 Add `@specable/domain` workspace dependency to `packages/cli/package.json`
-- [ ] T028 Update `.fallowrc.json` to scope both `packages/domain` and `packages/cli`
+- [X] T023 Create `packages/domain/package.json` for `@specable/domain` with `effect`/`@effect/schema` and `@effect/build-utils` scripts (no CLI, platform, or YAML dependencies)
+- [X] T024 [P] Create `packages/domain/tsconfig.json`, `packages/domain/tsconfig.src.json`, `packages/domain/tsconfig.test.json`, and `packages/domain/tsconfig.build.json`
+- [X] T025 Update root `tsconfig.base.json` with `@specable/domain` path alias alongside `@specable/cli`
+- [X] T026 Update root `tsconfig.json` and `tsconfig.build.json` to reference `packages/domain` and `packages/cli` (cli references domain)
+- [X] T027 Add `@specable/domain` workspace dependency to `packages/cli/package.json`
+- [X] T028 Update `.fallowrc.json` to scope both `packages/domain` and `packages/cli`
 
 ### Domain schemas (`@specable/domain` — Schema-only, no native `enum`)
 
