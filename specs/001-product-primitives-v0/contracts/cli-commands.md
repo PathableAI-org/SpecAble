@@ -34,14 +34,15 @@
 6. Integrity warnings (if any)
 7. Summary preview (Markdown truncated to documented max lines, e.g. 80)
 
-**Exit codes**:
+**Exit codes** (FR-060):
+
 | Code | Meaning |
 |------|---------|
-| 0 | No Active validation failures |
+| 0 | No Active validation failures and no broken references |
 | 1 | Active validation failures and/or broken references |
-| 2 | Usage/runtime error (missing project dir, decode error) |
+| 2 | Usage/runtime error (missing project dir, malformed JSON, schema decode error) |
 
-Warnings alone do not fail exit code unless `--strict` is added in a future version (not v0).
+**Exit code policy**: Integrity warnings alone—including duplicate normalized names (FR-034a), likely duplicates, Draft incompleteness, and advisory quality flags—MUST NOT cause exit `1`. Warnings alone do not fail exit unless `--strict` is added in a future version (not v0).
 
 ### `specable --help`
 

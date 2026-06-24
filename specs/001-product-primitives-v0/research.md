@@ -1,7 +1,7 @@
 # Research: SpecAble v0 — Product Primitive Graph
 
 **Feature**: `001-product-primitives-v0`  
-**Date**: 2026-06-23 (updated 2026-06-24)
+**Date**: 2026-06-23 (updated 2026-06-24 — JSON fixtures, exit codes, duplicate-name warnings)
 
 ## R1 — Monorepo layout for v0
 
@@ -35,19 +35,20 @@
 
 ## R4 — Fixture serialization format
 
-**Decision**: YAML for human-authored graph fixtures; JSON for machine-written CLI artifacts (`validation.json`, `integrity-report.json`, `check-result.json`).
+**Decision**: **JSON only** for human-authored graph project fixtures (one file per primitive type plus optional `graph.json` metadata). JSON for machine-written CLI artifacts (`validation.json`, `integrity-report.json`, `check-result.json`). YAML fixture input is out of scope for v0 (FR-061).
 
-**Rationale**: Spec assumes human-editable structured files; YAML is easier for product owners. JSON outputs are stable for CI and tooling.
+**Rationale**: Clarified in spec session 2026-06-24 — JSON preferred for v0 first version; avoids an extra YAML parser dependency at the loader boundary; aligns with structured CI tooling and native Node `JSON.parse`.
 
 **Alternatives considered**:
-- JSON fixtures only — rejected; worse authoring ergonomics for examples.
+- YAML fixtures — rejected in 2026-06-24 clarification; previously assumed for authoring ergonomics.
+- Both YAML and JSON — rejected; v0 standardizes on one input format.
 - TOML — rejected; less common in product/engineering docs tooling.
 
 ## R5 — Fixture file layout
 
-**Decision**: One file per primitive type plus optional `graph.yaml` metadata, using documented canonical filenames under a graph project directory.
+**Decision**: One JSON file per primitive type plus optional `graph.json` metadata, using documented canonical filenames under a graph project directory.
 
-**Rationale**: Clarified in spec session 2026-06-23 (Option B).
+**Rationale**: Clarified in spec session 2026-06-23 (layout); filenames updated to `.json` in session 2026-06-24.
 
 **Alternatives considered**:
 - Single combined graph file — rejected during clarification.
@@ -94,6 +95,16 @@
 **Alternatives considered**:
 - Levenshtein-only — rejected; noisier on short names.
 
+## R10a — Duplicate normalized name severity
+
+**Decision**: Exact duplicate normalized names within a primitive type are integrity **warnings** only (FR-034a). They appear in integrity output and gap sections but do not alone cause validation failure or CLI exit code `1`.
+
+**Rationale**: Clarified in spec session 2026-06-24. Aligns with advisory duplicate/likely-duplicate pattern and CI-friendly exit semantics (FR-060).
+
+**Alternatives considered**:
+- Integrity failure with exit `1` — rejected; too noisy for in-progress graphs.
+- Validation failure — rejected; duplicate names are modeling quality signals, not structural invalidity like duplicate IDs.
+
 ## R11 — Workflow derivability for Expected Results / Domain Concepts
 
 **Decision**: Derive workflow-level Expected Results and Domain Concepts by traversing linked Capabilities and their Capability Concept Links and Expected Result edges. If none derivable, emit integrity **warning** for Active workflows (not hard failure unless explicit relations also missing and derivation empty).
@@ -126,7 +137,7 @@
 
 **Decision**: Effect Schema annotations in `@specable/domain` should use built-in annotation fields (`title`, `description`, `documentation`, `examples`, `identifier`) to document primitive and field semantics. Canonical relationships are represented by the primitive fields themselves (`Capability.actors`, `Workflow.capabilities`, `Story.expectedResult`, etc.), not by separate `Graph*` edge/node metadata or custom `jsonSchema` objects.
 
-**Rationale**: Primitive fields are the durable ontology contract consumed by validation, summaries, story generation, and future MCP/adapters. A second graph-metadata model can drift from the schemas and blurs the line between domain semantics and graph/index/storage implementation. Storage backends may use SQL joins, Notion relations, Confluence links, YAML IDs, or other mechanisms; adapters translate those physical links into the same canonical primitive fields.
+**Rationale**: Primitive fields are the durable ontology contract consumed by validation, summaries, story generation, and future MCP/adapters. A second graph-metadata model can drift from the schemas and blurs the line between domain semantics and graph/index/storage implementation. Storage backends may use SQL joins, Notion relations, Confluence links, JSON ID references, or other mechanisms; adapters translate those physical links into the same canonical primitive fields.
 
 **Alternatives considered**:
 - Custom `GraphEdge` / `GraphNode` annotation metadata — rejected because it creates a parallel relationship model without a current consumer.
@@ -136,8 +147,19 @@
 
 **Decision**: Use `Schema.brand` for opaque semantically distinct strings, starting with canonical `PrimitiveId`. Reuse `PrimitiveId` for primitive identity and reference targets. Do not brand human-authored prose or labels (`name`, `description`, `notes`, `evidence`, `Story.text`, `tags`). Future adapter-specific identifiers must use separate adapter-layer brands (for example `NotionPageId`, `SqlRowId`, `ConfluencePageId`) and must not leak into domain schemas.
 
-**Rationale**: Branded IDs prevent accidental mixing of opaque string domains while preserving fixture ergonomics: raw YAML strings decode into branded IDs at the schema boundary. Over-branding descriptive strings creates friction without improving semantic safety.
+**Rationale**: Branded IDs prevent accidental mixing of opaque string domains while preserving fixture ergonomics: raw JSON strings decode into branded IDs at the schema boundary. Over-branding descriptive strings creates friction without improving semantic safety.
 
 **Alternatives considered**:
 - Leave all strings unbranded — rejected for opaque identifiers because accidental ID/string mixing is likely as adapters and graph indexing expand.
 - Brand every string-like field — rejected because prose and display labels are not opaque identity domains and should remain easy to author and transform.
+
+## R17 — CLI exit codes
+
+**Decision**: `specable check` exit codes (FR-060): `0` = no Active validation failures or broken references; `1` = Active validation failures or broken references present; `2` = usage/runtime/fixture decode errors. Integrity warnings alone (duplicate names, likely duplicates, Draft incompleteness, advisory quality flags) never fail exit.
+
+**Rationale**: Clarified in spec session 2026-06-24. Enables CI to gate on Active correctness while still surfacing advisory integrity findings on stdout.
+
+**Alternatives considered**:
+- Fail on any integrity failure — rejected; orphans/missing links may already surface as Active validation failures; duplicate names remain advisory.
+- Strict mode failing on warnings — deferred post-v0 (`--strict`).
+

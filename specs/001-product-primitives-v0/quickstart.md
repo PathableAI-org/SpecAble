@@ -64,7 +64,7 @@ pnpm --filter @specable/cli exec specable check packages/cli/examples/coachbridg
 ## Create a local graph project
 
 1. Create directory `my-graph/`.
-2. Add `graph.yaml` and primitive type files per [fixture-format.md](./contracts/fixture-format.md).
+2. Add `graph.json` and primitive type `.json` files per [fixture-format.md](./contracts/fixture-format.md).
 3. Run:
 
 ```bash

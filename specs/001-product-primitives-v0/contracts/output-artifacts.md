@@ -40,7 +40,7 @@ Finding codes (non-exhaustive): `missing-field`, `missing-relationship`, `broken
 
 ## `integrity-report.json`
 
-Same finding shape plus advisory codes: `likely-duplicate-name`, `disconnected-actor`, `implementation-shaped-domain-concept`, `vague-expected-result`, `missing-workflow-derivation`.
+Same finding shape plus advisory codes: `duplicate-name` (warning), `likely-duplicate-name`, `disconnected-actor`, `implementation-shaped-domain-concept`, `vague-expected-result`, `missing-workflow-derivation`.
 
 Includes `duplicateStoryTriples`:
 

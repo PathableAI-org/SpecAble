@@ -18,6 +18,9 @@
 - Q: What is the scope boundary of `@specable/domain` vs `@specable/cli`? → A: `@specable/domain` holds primitive schemas, Schema literal unions, reference types, and domain tagged errors only; graph types, loaders, validation, integrity, summary, and CLI stay in `@specable/cli`. The only logic in `@specable/domain` is that embedded in Effect Schema itself.
 - Q: How should schemas express semantic meaning and field-level validation? → A: Leverage Effect Schema annotations to describe semantic meaning and encode validation wherever Schema supports it; logic beyond Schema capabilities belongs in downstream packages that consume these schemas.
 - Q: What testing is required in `@specable/domain`? → A: Minimal—focused on encode/decode round-trips for complex schema cases only; comprehensive validation and graph behavior tests live in consuming packages.
+- Q: What severity should duplicate normalized names within a primitive type receive? → A: Integrity **warnings** only—report in the integrity report but do not fail validation or cause a non-zero CLI exit code on names alone.
+- Q: What CLI exit code policy should `specable check` use? → A: Exit `0` when no Active validation failures; exit `1` on Active validation failures or broken references; exit `2` on usage/runtime/decode errors; integrity warnings alone (duplicate names, likely duplicates, advisory flags) never fail exit.
+- Q: What fixture file encoding should v0 graph projects use? → A: **JSON only** for primitive type files and optional project metadata—not YAML. v0 loader, bundled examples, and documentation MUST use JSON fixtures exclusively.
 
 ### Session 2026-06-23
 
@@ -35,7 +38,7 @@ A product owner or engineer maintains product intent as structured primitive fix
 
 **Why this priority**: Validation is the minimum viable entry point. Without trustworthy structural checks, relationship reports and summaries would amplify bad data instead of clarifying product state.
 
-**Independent Test**: Point the tool at a fixture folder containing a mix of valid, Draft, Active, and Deprecated primitives; confirm the tool reports pass/fail per primitive type, distinguishes warnings (Draft incompleteness) from failures (Active incompleteness), lists missing required fields and relationships with stable IDs, and exits with a clear overall validation outcome without requiring network access or external services.
+**Independent Test**: Point the tool at a fixture folder containing a mix of valid, Draft, Active, and Deprecated primitives; confirm the tool reports pass/fail per primitive type, distinguishes warnings (Draft incompleteness) from failures (Active incompleteness), lists missing required fields and relationships with stable IDs, exits `0` only when no Active validation failures or broken references are present, and completes without network access or external services.
 
 **Acceptance Scenarios**:
 
@@ -44,6 +47,8 @@ A product owner or engineer maintains product intent as structured primitive fix
 3. **Given** an Active primitive missing a required field or canonical relationship, **When** the user runs validation, **Then** the tool reports a validation failure with primitive ID, type, field or relationship name, and a human-readable error without modifying source files.
 4. **Given** a fixture folder with invalid references to unknown primitive IDs, **When** the user runs validation, **Then** the tool reports broken references as validation failures distinct from missing required fields.
 5. **Given** no network connectivity and no third-party credentials, **When** the user runs validation on local fixtures, **Then** the tool completes successfully using only local files.
+6. **Given** a graph with integrity warnings only (e.g., duplicate normalized names, likely duplicates, Draft incompleteness) and zero Active validation failures, **When** the user runs the default check command, **Then** the process exits with code `0`.
+7. **Given** a graph with one or more Active validation failures or broken references, **When** the user runs the default check command, **Then** the process exits with code `1`.
 
 ---
 
@@ -60,7 +65,7 @@ After structural validation, the user needs to understand whether the primitive 
 1. **Given** a graph where a persona references a missing actor ID, **When** the user requests a relationship integrity report, **Then** the report lists the broken reference with source primitive, relationship type, and target ID.
 2. **Given** Active primitives with no inbound or outbound relationships where canonical rules require them, **When** the user requests the report, **Then** under-linked Active primitives are listed as failures and under-linked Draft primitives as warnings.
 3. **Given** two Active stories sharing the same Actor, Capability, and Expected Result triple, **When** the user requests the report, **Then** the report flags duplicate Story triples and identifies the conflicting story IDs.
-4. **Given** two capabilities with the same normalized name in one graph, **When** the user requests the report, **Then** the report flags duplicate names and identifies the conflicting primitive IDs.
+4. **Given** two capabilities with the same normalized name in one graph, **When** the user requests the report, **Then** the report flags duplicate names as integrity **warnings** (not failures), identifies the conflicting primitive IDs, and does not alone cause a non-zero CLI exit code.
 5. **Given** a Deprecated primitive with incomplete relationships not referenced by any Active primitive, **When** the user requests the report, **Then** completeness rules are not enforced against that Deprecated primitive.
 
 ---
@@ -101,13 +106,16 @@ A new user opens bundled example primitive graphs to understand how to model pro
 ### Edge Cases
 
 - **Empty or missing fixture folder**: Validation fails with a clear error identifying missing project root or expected primitive type files; no summary is generated.
+- **Invalid JSON fixture**: Fixture decode errors (malformed JSON, schema decode failure) MUST fail with exit code `2` and report file path plus field path; no summary is generated.
 - **Missing primitive type file**: Treated as an empty collection for that type (zero primitives); validation proceeds and reports under-linked Active primitives or missing references accordingly.
 - **Duplicate stable IDs**: Duplicate IDs within a graph project are validation failures regardless of status.
+- **Duplicate normalized names**: Same normalized display name within a primitive type (e.g., two Active capabilities named "Schedule Session") are integrity **warnings**, not validation or integrity failures; they appear in the integrity report and gap sections but do not alone fail `check` or force exit code `1`.
 - **Authored vs derived story conflict**: Two Active stories with the same Actor + Capability + Expected Result triple are flagged as duplicate Story triples. Stored text differing from generated template text is allowed and passes validation; optional future mode may warn on inconsistency.
 - **Optional descriptive fields empty**: Allowed for Draft primitives (warn if Active-relevant); Active primitives fail required-field validation when mandatory descriptive fields are absent.
 - **Circular workflow references**: Allowed if references resolve; integrity report warns on redundant cycles but does not fail unless Active completeness rules are violated.
 - **Summary on partially invalid graphs**: Summary generation is permitted; output MUST include prominent gap sections. Active validation failures MUST be listed in gaps; Draft warnings SHOULD be listed separately from Active failures.
 - **Deprecated primitives referenced by Active graph**: Deprecated targets remain valid reference targets; Deprecated sources must not block Active validation unless an Active primitive depends on an incomplete Deprecated chain incorrectly marked Active.
+- **CLI exit codes**: Exit `0` when no Active validation failures or broken references; exit `1` on Active validation failures or broken references; exit `2` on usage, runtime, or fixture decode errors. Integrity warnings alone (duplicate names, likely duplicates, advisory quality flags, Draft incompleteness) MUST NOT cause exit `1`.
 
 ## Requirements *(mandatory)*
 
@@ -198,6 +206,7 @@ A new user opens bundled example primitive graphs to understand how to model pro
 - **FR-053**: By default (no `--out`), the CLI MUST print validation status, integrity findings, and a short summary preview to stdout and MUST NOT write files.
 - **FR-054**: When `--out <dir>` is provided, the CLI MUST write shareable artifacts to that directory, including at minimum `summary.md`, `validation.json`, and `integrity-report.json`; it MAY also write `integrity-report.md` and a combined `check-result.json` for machine-readable consumption.
 - **FR-055**: File writes MUST occur only when `--out` is explicitly supplied; the default command MUST remain suitable for interactive fixture authoring and CI stdout inspection.
+- **FR-060**: The primary CLI command MUST use deterministic exit codes: `0` when no Active validation failures or broken references are present; `1` when one or more Active validation failures or broken references are present; `2` for usage errors, missing project directory, or fixture decode failures. Integrity warnings alone—including duplicate normalized names, likely duplicates, Draft incompleteness, and advisory quality flags—MUST NOT cause exit `1`.
 - **FR-031**: Validation MUST report required-field and relationship compliance with status-aware severity (warnings vs failures per FR-006 through FR-009).
 - **FR-032**: Validation MUST detect broken references to unknown primitive IDs and report them as failures distinct from missing required relationships.
 
@@ -205,6 +214,7 @@ A new user opens bundled example primitive graphs to understand how to model pro
 
 - **FR-033**: Users MUST be able to obtain a relationship integrity report from the command line for a local graph.
 - **FR-034**: The integrity report MUST consolidate missing canonical links, orphans, broken references, duplicate names within a primitive type, likely duplicates, duplicate Story triples, and advisory quality warnings with status-aware severity.
+- **FR-034a**: Duplicate normalized names within a primitive type MUST be reported as integrity **warnings**, not validation failures or integrity failures. Duplicate names alone MUST NOT cause a non-zero CLI exit code.
 - **FR-035**: When information needed to infer product meaning is absent, the system MUST report the gap explicitly instead of silently assuming defaults that invent intent.
 
 **Summary generation**
@@ -221,8 +231,9 @@ A new user opens bundled example primitive graphs to understand how to model pro
 - **FR-040**: The release MUST ship at least two example graphs: (a) a small generic example not tied to Pathable or CoachBridge, and (b) a small synthetic CoachBridge-inspired example using fake data only.
 - **FR-041**: Example graphs MUST include at least one intentionally imperfect variant or documented mistake pattern demonstrating Draft warnings, Active failures, and advisory warnings.
 - **FR-042**: Users MUST be able to create and edit local primitive fixture files using documented fixture conventions shipped with the release.
-- **FR-045**: A graph project folder MUST store primitives as **one file per primitive type** (e.g., `objectives.yaml`, `actors.yaml`, `personas.yaml`, `domain-concepts.yaml`, `capabilities.yaml`, `capability-concept-links.yaml`, `expected-results.yaml`, `workflows.yaml`, `stories.yaml`); exact filenames MAY vary but MUST be documented and consistent within a project.
-- **FR-046**: A graph project MAY include optional project metadata (e.g., graph name, version, schema version) in a small root metadata file separate from primitive type files.
+- **FR-045**: A graph project folder MUST store primitives as **one JSON file per primitive type** (e.g., `objectives.json`, `actors.json`, `personas.json`, `domain-concepts.json`, `capabilities.json`, `capability-concept-links.json`, `expected-results.json`, `workflows.json`, `stories.json`); exact filenames MAY vary but MUST be documented, use the `.json` extension, and remain consistent within a project.
+- **FR-046**: A graph project MAY include optional project metadata (e.g., graph name, version, schema version) in a small root metadata JSON file separate from primitive type files.
+- **FR-061**: v0 graph project fixtures MUST use **JSON encoding only** for primitive type files and optional project metadata. YAML fixture input is out of scope for v0; the loader MUST NOT require or discover YAML primitive files. Bundled examples and shipped fixture documentation MUST use JSON.
 - **FR-047**: The CLI and library MUST discover and load all primitive type files from a user-supplied project folder without requiring a Notion or hosted service connection.
 
 **Quality attributes (user-visible)**
@@ -244,17 +255,17 @@ A new user opens bundled example primitive graphs to understand how to model pro
 - **Primitive status**: `Draft` | `Active` | `Deprecated` (Schema literal union); controls validation strictness.
 - **Relationship edge**: Typed link between primitives per canonical ontology; carries integrity and derivation rules.
 - **Validation finding**: Structured issue with severity (`warning` | `failure`) for fields, relationships, or broken references on a specific primitive ID.
-- **Integrity finding**: Structured issue for missing links, orphans, duplicates, duplicate story triples, or advisory quality flags.
+- **Integrity finding**: Structured issue for missing links, orphans, duplicate normalized names (warning), likely duplicates (warning), duplicate story triples (validation failure when Active), or advisory quality flags.
 - **Product summary artifact**: Generated Markdown derived from graph state and findings; not canonical.
 
 ## Success Criteria *(mandatory)*
 
 ### Measurable Outcomes
 
-- **SC-001**: A user can create or edit a complete v0 graph using only local fixture files and project documentation, with no external accounts or network services.
+- **SC-001**: A user can create or edit a complete v0 graph using only local JSON fixture files and project documentation, with no external accounts or network services.
 - **SC-002**: Running validation on the bundled generic example (Active-valid variant) completes in under 5 seconds on a typical developer laptop and reports zero Active failures.
 - **SC-003**: For engineered invalid fixtures, at least 95% of injected issues (missing Active relationship, broken reference, duplicate story triple, duplicate name, advisory quality flag) appear in validation or integrity output with the correct primitive ID cited and correct severity (warning vs failure).
-- **SC-004**: A user can run the primary CLI command against a fixture folder and receive validation status and integrity findings on stdout plus a short summary preview in one invocation; `--out <dir>` writes `summary.md` and structured JSON reports for sharing. Scoped flags allow validate-only, integrity-only, or summary-only runs without a separate manual pipeline.
+- **SC-004**: A user can run the primary CLI command against a fixture folder and receive validation status and integrity findings on stdout plus a short summary preview in one invocation; `--out <dir>` writes `summary.md` and structured JSON reports for sharing. Scoped flags allow validate-only, integrity-only, or summary-only runs without a separate manual pipeline. Exit code `0` indicates no Active validation failures or broken references; exit `1` indicates Active failures or broken references; integrity warnings alone do not fail exit.
 - **SC-005**: Generated summaries for the generic example allow a new reviewer to correctly identify at least four primitive types, two canonical relationships, and Draft vs Active status behavior without prior SpecAble training, verified by a short comprehension checklist in project docs.
 - **SC-006**: Every Active story represented in a summary has exactly one Actor, one Capability, and one Expected Result in the graph. Summary story text is either stored or deterministically generated from those links using the v0 template; no story text appears when any required link is missing.
 - **SC-007**: Re-running summary generation on an unchanged graph produces byte-identical Markdown output (excluding optional timestamp metadata if the product chooses to include it, which MUST be off by default).
@@ -268,15 +279,17 @@ A new user opens bundled example primitive graphs to understand how to model pro
 - `@specable/domain` is schema-only: semantic meaning and field constraints are expressed via Effect Schema annotations and built-in validation; graph loading, status-aware rules, integrity, and summaries are downstream concerns.
 - `@specable/domain` carries minimal tests (complex encode/decode cases only); behavioral test suites belong in `@specable/cli`.
 - Canonical relationship rules match the Notion Product Primitives ontology; v0 encodes those rules locally—Notion is a specification source, not a runtime dependency.
-- Fixture files use human-editable structured formats (YAML or JSON) in a graph project folder with **one file per primitive type** plus optional project metadata; exact filenames and metadata schema will be defined during planning but MUST remain storage-provider agnostic.
+- Fixture files use **JSON only** in a graph project folder with **one file per primitive type** plus optional project metadata; exact filenames and metadata schema will be defined during planning but MUST remain storage-provider agnostic. YAML fixture input is explicitly out of scope for v0.
 - Stable IDs are globally unique strings within a graph project; duplicate IDs are validation failures.
-- "Likely duplicate" detection uses normalized name equality within a primitive type as a baseline, with optional fuzzy similarity for same-type pairs sharing significant token overlap.
+- Exact duplicate normalized names within a primitive type are integrity **warnings** (not failures); "likely duplicate" detection uses normalized name equality as a baseline, with optional fuzzy similarity for same-type pairs sharing significant token overlap—also reported as warnings.
 - Summary generation on graphs with Active validation failures is allowed; output MUST prominently list gaps and MUST NOT fabricate missing primitive content.
 - Command-line interaction is the only required user interface for v0; graphical UI, MCP tools, and hosted services are explicitly deferred.
+- `specable check` exit codes: `0` = no Active validation failures or broken references; `1` = Active validation failures or broken references present; `2` = usage/runtime/decode errors. Integrity warnings alone never fail exit.
 - Licensing and open-source distribution details are handled outside this feature spec but MUST NOT contradict local-first operation.
 
 ## Out of Scope (v0)
 
+- YAML fixture input (v0 uses JSON-only graph project files; YAML adapters deferred)
 - Notion, Confluence, Linear, Jira, GitHub, Figma, or any hosted storage adapter at runtime
 - MCP server exposure, cloud hosting, authentication, or multi-user permissions
 - Write-back automation to external systems

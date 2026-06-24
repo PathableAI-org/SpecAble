@@ -16,7 +16,7 @@ Opaque canonical primitive IDs are branded as `PrimitiveId` in `@specable/domain
 
 ## Overview
 
-A **graph project** is a directory of YAML fixture files representing product primitives and typed references. The in-memory **ProductGraph** indexes primitives by `id` and `type`, materializes reference edges, and feeds validation, integrity analysis, and summary generation.
+A **graph project** is a directory of JSON fixture files representing product primitives and typed references. The in-memory **ProductGraph** indexes primitives by `id` and `type`, materializes reference edges, and feeds validation, integrity analysis, and summary generation.
 
 All primitives share common metadata:
 
@@ -37,7 +37,7 @@ Canonical relationships are modeled by primitive fields, not by separate graph m
 - `Workflow.capabilities` references Capability primitives.
 - `Story.actor`, `Story.capability`, and `Story.expectedResult` form the story triple.
 
-The physical representation of those links is storage-specific. YAML uses primitive ID references, SQL may use foreign keys or join tables, Notion may use relation properties, and Confluence may use page links. Each adapter translates its storage-specific links into the canonical primitive fields before validation, integrity analysis, summaries, or MCP/query surfaces consume the model.
+The physical representation of those links is storage-specific. JSON fixtures use primitive ID references, SQL may use foreign keys or join tables, Notion may use relation properties, and Confluence may use page links. Each adapter translates its storage-specific links into the canonical primitive fields before validation, integrity analysis, summaries, or MCP/query surfaces consume the model.
 
 ## Primitive types
 
@@ -146,10 +146,11 @@ Duplicate Active triple `(actorId, capabilityId, expectedResultId)` → validati
 
 ## Reference object shape
 
-```yaml
-- id: actor-coach
-  role: Primary   # optional; required where Primary Actor rules apply
+```json
+{ "id": "actor-coach", "role": "Primary" }
 ```
+
+Or string ID shorthand: `"actor-coach"`.
 
 Reference `id` values are canonical `PrimitiveId` values after Schema decode. They are not backend object identifiers.
 
@@ -159,19 +160,19 @@ Broken refs (unknown ID) → **failure** regardless of status.
 
 ```text
 my-product-graph/
-├── graph.yaml                 # optional metadata
-├── objectives.yaml
-├── actors.yaml
-├── personas.yaml
-├── domain-concepts.yaml
-├── capabilities.yaml
-├── capability-concept-links.yaml
-├── expected-results.yaml
-├── workflows.yaml
-└── stories.yaml
+├── graph.json                 # optional metadata
+├── objectives.json
+├── actors.json
+├── personas.json
+├── domain-concepts.json
+├── capabilities.json
+├── capability-concept-links.json
+├── expected-results.json
+├── workflows.json
+└── stories.json
 ```
 
-Each `*.yaml` file contains a top-level `primitives` array for that type (exact key documented in fixture contract).
+Each `*.json` file contains a top-level `primitives` array for that type (exact key documented in fixture contract).
 
 Missing type file → empty collection.
 
@@ -211,7 +212,21 @@ ProductSummary
 | Broken reference | failure | failure | failure if referenced |
 | Duplicate ID | failure | failure | failure |
 | Duplicate Active story triple | failure | failure | n/a |
+| Duplicate normalized name (same type) | warning | warning | warning |
+| Likely duplicate name (fuzzy) | warning | warning | warning |
 | Advisory quality heuristics | warning | warning | ignored |
+
+Duplicate normalized names are integrity **warnings** only (FR-034a); they do not alone cause CLI exit code `1`.
+
+## CLI exit semantics
+
+| Exit code | Condition |
+|-----------|-----------|
+| `0` | No Active validation failures and no broken references |
+| `1` | One or more Active validation failures or broken references |
+| `2` | Usage error, missing project directory, or JSON/schema decode failure |
+
+Integrity warnings alone never fail exit (FR-060).
 
 ## Tagged errors (Effect)
 
@@ -219,7 +234,7 @@ ProductSummary
 
 | Error | When |
 |-------|------|
-| `FixtureDecodeError` | YAML/Schema decode failure with path |
+| `FixtureDecodeError` | JSON/Schema decode failure with path |
 
 **`@specable/cli`**
 
@@ -228,9 +243,9 @@ ProductSummary
 | `GraphProjectNotFoundError` | Missing project directory |
 | `DuplicateIdError` | Duplicate primitive IDs at load/index |
 | `BrokenReferenceError` | Unknown target ID (validation) |
-| `ValidationFailedError` | Active failures present (CLI exit code) |
+| `ValidationFailedError` | Active failures present (CLI exit code `1`) |
 | `OutputWriteError` | `--out` directory not writable |
 
 ## Schema module boundary
 
-`@specable/domain` MUST NOT import `@specable/cli`, Node platform modules, or YAML parsers. Only Effect core/Schema and domain-local types. Cross-primitive graph rules, status-aware severity, and integrity heuristics are implemented in `@specable/cli` consuming decoded domain types.
+`@specable/domain` MUST NOT import `@specable/cli`, Node platform modules, or fixture parsers beyond Schema decode of already-parsed JSON values. Only Effect core/Schema and domain-local types. Cross-primitive graph rules, status-aware severity, and integrity heuristics are implemented in `@specable/cli` consuming decoded domain types.

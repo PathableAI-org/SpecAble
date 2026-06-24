@@ -2,21 +2,21 @@
 
 **Branch**: `001-product-primitives-v0` | **Date**: 2026-06-24 | **Spec**: [spec.md](./spec.md)
 
-**Input**: Feature specification from `/specs/001-product-primitives-v0/spec.md` (updated with Session 2026-06-24 clarifications: `@specable/domain` package split, Schema literal unions, annotation-first validation)
+**Input**: Feature specification from `/specs/001-product-primitives-v0/spec.md` (updated with Session 2026-06-24 clarifications: `@specable/domain` package split, Schema literal unions, annotation-first validation, JSON-only fixtures, exit code policy, duplicate-name warnings)
 
 ## Summary
 
 Deliver SpecAble v0 as a local-first, open-source **two-package** Effect TypeScript workspace: `@specable/domain` (primitive schemas, closed-set Schema literal unions, references, domain decode errors) and `@specable/cli` (graph loading, status-aware validation, integrity analysis, summary generation, and `specable check` CLI). The CLI package depends on the domain package; graph behavior and rules beyond Effect Schema capabilities live only in `@specable/cli`.
 
-Technical approach: Effect Schema with annotations for semantic meaning and field-level validation in `@specable/domain`; no native TypeScript `enum`; YAML fixtures decoded at the CLI adapter boundary; `@effect/cli` + `@effect/platform-node` for the command surface; comprehensive tests in `@specable/cli`, minimal encode/decode tests in `@specable/domain`.
+Technical approach: Effect Schema with annotations for semantic meaning and field-level validation in `@specable/domain`; no native TypeScript `enum`; **JSON-only** graph project fixtures decoded at the CLI adapter boundary via `JSON.parse`; `@effect/cli` + `@effect/platform-node` for the command surface; comprehensive tests in `@specable/cli`, minimal encode/decode tests in `@specable/domain`.
 
 ## Technical Context
 
 **Language/Version**: TypeScript 6.x / ES2022 target (template-aligned)
 
-**Primary Dependencies**: `effect@^3.21`, `@effect/schema`, `@effect/cli`, `@effect/platform`, `@effect/platform-node`, `@effect/vitest`, `@effect/build-utils`, `yaml` (fixture parsing in `@specable/cli` only)
+**Primary Dependencies**: `effect@^3.21`, `@effect/schema`, `@effect/cli`, `@effect/platform`, `@effect/platform-node`, `@effect/vitest`, `@effect/build-utils` (no YAML parser; JSON fixtures use Node built-in parse)
 
-**Storage**: Local YAML graph project directories (one file per primitive type); JSON artifact outputs with `--out`
+**Storage**: Local JSON graph project directories (one `.json` file per primitive type); JSON artifact outputs with `--out`
 
 **Testing**: Vitest 4 + `@effect/vitest`; `@specable/domain` — minimal schema encode/decode tests for complex compositions; `@specable/cli` — full constitution-mandated suites with fixtures under `packages/cli/examples/` and `packages/cli/test/fixtures/`
 
@@ -37,7 +37,7 @@ Technical approach: Effect Schema with annotations for semantic meaning and fiel
 | Principle | Gate Question | Pass? |
 |-----------|---------------|-------|
 | I. Primitive graph canonical | Does this feature read/write typed primitives and relationships, not prose-only artifacts as source of truth? | ✅ |
-| II. Adapter-based | Is core logic free of Notion/Jira/Linear/GitHub/Figma/etc. dependencies? Are integrations adapter-only? | ✅ YAML loader in CLI only; Notion is spec source encoded locally |
+| II. Adapter-based | Is core logic free of Notion/Jira/Linear/GitHub/Figma/etc. dependencies? Are integrations adapter-only? | ✅ JSON loader in CLI only; Notion is spec source encoded locally |
 | III. Local-first / OSS-first | Is the slice demoable locally without a hosted SpecAble platform? | ✅ |
 | IV. MCP-first | If agent-facing, are read/query/validation/generation prioritized over write-back automation? | ✅ MCP deferred; read/validate/generate via CLI |
 | V. Library-first | Is domain behavior planned for `packages/*` with thin CLI/MCP wrappers? | ✅ `@specable/domain` library + thin `@specable/cli` adapter |
@@ -48,7 +48,7 @@ Technical approach: Effect Schema with annotations for semantic meaning and fiel
 | X. Narrow v1 | Does scope avoid PM SaaS, full UI, cloud platform, or vendor replacement ambitions? | ✅ |
 | Technical standards | Are TypeScript, pnpm, schema validation, and required test categories addressed? | ✅ |
 
-**Post-design re-check (2026-06-24)**: All gates pass. Session 2026-06-24 clarifications resolve the prior Principle V single-package exception.
+**Post-design re-check (2026-06-24)**: All gates pass. Session 2026-06-24 clarifications resolve the prior Principle V single-package exception and align fixture format (JSON-only), exit semantics, and integrity warning severity with contracts.
 
 ## Project Structure
 
@@ -118,7 +118,7 @@ SpecAble/
         │   ├── index.ts
         │   ├── cli/
         │   │   └── CheckCommand.ts
-        │   ├── graph/           # ProductGraph, GraphLoader, YAML decode
+        │   ├── graph/           # ProductGraph, GraphLoader, JSON decode
         │   ├── validation/      # Status-aware rules (consumes domain schemas)
         │   ├── integrity/
         │   ├── summary/
@@ -137,7 +137,7 @@ SpecAble/
 ```text
 @specable/domain  (no dependency on @specable/cli)
        ↑
-@specable/cli     (depends on @specable/domain; YAML/Node platform at boundary)
+@specable/cli     (depends on @specable/domain; JSON/Node platform at boundary)
 ```
 
 ### Root scripts (template-equivalent)
@@ -173,9 +173,9 @@ SpecAble/
 
 ## Phase 0 — Research
 
-Completed in [research.md](./research.md). Updated 2026-06-24 for two-package layout and Schema union conventions. No remaining `NEEDS CLARIFICATION`.
+Completed in [research.md](./research.md). Updated 2026-06-24 for two-package layout, Schema union conventions, JSON-only fixtures, exit codes, and duplicate-name warning severity. No remaining `NEEDS CLARIFICATION`.
 
-Key decisions: `@specable/domain` + `@specable/cli`, Effect Schema literal unions (no TS `enum`), annotation-first field validation, YAML fixtures in CLI, `@effect/cli check`, stdout + `--out`, Changesets for both packages, Fallow scoped to `packages/domain` and `packages/cli`.
+Key decisions: `@specable/domain` + `@specable/cli`, Effect Schema literal unions (no TS `enum`), annotation-first field validation, **JSON-only** graph fixtures, `@effect/cli check`, stdout + `--out`, exit codes FR-060, Changesets for both packages, Fallow scoped to `packages/domain` and `packages/cli`.
 
 ## Phase 1 — Design & Contracts
 
@@ -191,11 +191,11 @@ Key decisions: `@specable/domain` + `@specable/cli`, Effect Schema literal union
 
 1. **Repo bootstrap** — template scripts, TS configs, ESLint, CI, AGENTS.md, Changesets, Fallow config (Phase 1 largely complete; extend for `packages/domain`).
 2. **`@specable/domain` package** — workspace scaffolding, Schema literal unions, primitive schemas with annotations, references, `FixtureDecodeError`, codegen exports, minimal decode tests.
-3. **Graph loader (`@specable/cli`)** — YAML per-type files → `ProductGraph` Layer using domain schemas.
+3. **Graph loader (`@specable/cli`)** — JSON per-type files → `ProductGraph` Layer using domain schemas.
 4. **Validation engine** — status-aware required field + relationship rules (FR-010–FR-026); consumes domain types.
-5. **Integrity engine** — duplicates, triples, advisories, workflow derivations.
+5. **Integrity engine** — duplicate names (warnings), likely duplicates, triples, advisories, workflow derivations.
 6. **Story + summary** — template text, Markdown sections, preview truncation.
-7. **CLI** — `specable check` wiring, stdout/`--out` writers, exit codes.
+7. **CLI** — `specable check` wiring, stdout/`--out` writers, exit codes (FR-060).
 8. **Examples + tests** — generic + coachbridge synthetic; SC-003 engineered fixtures in `@specable/cli`.
 
 ### Test categories (constitution-mandated)
