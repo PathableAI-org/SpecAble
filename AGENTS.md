@@ -27,9 +27,9 @@ driven by the `speckit-*` skills which call the bash scripts in
 
 Non-obvious caveats:
 - These scripts resolve the repo root by searching **upward from the current working
-  directory** for the nearest `.specify/` dir. Always run them from `/workspace` (or set
-  `SPECIFY_INIT_DIR=/workspace`). Running from a temp dir that contains a copied `.specify/`
-  will silently resolve to that copy instead.
+  directory** for the nearest `.specify/` dir. Run them from the repo root (the directory
+  that contains `.specify/`), or set `SPECIFY_INIT_DIR` to that path. Running from a temp dir
+  that contains a copied `.specify/` will silently resolve to that copy instead.
 - Active feature context comes from `.specify/feature.json` (`feature_directory`) or the
   `SPECIFY_FEATURE_DIRECTORY` env var. It currently points at
   `specs/001-product-primitives-v0`. The scripts persist this file, so prefer running
@@ -39,6 +39,6 @@ Non-obvious caveats:
   installed here, so JSON output paths are exercised.
 
 ### When you implement the product
-After scaffolding `package.json` + `pnpm-workspace.yaml`, the startup update script will
-automatically run `pnpm install` (it is guarded to no-op while no `package.json` exists).
-Use the workflow in `quickstart.md` for codegen/lint/test/build.
+After scaffolding `package.json` + `pnpm-workspace.yaml`, run `pnpm install`.
+Then use the workflow in `quickstart.md` for codegen/lint/test/build.
+(If you add an automated startup/update script, guard it to no-op while no `package.json` exists.)
