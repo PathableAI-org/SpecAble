@@ -2,9 +2,6 @@ export * from "./primitives/index.js"
 export * from "./unions/index.js"
 
 
-export * as GraphAnnotations from "./GraphAnnotations.js"
-
-
 export * as PrimitiveBase from "./PrimitiveBase.js"
 
 

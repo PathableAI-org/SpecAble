@@ -1,25 +1,25 @@
 import { Schema } from "@effect/schema"
 
-import { graphJsonSchema, graphNode, primitiveTypeLiteral, relationship } from "../GraphAnnotations.js"
 import { makePrimitiveId, PrimitiveBaseFields } from "../PrimitiveBase.js"
 import { ReferenceArray } from "../Reference.js"
 
 export const Objective = Schema.Struct({
-  type: primitiveTypeLiteral("Objective"),
+  type: Schema.Literal("Objective").annotations({
+    description: "Discriminator value identifying this primitive as Objective",
+    documentation: "Use `Objective` in the `type` field only for Objective primitives.",
+    examples: ["Objective"],
+    identifier: "ObjectiveType",
+    title: "Objective Type"
+  }),
   ...PrimitiveBaseFields,
   expectedResults: Schema.optional(
-    ReferenceArray.annotations(
-      relationship({
-        cardinality: "many",
-        description: "Expected results that make this objective observable or measurable",
-        from: "Objective",
-        identifier: "ObjectiveExpectedResults",
-        requiredWhenActive: true,
-        role: "measured-by",
-        title: "Expected Results",
-        to: "ExpectedResult"
-      })
-    )
+    ReferenceArray.annotations({
+      description: "Expected results that make this objective observable or measurable",
+      documentation:
+        "Relationship field: Objective.expectedResults references ExpectedResult primitives. Required when the Objective is Active.",
+      identifier: "ObjectiveExpectedResults",
+      title: "Expected Results"
+    })
   ),
   successCriteria: Schema.optional(
     Schema.String.annotations({
@@ -31,17 +31,12 @@ export const Objective = Schema.Struct({
     })
   ),
   workflows: Schema.optional(
-    ReferenceArray.annotations(
-      relationship({
-        cardinality: "many",
-        description: "Workflows that operationalize this objective",
-        from: "Objective",
-        identifier: "ObjectiveWorkflows",
-        role: "operationalized-by",
-        title: "Workflows",
-        to: "Workflow"
-      })
-    )
+    ReferenceArray.annotations({
+      description: "Workflows that operationalize this objective",
+      documentation: "Relationship field: Objective.workflows references Workflow primitives.",
+      identifier: "ObjectiveWorkflows",
+      title: "Workflows"
+    })
   )
 }).annotations({
   description: "Why work matters; links to workflows and expected results",
@@ -60,7 +55,6 @@ export const Objective = Schema.Struct({
     }
   ],
   identifier: "Objective",
-  jsonSchema: graphJsonSchema(graphNode("Objective")),
   title: "Objective"
 })
 

@@ -1,53 +1,43 @@
 import { Schema } from "@effect/schema"
 
-import { graphJsonSchema, graphNode, primitiveTypeLiteral, relationship } from "../GraphAnnotations.js"
 import { makePrimitiveId, PrimitiveBaseFields } from "../PrimitiveBase.js"
 import { Reference, ReferenceArray } from "../Reference.js"
 
 export const Story = Schema.Struct({
-  type: primitiveTypeLiteral("Story"),
+  type: Schema.Literal("Story").annotations({
+    description: "Discriminator value identifying this primitive as Story",
+    documentation: "Use `Story` in the `type` field only for Story primitives.",
+    examples: ["Story"],
+    identifier: "StoryType",
+    title: "Story Type"
+  }),
   ...PrimitiveBaseFields,
   actor: Schema.optional(
-    Reference.annotations(
-      relationship({
-        cardinality: "one",
-        description: "Actor who wants or performs the story behavior",
-        from: "Story",
-        identifier: "StoryActor",
-        requiredWhenActive: true,
-        role: "as-a",
-        title: "Actor",
-        to: "Actor"
-      })
-    )
+    Reference.annotations({
+      description: "Actor who wants or performs the story behavior",
+      documentation:
+        "Relationship field: Story.actor references one Actor primitive. Required when the Story is Active.",
+      identifier: "StoryActor",
+      title: "Actor"
+    })
   ),
   capability: Schema.optional(
-    Reference.annotations(
-      relationship({
-        cardinality: "one",
-        description: "Capability that enables the story behavior",
-        from: "Story",
-        identifier: "StoryCapability",
-        requiredWhenActive: true,
-        role: "can",
-        title: "Capability",
-        to: "Capability"
-      })
-    )
+    Reference.annotations({
+      description: "Capability that enables the story behavior",
+      documentation:
+        "Relationship field: Story.capability references one Capability primitive. Required when the Story is Active.",
+      identifier: "StoryCapability",
+      title: "Capability"
+    })
   ),
   expectedResult: Schema.optional(
-    Reference.annotations(
-      relationship({
-        cardinality: "one",
-        description: "Expected result or benefit produced by the story",
-        from: "Story",
-        identifier: "StoryExpectedResult",
-        requiredWhenActive: true,
-        role: "so-that",
-        title: "Expected Result",
-        to: "ExpectedResult"
-      })
-    )
+    Reference.annotations({
+      description: "Expected result or benefit produced by the story",
+      documentation:
+        "Relationship field: Story.expectedResult references one ExpectedResult primitive. Required when the Story is Active.",
+      identifier: "StoryExpectedResult",
+      title: "Expected Result"
+    })
   ),
   text: Schema.optional(
     Schema.String.annotations({
@@ -62,17 +52,12 @@ export const Story = Schema.Struct({
     })
   ),
   workflows: Schema.optional(
-    ReferenceArray.annotations(
-      relationship({
-        cardinality: "many",
-        description: "Workflows this story demonstrates or belongs to",
-        from: "Story",
-        identifier: "StoryWorkflows",
-        role: "belongs-to",
-        title: "Workflows",
-        to: "Workflow"
-      })
-    )
+    ReferenceArray.annotations({
+      description: "Workflows this story demonstrates or belongs to",
+      documentation: "Relationship field: Story.workflows references Workflow primitives.",
+      identifier: "StoryWorkflows",
+      title: "Workflows"
+    })
   )
 }).annotations({
   description: "Human-readable planning artifact derived from actor, capability, and expected result",
@@ -92,7 +77,6 @@ export const Story = Schema.Struct({
     }
   ],
   identifier: "Story",
-  jsonSchema: graphJsonSchema(graphNode("Story")),
   title: "Story"
 })
 

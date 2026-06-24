@@ -1,79 +1,59 @@
 import { Schema } from "@effect/schema"
 
-import { graphJsonSchema, graphNode, primitiveTypeLiteral, relationship } from "../GraphAnnotations.js"
 import { makePrimitiveId, PrimitiveBaseFields } from "../PrimitiveBase.js"
 import { ReferenceArray } from "../Reference.js"
 
 export const Workflow = Schema.Struct({
-  type: primitiveTypeLiteral("Workflow"),
+  type: Schema.Literal("Workflow").annotations({
+    description: "Discriminator value identifying this primitive as Workflow",
+    documentation: "Use `Workflow` in the `type` field only for Workflow primitives.",
+    examples: ["Workflow"],
+    identifier: "WorkflowType",
+    title: "Workflow Type"
+  }),
   ...PrimitiveBaseFields,
   capabilities: Schema.optional(
-    ReferenceArray.annotations(
-      relationship({
-        cardinality: "many",
-        description: "Capabilities sequenced or coordinated by this workflow",
-        from: "Workflow",
-        identifier: "WorkflowCapabilities",
-        requiredWhenActive: true,
-        role: "sequences",
-        title: "Capabilities",
-        to: "Capability"
-      })
-    )
+    ReferenceArray.annotations({
+      description: "Capabilities sequenced or coordinated by this workflow",
+      documentation:
+        "Relationship field: Workflow.capabilities references Capability primitives. Required when the Workflow is Active.",
+      identifier: "WorkflowCapabilities",
+      title: "Capabilities"
+    })
   ),
   domainConcepts: Schema.optional(
-    ReferenceArray.annotations(
-      relationship({
-        cardinality: "many",
-        description: "Domain concepts materially handled across this workflow",
-        from: "Workflow",
-        identifier: "WorkflowDomainConcepts",
-        role: "touches",
-        title: "Domain Concepts",
-        to: "DomainConcept"
-      })
-    )
+    ReferenceArray.annotations({
+      description: "Domain concepts materially handled across this workflow",
+      documentation: "Relationship field: Workflow.domainConcepts references DomainConcept primitives.",
+      identifier: "WorkflowDomainConcepts",
+      title: "Domain Concepts"
+    })
   ),
   expectedResults: Schema.optional(
-    ReferenceArray.annotations(
-      relationship({
-        cardinality: "many",
-        description: "Expected results this workflow is intended to produce or support",
-        from: "Workflow",
-        identifier: "WorkflowExpectedResults",
-        role: "delivers",
-        title: "Expected Results",
-        to: "ExpectedResult"
-      })
-    )
+    ReferenceArray.annotations({
+      description: "Expected results this workflow is intended to produce or support",
+      documentation: "Relationship field: Workflow.expectedResults references ExpectedResult primitives.",
+      identifier: "WorkflowExpectedResults",
+      title: "Expected Results"
+    })
   ),
   objectives: Schema.optional(
-    ReferenceArray.annotations(
-      relationship({
-        cardinality: "many",
-        description: "Objectives this workflow operationalizes",
-        from: "Workflow",
-        identifier: "WorkflowObjectives",
-        requiredWhenActive: true,
-        role: "operationalizes",
-        title: "Objectives",
-        to: "Objective"
-      })
-    )
+    ReferenceArray.annotations({
+      description: "Objectives this workflow operationalizes",
+      documentation:
+        "Relationship field: Workflow.objectives references Objective primitives. Required when the Workflow is Active.",
+      identifier: "WorkflowObjectives",
+      title: "Objectives"
+    })
   ),
   primaryActors: Schema.optional(
-    ReferenceArray.annotations(
-      relationship({
-        cardinality: "many",
-        description: "Actors primarily responsible for or participating in this workflow",
-        from: "Workflow",
-        identifier: "WorkflowPrimaryActors",
-        requiredWhenActive: true,
-        role: "primary-participant",
-        title: "Primary Actors",
-        to: "Actor"
-      })
-    )
+    ReferenceArray.annotations({
+      description: "Actors primarily responsible for or participating in this workflow",
+      documentation:
+        "Relationship field: Workflow.primaryActors references Actor primitives. Required when the Workflow is Active.",
+      identifier: "WorkflowPrimaryActors",
+      title: "Primary Actors"
+    })
   ),
   sequenceNotes: Schema.optional(
     Schema.String.annotations({
@@ -85,17 +65,12 @@ export const Workflow = Schema.Struct({
     })
   ),
   stories: Schema.optional(
-    ReferenceArray.annotations(
-      relationship({
-        cardinality: "many",
-        description: "Stories derived from or demonstrating this workflow",
-        from: "Workflow",
-        identifier: "WorkflowStories",
-        role: "demonstrated-by",
-        title: "Stories",
-        to: "Story"
-      })
-    )
+    ReferenceArray.annotations({
+      description: "Stories derived from or demonstrating this workflow",
+      documentation: "Relationship field: Workflow.stories references Story primitives.",
+      identifier: "WorkflowStories",
+      title: "Stories"
+    })
   )
 }).annotations({
   description: "Operational sequence linking objectives, actors, capabilities, and stories",
@@ -117,7 +92,6 @@ export const Workflow = Schema.Struct({
     }
   ],
   identifier: "Workflow",
-  jsonSchema: graphJsonSchema(graphNode("Workflow")),
   title: "Workflow"
 })
 

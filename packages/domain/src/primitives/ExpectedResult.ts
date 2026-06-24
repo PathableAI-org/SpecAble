@@ -1,24 +1,24 @@
 import { Schema } from "@effect/schema"
 
-import { graphJsonSchema, graphNode, primitiveTypeLiteral, relationship } from "../GraphAnnotations.js"
 import { makePrimitiveId, PrimitiveBaseFields } from "../PrimitiveBase.js"
 import { ReferenceArray } from "../Reference.js"
 
 export const ExpectedResult = Schema.Struct({
-  type: primitiveTypeLiteral("ExpectedResult"),
+  type: Schema.Literal("ExpectedResult").annotations({
+    description: "Discriminator value identifying this primitive as Expected Result",
+    documentation: "Use `ExpectedResult` in the `type` field only for Expected Result primitives.",
+    examples: ["ExpectedResult"],
+    identifier: "ExpectedResultType",
+    title: "Expected Result Type"
+  }),
   ...PrimitiveBaseFields,
   capabilities: Schema.optional(
-    ReferenceArray.annotations(
-      relationship({
-        cardinality: "many",
-        description: "Capabilities that produce or materially contribute to this expected result",
-        from: "ExpectedResult",
-        identifier: "ExpectedResultCapabilities",
-        role: "produced-by",
-        title: "Capabilities",
-        to: "Capability"
-      })
-    )
+    ReferenceArray.annotations({
+      description: "Capabilities that produce or materially contribute to this expected result",
+      documentation: "Relationship field: ExpectedResult.capabilities references Capability primitives.",
+      identifier: "ExpectedResultCapabilities",
+      title: "Capabilities"
+    })
   ),
   definition: Schema.optional(
     Schema.String.annotations({
@@ -30,18 +30,13 @@ export const ExpectedResult = Schema.Struct({
     })
   ),
   objectives: Schema.optional(
-    ReferenceArray.annotations(
-      relationship({
-        cardinality: "many",
-        description: "Objectives that this expected result supports or measures",
-        from: "ExpectedResult",
-        identifier: "ExpectedResultObjectives",
-        requiredWhenActive: true,
-        role: "supports",
-        title: "Objectives",
-        to: "Objective"
-      })
-    )
+    ReferenceArray.annotations({
+      description: "Objectives that this expected result supports or measures",
+      documentation:
+        "Relationship field: ExpectedResult.objectives references Objective primitives. Required when the Expected Result is Active.",
+      identifier: "ExpectedResultObjectives",
+      title: "Objectives"
+    })
   )
 }).annotations({
   description: "Observable changed state with producing capabilities and supported objectives",
@@ -59,7 +54,6 @@ export const ExpectedResult = Schema.Struct({
     }
   ],
   identifier: "ExpectedResult",
-  jsonSchema: graphJsonSchema(graphNode("ExpectedResult")),
   title: "Expected Result"
 })
 

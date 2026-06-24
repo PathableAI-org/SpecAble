@@ -1,11 +1,16 @@
 import { Schema } from "@effect/schema"
 
-import { graphJsonSchema, graphNode, primitiveTypeLiteral, relationship } from "../GraphAnnotations.js"
 import { makePrimitiveId, PrimitiveBaseFields } from "../PrimitiveBase.js"
 import { ReferenceArray } from "../Reference.js"
 
 export const Persona = Schema.Struct({
-  type: primitiveTypeLiteral("Persona"),
+  type: Schema.Literal("Persona").annotations({
+    description: "Discriminator value identifying this primitive as Persona",
+    documentation: "Use `Persona` in the `type` field only for Persona primitives.",
+    examples: ["Persona"],
+    identifier: "PersonaType",
+    title: "Persona Type"
+  }),
   ...PrimitiveBaseFields,
   goalsOrPainPoints: Schema.optional(
     Schema.String.annotations({
@@ -17,18 +22,13 @@ export const Persona = Schema.Struct({
     })
   ),
   primaryActors: Schema.optional(
-    ReferenceArray.annotations(
-      relationship({
-        cardinality: "many",
-        description: "Actors that embody or represent this persona in product behavior",
-        from: "Persona",
-        identifier: "PersonaPrimaryActors",
-        requiredWhenActive: true,
-        role: "represented-by",
-        title: "Primary Actors",
-        to: "Actor"
-      })
-    )
+    ReferenceArray.annotations({
+      description: "Actors that embody or represent this persona in product behavior",
+      documentation:
+        "Relationship field: Persona.primaryActors references Actor primitives. Required when the Persona is Active.",
+      identifier: "PersonaPrimaryActors",
+      title: "Primary Actors"
+    })
   )
 }).annotations({
   description: "Evidence-backed archetype distinct from actors",
@@ -46,7 +46,6 @@ export const Persona = Schema.Struct({
     }
   ],
   identifier: "Persona",
-  jsonSchema: graphJsonSchema(graphNode("Persona")),
   title: "Persona"
 })
 

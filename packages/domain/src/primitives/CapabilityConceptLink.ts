@@ -1,41 +1,36 @@
 import { Schema } from "@effect/schema"
 
-import { graphJsonSchema, graphNode, primitiveTypeLiteral, relationship } from "../GraphAnnotations.js"
 import { makePrimitiveId, PrimitiveBaseFields } from "../PrimitiveBase.js"
 import { Reference } from "../Reference.js"
 import { ConceptImportance } from "../unions/ConceptImportance.js"
 import { ConceptRole } from "../unions/ConceptRole.js"
 
 export const CapabilityConceptLink = Schema.Struct({
-  type: primitiveTypeLiteral("CapabilityConceptLink"),
+  type: Schema.Literal("CapabilityConceptLink").annotations({
+    description: "Discriminator value identifying this primitive as Capability Concept Link",
+    documentation: "Use `CapabilityConceptLink` in the `type` field only for Capability Concept Link primitives.",
+    examples: ["CapabilityConceptLink"],
+    identifier: "CapabilityConceptLinkType",
+    title: "Capability Concept Link Type"
+  }),
   ...PrimitiveBaseFields,
   capability: Schema.optional(
-    Reference.annotations(
-      relationship({
-        cardinality: "one",
-        description: "Capability whose interaction with a domain concept is being classified",
-        from: "CapabilityConceptLink",
-        identifier: "CapabilityConceptLinkCapability",
-        requiredWhenActive: true,
-        role: "classifies-capability",
-        title: "Capability",
-        to: "Capability"
-      })
-    )
+    Reference.annotations({
+      description: "Capability whose interaction with a domain concept is being classified",
+      documentation:
+        "Relationship field: CapabilityConceptLink.capability references one Capability primitive. Required when the link is Active.",
+      identifier: "CapabilityConceptLinkCapability",
+      title: "Capability"
+    })
   ),
   domainConcept: Schema.optional(
-    Reference.annotations(
-      relationship({
-        cardinality: "one",
-        description: "Domain concept involved in the classified capability interaction",
-        from: "CapabilityConceptLink",
-        identifier: "CapabilityConceptLinkDomainConcept",
-        requiredWhenActive: true,
-        role: "classifies-concept",
-        title: "Domain Concept",
-        to: "DomainConcept"
-      })
-    )
+    Reference.annotations({
+      description: "Domain concept involved in the classified capability interaction",
+      documentation:
+        "Relationship field: CapabilityConceptLink.domainConcept references one DomainConcept primitive. Required when the link is Active.",
+      identifier: "CapabilityConceptLinkDomainConcept",
+      title: "Domain Concept"
+    })
   ),
   importance: Schema.optional(
     ConceptImportance.annotations({
@@ -70,7 +65,6 @@ export const CapabilityConceptLink = Schema.Struct({
     }
   ],
   identifier: "CapabilityConceptLink",
-  jsonSchema: graphJsonSchema(graphNode("CapabilityConceptLink")),
   title: "Capability Concept Link"
 })
 

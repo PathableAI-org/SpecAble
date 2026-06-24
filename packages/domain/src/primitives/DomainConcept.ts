@@ -1,10 +1,15 @@
 import { Schema } from "@effect/schema"
 
-import { graphJsonSchema, graphNode, primitiveTypeLiteral } from "../GraphAnnotations.js"
 import { makePrimitiveId, PrimitiveBaseFields } from "../PrimitiveBase.js"
 
 export const DomainConcept = Schema.Struct({
-  type: primitiveTypeLiteral("DomainConcept"),
+  type: Schema.Literal("DomainConcept").annotations({
+    description: "Discriminator value identifying this primitive as Domain Concept",
+    documentation: "Use `DomainConcept` in the `type` field only for Domain Concept primitives.",
+    examples: ["DomainConcept"],
+    identifier: "DomainConceptType",
+    title: "Domain Concept Type"
+  }),
   ...PrimitiveBaseFields,
   definition: Schema.optional(
     Schema.String.annotations({
@@ -30,7 +35,6 @@ export const DomainConcept = Schema.Struct({
     }
   ],
   identifier: "DomainConcept",
-  jsonSchema: graphJsonSchema(graphNode("DomainConcept")),
   title: "Domain Concept"
 })
 

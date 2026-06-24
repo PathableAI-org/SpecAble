@@ -1,11 +1,16 @@
 import { Schema } from "@effect/schema"
 
-import { graphJsonSchema, graphNode, primitiveTypeLiteral } from "../GraphAnnotations.js"
 import { makePrimitiveId, PrimitiveBaseFields } from "../PrimitiveBase.js"
 import { ActorCategory } from "../unions/ActorCategory.js"
 
 export const Actor = Schema.Struct({
-  type: primitiveTypeLiteral("Actor"),
+  type: Schema.Literal("Actor").annotations({
+    description: "Discriminator value identifying this primitive as Actor",
+    documentation: "Use `Actor` in the `type` field only for Actor primitives.",
+    examples: ["Actor"],
+    identifier: "ActorType",
+    title: "Actor Type"
+  }),
   ...PrimitiveBaseFields,
   category: Schema.optional(
     ActorCategory.annotations({
@@ -30,7 +35,6 @@ export const Actor = Schema.Struct({
     }
   ],
   identifier: "Actor",
-  jsonSchema: graphJsonSchema(graphNode("Actor")),
   title: "Actor"
 })
 

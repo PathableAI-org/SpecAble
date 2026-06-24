@@ -1,6 +1,5 @@
 import { Schema } from "@effect/schema"
 
-import { valueDescriptionsJsonSchema } from "../GraphAnnotations.js"
 import { makePrimitiveId } from "../PrimitiveBase.js"
 import { Actor } from "./Actor.js"
 import { Capability } from "./Capability.js"
@@ -28,17 +27,6 @@ export const PrimitiveType = Schema.Literal(
     "Allowed values:\n- `Objective`: why work matters.\n- `Actor`: participant in product behavior.\n- `Persona`: evidence-backed archetype.\n- `DomainConcept`: product/domain vocabulary item.\n- `Capability`: reusable operational ability.\n- `CapabilityConceptLink`: operation-level capability-to-concept join.\n- `ExpectedResult`: observable changed state.\n- `Workflow`: operational sequence.\n- `Story`: human-readable actor/capability/result artifact.",
   examples: ["Objective", "Capability", "Story"],
   identifier: "PrimitiveType",
-  jsonSchema: valueDescriptionsJsonSchema({
-    Actor: "Participant in product behavior.",
-    Capability: "Reusable operational ability linking actors, outcomes, workflows, and concepts.",
-    CapabilityConceptLink: "Operation-level join between a capability and a domain concept.",
-    DomainConcept: "Semantic product or domain vocabulary item.",
-    ExpectedResult: "Observable changed state with producing capabilities and supported objectives.",
-    Objective: "Why work matters; links to workflows and expected results.",
-    Persona: "Evidence-backed archetype distinct from actors.",
-    Story: "Human-readable planning artifact derived from actor, capability, and expected result.",
-    Workflow: "Operational sequence linking objectives, actors, capabilities, and stories."
-  }),
   title: "Primitive Type"
 })
 

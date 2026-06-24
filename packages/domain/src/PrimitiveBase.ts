@@ -1,6 +1,5 @@
 import { Schema } from "@effect/schema"
 
-import { graphField, graphJsonSchema } from "./GraphAnnotations.js"
 import { PersonaConfidence } from "./unions/PersonaConfidence.js"
 import { Status } from "./unions/Status.js"
 
@@ -10,7 +9,6 @@ export const PrimitiveId = Schema.String.annotations({
     "Primitive IDs are the durable link targets used by references. Prefer lowercase, stable IDs such as `cap-schedule-session` over display names.",
   examples: ["obj-improve-coach-utilization", "cap-schedule-session"],
   identifier: "PrimitiveIdString",
-  jsonSchema: graphJsonSchema(graphField("PrimitiveBase", "identity")),
   title: "Primitive ID"
 }).pipe(Schema.brand("PrimitiveId"))
 
@@ -23,7 +21,6 @@ export const PrimitiveName = Schema.String.annotations({
   documentation: "Names are human-facing labels and are not used as graph identifiers.",
   examples: ["Improve coach utilization", "Schedule coaching session"],
   identifier: "PrimitiveName",
-  jsonSchema: graphJsonSchema(graphField("PrimitiveBase", "display-name")),
   title: "Primitive Name"
 })
 
@@ -33,7 +30,6 @@ export const PrimitiveBaseFields = {
       description: "Evidence confidence for primitives that capture user or persona assumptions",
       documentation: "Primarily used by Persona primitives; validation may treat Hypothesis confidence as less strict.",
       identifier: "PrimitiveConfidence",
-      jsonSchema: graphJsonSchema(graphField("PrimitiveBase", "evidence-confidence")),
       title: "Confidence"
     })
   ),
@@ -44,7 +40,6 @@ export const PrimitiveBaseFields = {
         "Use this for concise product meaning. It should clarify the primitive without becoming the source of relationships.",
       examples: ["Reduce manual coordination work by helping coaches keep session schedules current."],
       identifier: "PrimitiveDescription",
-      jsonSchema: graphJsonSchema(graphField("PrimitiveBase", "description")),
       title: "Description"
     })
   ),
@@ -55,7 +50,6 @@ export const PrimitiveBaseFields = {
         "Use synthetic or local references in fixtures; do not include secrets or private production data.",
       examples: ["Discovery interview synthesis, 2026-06-24"],
       identifier: "PrimitiveEvidence",
-      jsonSchema: graphJsonSchema(graphField("PrimitiveBase", "evidence")),
       title: "Evidence"
     })
   ),
@@ -67,7 +61,6 @@ export const PrimitiveBaseFields = {
       documentation: "Notes are supplementary and should not carry required graph relationships.",
       examples: ["Needs validation with the implementation team before moving to Active."],
       identifier: "PrimitiveNotes",
-      jsonSchema: graphJsonSchema(graphField("PrimitiveBase", "notes")),
       title: "Notes"
     })
   ),
@@ -76,7 +69,6 @@ export const PrimitiveBaseFields = {
     documentation:
       "Draft primitives can be incomplete, Active primitives must satisfy relationship rules, and Deprecated primitives are ignored unless still referenced by Active primitives.",
     identifier: "PrimitiveStatus",
-    jsonSchema: graphJsonSchema(graphField("PrimitiveBase", "lifecycle-status")),
     title: "Status"
   }),
   tags: Schema.optional(
@@ -85,7 +77,6 @@ export const PrimitiveBaseFields = {
       documentation: "Tags help group primitives in reports; they are not relationship edges.",
       examples: [["scheduling", "coach-ops"]],
       identifier: "PrimitiveTags",
-      jsonSchema: graphJsonSchema(graphField("PrimitiveBase", "categorization")),
       title: "Tags"
     })
   )
@@ -105,7 +96,6 @@ export const PrimitiveBase = Schema.Struct(PrimitiveBaseFields).annotations({
     }
   ],
   identifier: "PrimitiveBase",
-  jsonSchema: graphJsonSchema(graphField("PrimitiveBase", "shared-metadata")),
   title: "Primitive Base"
 })
 

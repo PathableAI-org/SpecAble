@@ -1,6 +1,5 @@
 import { Schema } from "@effect/schema"
 
-import { graphField, graphJsonSchema } from "./GraphAnnotations.js"
 import { makePrimitiveId, PrimitiveId } from "./PrimitiveBase.js"
 import { ReferenceRole } from "./unions/ReferenceRole.js"
 
@@ -10,7 +9,6 @@ export const ReferenceObject = Schema.Struct({
     documentation: "Matches the `id` field on another primitive in the same graph project.",
     examples: [makePrimitiveId("actor-care-coach"), makePrimitiveId("cap-schedule-session")],
     identifier: "ReferenceId",
-    jsonSchema: graphJsonSchema(graphField("Reference", "target-id")),
     title: "Reference ID"
   }),
   role: Schema.optional(
@@ -19,7 +17,6 @@ export const ReferenceObject = Schema.Struct({
       documentation:
         "Use role metadata when the same relationship field can distinguish primary from supporting targets.",
       identifier: "ReferenceObjectRole",
-      jsonSchema: graphJsonSchema(graphField("Reference", "relationship-role")),
       title: "Reference Role"
     })
   )
@@ -33,7 +30,6 @@ export const ReferenceObject = Schema.Struct({
     }
   ],
   identifier: "ReferenceObject",
-  jsonSchema: graphJsonSchema(graphField("Reference", "typed-reference")),
   title: "Typed Reference"
 })
 
@@ -45,7 +41,6 @@ export const Reference = Schema.Union(
     documentation: "Use this compact form when the edge does not need additional role metadata.",
     examples: [makePrimitiveId("actor-care-coach")],
     identifier: "ReferenceIdString",
-    jsonSchema: graphJsonSchema(graphField("Reference", "shorthand-reference")),
     title: "Reference ID"
   }),
   ReferenceObject
@@ -54,7 +49,6 @@ export const Reference = Schema.Union(
   documentation: "References are resolved by the graph loader and validated against known primitive IDs.",
   examples: [makePrimitiveId("cap-schedule-session"), { id: makePrimitiveId("actor-care-coach"), role: "Primary" }],
   identifier: "Reference",
-  jsonSchema: graphJsonSchema(graphField("Reference", "primitive-reference")),
   title: "Reference"
 })
 
@@ -66,7 +60,6 @@ export const ReferenceArray = Schema.Array(Reference).annotations({
     "A reusable shape for relationship fields. Field-level annotations on primitive schemas define the edge meaning.",
   examples: [[makePrimitiveId("actor-care-coach"), makePrimitiveId("actor-client")]],
   identifier: "ReferenceArray",
-  jsonSchema: graphJsonSchema(graphField("Reference", "reference-list")),
   title: "Reference List"
 })
 
