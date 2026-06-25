@@ -1,7 +1,7 @@
 # Data Model: SpecAble v0 — Product Primitive Graph
 
 **Feature**: `001-product-primitives-v0`  
-**Date**: 2026-06-23 (updated 2026-06-24)
+**Date**: 2026-06-23 (updated 2026-06-24, 2026-06-25)
 
 ## Package boundaries
 
@@ -9,6 +9,16 @@
 |---------|---------|----------|
 | Primitive schemas, Schema literal unions, references | `@specable/domain` | `packages/domain/src/` |
 | `ProductGraph`, loaders, validation, integrity, summary, CLI | `@specable/cli` | `packages/cli/src/` |
+
+## Service boundaries (`@specable/cli`)
+
+| Service | Role | Consumers |
+|---------|------|-----------|
+| `GraphRepository` | Public load contract: `load(projectPath) → ProductGraph` | Validation, integrity, summary, CLI commands |
+| `GraphLoader` | File-backed JSON implementation (internal) | Composed into `GraphRepository` via Layers only |
+| `FileSystem` | Platform I/O (Node in v0) | Composed at `services/Layers.ts`; not imported by feature modules |
+
+Storage mechanics (per-type JSON files, paths, `JSON.parse`) MUST NOT leak past `GraphLoader` into validation, integrity, or CLI adapters.
 
 Closed-set fields (`status`, `category`, `role`, `importance`, `confidence`, etc.) are **Schema literal unions** in `@specable/domain` — not native TypeScript `enum`. Field semantics and Schema-supported validation use Effect Schema annotations (FR-058).
 
@@ -182,7 +192,7 @@ Missing type file → empty collection.
 
 ```text
 ProductGraph
-├── metadata: GraphMetadata | null
+├── metadata: Option<GraphMetadata>
 ├── nodes: Map<PrimitiveId, PrimitiveRecord>
 ├── byType: Map<PrimitiveType, Set<PrimitiveId>>
 └── edges: EdgeIndex (typed adjacency)

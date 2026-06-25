@@ -1,21 +1,19 @@
 <!--
 Sync Impact Report
 ==================
-Version change: [template placeholders] → 1.0.0
-Modified principles: N/A (initial ratification)
+Version change: 1.0.0 → 1.1.0
+Modified principles: II (storage abstraction), V (consumer-facing services)
 Added sections:
-  - Core Principles I–X (SpecAble product principles)
-  - Technical Standards
-  - Development Workflow
-  - Governance
-Removed sections: Template placeholder principles (generic 5-principle scaffold)
+  - Technical Standards → TypeScript type safety
+  - Technical Standards → Storage and service abstractions
+Removed sections: none
 Templates requiring updates:
-  - .specify/templates/plan-template.md ✅ updated (Constitution Check gates)
-  - .specify/templates/tasks-template.md ✅ updated (test scope + library-first paths)
-  - .specify/templates/spec-template.md ✅ no change required (already supports vertical slices)
-  - .specify/templates/checklist-template.md ✅ no change required
-  - .specify/templates/commands/*.md ⚠ not present in repo
-  - README.md ⚠ not present in repo
+  - .specify/templates/plan-template.md ✅ updated (TypeScript conventions)
+  - .specify/templates/tasks-template.md ✅ updated (implementation conventions)
+  - specs/001-product-primitives-v0/plan.md ✅ updated (Session 2026-06-25 PR review)
+  - specs/001-product-primitives-v0/research.md ✅ updated (R18–R19)
+  - specs/001-product-primitives-v0/data-model.md ✅ updated (GraphRepository boundary)
+  - specs/001-product-primitives-v0/tasks.md ✅ updated (implementation conventions)
 Deferred TODOs: none
 -->
 
@@ -61,9 +59,14 @@ integrations MUST translate into the same domain model.
 - Each external integration MUST implement a storage or sync adapter with explicit
   input/output schemas mapped to domain primitives.
 - Adapter-specific APIs, field names, and IDs MUST NOT leak into core domain types.
+- Storage mechanics (filesystem paths, JSON/YAML layout, SQL joins, Notion relations) MUST stay
+  behind adapter or repository services. Downstream features (validation, integrity, summary,
+  CLI, MCP) MUST depend on typed load/query contracts—not on concrete loader implementations.
 
 **Rationale**: Vendor coupling erodes portability and blocks local-first operation.
-Adapters isolate integration churn from product semantics.
+Adapters isolate integration churn from product semantics. Hiding storage mechanics behind
+repository-style services keeps future adapters (SQL, Notion, MCP) swappable without
+rewriting graph consumers.
 
 ### III. Local-First and Open-Source First
 
@@ -113,6 +116,9 @@ functions.
   translation MUST live in `packages/*` libraries with unit tests.
 - CLI and MCP layers MUST NOT contain domain rules that are untested at the library
   layer.
+- Consumer-facing Effect services (for example graph load, validation orchestration)
+  MUST expose stable contracts; concrete I/O or storage implementations MUST be composed
+  via Layers and MUST NOT be the dependency surface for feature modules.
 - New capabilities MUST prove value in a library API before gaining a command or
   tool wrapper.
 
@@ -219,6 +225,28 @@ operational or UX expansion.
 - Use Zod, Effect Schema, or an equivalent schema system for validation at all public
   boundaries.
 
+**TypeScript type safety**
+
+- `any` MUST NOT appear in library, CLI, or test source. Use generics, branded types,
+  Schema-inferred types, or `unknown` with narrowing at boundaries.
+- Type assertions (`as`) and unchecked casts MUST be avoided. Prefer generic helpers,
+  closed-over decode functions, Schema decode, and Effect service contracts so types
+  flow without widening.
+- When a cast is unavoidable (for example bridging an external library with incomplete
+  types), it MUST be localized, documented with a one-line rationale, and covered by
+  tests at that boundary.
+- `null` MUST NOT be used for optional or missing values. Use `Option` for optional
+  data, tagged errors or `Effect.fail` for expected failures, and defects only for
+  unrecoverable bugs.
+
+**Storage and service abstractions**
+
+- Graph and adapter I/O MUST expose repository- or store-shaped services to consumers
+  (for example `GraphRepository.load(projectPath)`), not file-loader internals.
+- File-backed JSON loading, Node filesystem access, and future SQL/Notion adapters
+  are implementation details composed in `services/` Layers—not imported by validation,
+  integrity, summary, or CLI command modules.
+
 **Testing**
 
 Tests MUST cover, using synthetic data where appropriate:
@@ -270,4 +298,4 @@ Core Principles, Technical Standards, and Development Workflow. Use
 `.specify/memory/constitution.md` as the authoritative reference during `/speckit-plan`,
 `/speckit-specify`, `/speckit-tasks`, and `/speckit-implement`.
 
-**Version**: 1.0.0 | **Ratified**: 2026-06-23 | **Last Amended**: 2026-06-23
+**Version**: 1.1.0 | **Ratified**: 2026-06-23 | **Last Amended**: 2026-06-25

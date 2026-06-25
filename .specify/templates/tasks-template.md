@@ -26,6 +26,13 @@ description: "Task list template for feature implementation"
 - **Web app**: `backend/src/`, `frontend/src/` (out of v1 scope unless constitution amended)
 - Paths shown below assume library-first monorepo - adjust based on plan.md structure
 
+## Implementation conventions
+
+Per constitution and plan.md:
+
+- Never use `any`; avoid type casts unless documented at an external boundary.
+- Hide storage/adapter mechanics behind repository services; feature modules depend on stable load/query contracts, not loader internals.
+
 <!--
   ============================================================================
   IMPORTANT: The tasks below are SAMPLE TASKS for illustration purposes only.

@@ -17,11 +17,11 @@ if (!cliSourceChanged) {
 
 execSync("pnpm codegen", { stdio: "inherit" })
 
-const indexStatus = execSync("git status --porcelain packages/cli/src/index.ts", {
+const unstagedDiff = execSync("git diff packages/cli/src/index.ts", {
   encoding: "utf8"
 }).trim()
 
-if (indexStatus.length > 0) {
+if (unstagedDiff.length > 0) {
   console.error(
     "packages/cli/src/index.ts is out of date. Run `pnpm codegen`, stage the result, and commit again."
   )
