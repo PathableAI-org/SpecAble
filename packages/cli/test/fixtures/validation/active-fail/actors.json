@@ -1,0 +1,11 @@
+{
+  "primitives": [
+    {
+      "type": "Actor",
+      "id": "actor-incomplete",
+      "name": "Incomplete actor",
+      "status": "Active",
+      "category": "Human"
+    }
+  ]
+}

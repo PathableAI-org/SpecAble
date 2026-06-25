@@ -10,6 +10,14 @@
 
 ## Clarifications
 
+### Session 2026-06-25
+
+- Q: When a graph project contains duplicate primitive IDs, how should `specable check` behave? → A: Enforce ID uniqueness at the storage/repository boundary during load (analogous to SQL unique constraints); file-backed loaders fail on the first duplicate; the CLI maps the storage error to a `duplicate-id` validation failure with exit code `1` (not exit `2`).
+- Q: For generated story text, which values fill the template placeholders? → A: Prefer linked primitive display names; fall back to primitive IDs only when the name is missing or whitespace-only.
+- Q: Where should advisory quality warnings (FR-013–FR-026) appear in CLI output artifacts? → A: Per-primitive advisories emit as validation **warnings** in `validation.json`; cross-primitive and graph-level heuristics (e.g., duplicate names, orphans, workflow derivability per FR-016) belong in `integrity-report.json`.
+- Q: What satisfies FR-012 Domain Concept linkage for Active Capabilities? → A: Either a direct `domainConcepts` reference on the Capability or a Capability Concept Link pointing at the Capability counts; Capability Concept Link is preferred but not required.
+- Q: How should validation and integrity artifacts split duplicate Active story triple reporting? → A: Validation emits `duplicate-story-triple` **failure** findings in `validation.json` (drives exit `1`); `integrity-report.json` includes the structured `duplicateStoryTriples` summary section for fix-up context without re-classifying severity.
+
 ### Session 2026-06-24
 
 - Q: Where should domain models live in Phase 2? → A: In a dedicated workspace package (`@specable/domain`) that `@specable/cli` depends on—not embedded under `packages/cli/src/domain/`.
@@ -108,9 +116,9 @@ A new user opens bundled example primitive graphs to understand how to model pro
 - **Empty or missing fixture folder**: Validation fails with a clear error identifying missing project root or expected primitive type files; no summary is generated.
 - **Invalid JSON fixture**: Fixture decode errors (malformed JSON, schema decode failure) MUST fail with exit code `2` and report file path plus field path; no summary is generated.
 - **Missing primitive type file**: Treated as an empty collection for that type (zero primitives); validation proceeds and reports under-linked Active primitives or missing references accordingly.
-- **Duplicate stable IDs**: Duplicate IDs within a graph project are validation failures regardless of status.
+- **Duplicate stable IDs**: Duplicate IDs within a graph project are validation failures regardless of status. Uniqueness is enforced at the storage/repository boundary during load (file-backed loaders fail on the first duplicate, analogous to SQL unique constraints); the CLI maps storage duplicate errors to `duplicate-id` validation failures with exit code `1`.
 - **Duplicate normalized names**: Same normalized display name within a primitive type (e.g., two Active capabilities named "Schedule Session") are integrity **warnings**, not validation or integrity failures; they appear in the integrity report and gap sections but do not alone fail `check` or force exit code `1`.
-- **Authored vs derived story conflict**: Two Active stories with the same Actor + Capability + Expected Result triple are flagged as duplicate Story triples. Stored text differing from generated template text is allowed and passes validation; optional future mode may warn on inconsistency.
+- **Authored vs derived story conflict**: Two Active stories with the same Actor + Capability + Expected Result triple are flagged as duplicate Story triples (`duplicate-story-triple` failures in `validation.json`; `duplicateStoryTriples` summary in `integrity-report.json`). Stored text differing from generated template text is allowed and passes validation; optional future mode may warn on inconsistency.
 - **Optional descriptive fields empty**: Allowed for Draft primitives (warn if Active-relevant); Active primitives fail required-field validation when mandatory descriptive fields are absent.
 - **Circular workflow references**: Allowed if references resolve; integrity report warns on redundant cycles but does not fail unless Active completeness rules are violated.
 - **Summary on partially invalid graphs**: Summary generation is permitted; output MUST include prominent gap sections. Active validation failures MUST be listed in gaps; Draft warnings SHOULD be listed separately from Active failures.
@@ -138,7 +146,7 @@ A new user opens bundled example primitive graphs to understand how to model pro
 - **FR-006**: For `Draft` primitives, validation MUST report missing required fields and missing canonical relationships as **warnings**, not hard failures.
 - **FR-007**: For `Active` primitives, validation MUST enforce all required fields and canonical relationship rules documented below; violations MUST be **validation failures**.
 - **FR-008**: For `Deprecated` primitives, validation MUST NOT enforce current completeness rules unless the Deprecated primitive is required to satisfy Active primitive relationships (i.e., Deprecated may be referenced for history without full Active completeness).
-- **FR-009**: Validation output MUST distinguish warnings (Draft incompleteness, advisory quality flags) from failures (Active incompleteness, broken references, duplicate IDs, duplicate Active story triples).
+- **FR-009**: Validation output MUST distinguish warnings (Draft incompleteness, per-primitive advisory quality flags per FR-013–FR-026) from failures (Active incompleteness, broken references, duplicate IDs, duplicate Active story triples). Per-primitive advisories appear in `validation.json`; cross-primitive graph heuristics (e.g., duplicate names, orphans, workflow derivability per FR-016) appear in `integrity-report.json`.
 
 **Canonical relationship rules (Active primitives)**
 
@@ -146,15 +154,15 @@ A new user opens bundled example primitive graphs to understand how to model pro
 
 - **FR-010**: Active Story MUST have exactly one Actor, exactly one Capability, exactly one Expected Result, at least one Workflow, and generated or stored story text. Canonical product meaning lives in linked primitives, not manually authored prose alone.
 - **FR-010a**: When stored story text is absent but Actor, Capability, Expected Result, and Workflow links are complete, validation MUST pass by treating deterministically generated story text as satisfying the story text requirement.
-- **FR-010b**: Generated story text MUST use the stable v0 template: `As a {Actor}, I can {Capability} so that {Expected Result}.` using linked primitive display names or IDs per documented resolution rules.
+- **FR-010b**: Generated story text MUST use the stable v0 template: `As a {Actor}, I can {Capability} so that {Expected Result}.` Template placeholders MUST use linked primitive display names when present and non-empty; otherwise fall back to the linked primitive IDs.
 - **FR-010c**: When Workflow context is included in structured or summary output, Workflow MUST appear as metadata (e.g., `Workflow: {Workflow}`) separate from the core story sentence unless stored story text explicitly includes it.
 - **FR-010d**: Active Story missing Actor, Capability, Expected Result, or Workflow links MUST fail validation. Draft Story with incomplete links MUST warn, not fail.
 - **FR-010e**: Active Story with stored text that differs from generated text MUST pass validation; strict generated-text consistency checks MAY be added later as an optional warning mode, not a v0 default failure.
-- **FR-011**: Validation MUST detect duplicate Story triples (same Actor + Capability + Expected Result) among Active stories.
+- **FR-011**: Validation MUST detect duplicate Story triples (same Actor + Capability + Expected Result) among Active stories and emit `duplicate-story-triple` failure findings in `validation.json`.
 
 *Capability* — reusable operational ability:
 
-- **FR-012**: Active Capability MUST link to at least one Actor that uses or benefits from it, at least one Expected Result it produces, at least one Workflow where it appears, and at least one Domain Concept it operates on (preferably via Capability Concept Link).
+- **FR-012**: Active Capability MUST link to at least one Actor that uses or benefits from it, at least one Expected Result it produces, at least one Workflow where it appears, and at least one Domain Concept it operates on. Domain Concept linkage is satisfied by either a direct `domainConcepts` reference or a Capability Concept Link (CCL is preferred but not required).
 - **FR-013**: Validation MUST flag capabilities that appear too broad, too narrow, or implementation-specific as **warnings**, not hard failures.
 
 *Capability Concept Link* — preferred Capability↔Domain Concept relation:
@@ -164,7 +172,7 @@ A new user opens bundled example primitive graphs to understand how to model pro
 *Workflow* — real operational sequence (not screen flow or generic business area):
 
 - **FR-015**: Active Workflow MUST link to at least one Objective, at least one Primary Actor, at least one Capability, at least one Story, and include description or sequence notes explaining the operational sequence.
-- **FR-016**: Expected Results and Domain Concepts MAY be explicit workflow relations or derived from workflow capabilities; validation MUST report when they are missing or not derivable.
+- **FR-016**: Expected Results and Domain Concepts MAY be explicit workflow relations or derived from workflow capabilities; integrity reporting MUST warn when they are missing or not derivable (cross-primitive heuristic reported in `integrity-report.json`).
 
 *Persona* — evidence-backed context distinct from Actor:
 
@@ -213,7 +221,7 @@ A new user opens bundled example primitive graphs to understand how to model pro
 **Relationship integrity reporting**
 
 - **FR-033**: Users MUST be able to obtain a relationship integrity report from the command line for a local graph.
-- **FR-034**: The integrity report MUST consolidate missing canonical links, orphans, broken references, duplicate names within a primitive type, likely duplicates, duplicate Story triples, and advisory quality warnings with status-aware severity.
+- **FR-034**: The integrity report MUST consolidate missing canonical links, orphans, broken references, duplicate names within a primitive type, likely duplicates, and cross-primitive advisory quality warnings (e.g., workflow derivation gaps per FR-016) with status-aware severity. Duplicate Active story triple **failures** are owned by validation (`validation.json` per FR-011); the integrity report includes a `duplicateStoryTriples` summary section for fix-up context.
 - **FR-034a**: Duplicate normalized names within a primitive type MUST be reported as integrity **warnings**, not validation failures or integrity failures. Duplicate names alone MUST NOT cause a non-zero CLI exit code.
 - **FR-035**: When information needed to infer product meaning is absent, the system MUST report the gap explicitly instead of silently assuming defaults that invent intent.
 
@@ -254,8 +262,8 @@ A new user opens bundled example primitive graphs to understand how to model pro
 - **Story**: Human-readable derived planning artifact from Actor + Capability + Expected Result (+ Workflow membership). Stored text preferred in summaries; otherwise deterministic template text satisfies Active validation.
 - **Primitive status**: `Draft` | `Active` | `Deprecated` (Schema literal union); controls validation strictness.
 - **Relationship edge**: Typed link between primitives per canonical ontology; carries integrity and derivation rules.
-- **Validation finding**: Structured issue with severity (`warning` | `failure`) for fields, relationships, or broken references on a specific primitive ID.
-- **Integrity finding**: Structured issue for missing links, orphans, duplicate normalized names (warning), likely duplicates (warning), duplicate story triples (validation failure when Active), or advisory quality flags.
+- **Validation finding**: Structured issue with severity (`warning` | `failure`) for fields, relationships, broken references, duplicate IDs, duplicate Active story triples, or per-primitive advisory quality flags (FR-013–FR-026) on a specific primitive ID; emitted in `validation.json`.
+- **Integrity finding**: Structured issue for cross-primitive graph heuristics—missing links, orphans, duplicate normalized names (warning), likely duplicates (warning), workflow derivation gaps (FR-016), and related graph-level advisories; emitted in `integrity-report.json`. Duplicate Active story triple failures are validation findings; integrity output includes a `duplicateStoryTriples` summary only.
 - **Product summary artifact**: Generated Markdown derived from graph state and findings; not canonical.
 
 ## Success Criteria *(mandatory)*
@@ -280,7 +288,7 @@ A new user opens bundled example primitive graphs to understand how to model pro
 - `@specable/domain` carries minimal tests (complex encode/decode cases only); behavioral test suites belong in `@specable/cli`.
 - Canonical relationship rules match the Notion Product Primitives ontology; v0 encodes those rules locally—Notion is a specification source, not a runtime dependency.
 - Fixture files use **JSON only** in a graph project folder with **one file per primitive type** plus optional project metadata; exact filenames and metadata schema will be defined during planning but MUST remain storage-provider agnostic. YAML fixture input is explicitly out of scope for v0.
-- Stable IDs are globally unique strings within a graph project; duplicate IDs are validation failures.
+- Stable IDs are globally unique strings within a graph project; duplicate IDs are validation failures enforced at the storage/repository boundary (loaders fail on first duplicate; CLI maps to exit `1`).
 - Exact duplicate normalized names within a primitive type are integrity **warnings** (not failures); "likely duplicate" detection uses normalized name equality as a baseline, with optional fuzzy similarity for same-type pairs sharing significant token overlap—also reported as warnings.
 - Summary generation on graphs with Active validation failures is allowed; output MUST prominently list gaps and MUST NOT fabricate missing primitive content.
 - Command-line interaction is the only required user interface for v0; graphical UI, MCP tools, and hosted services are explicitly deferred.

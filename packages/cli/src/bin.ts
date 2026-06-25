@@ -1,6 +1,24 @@
 #!/usr/bin/env node
 
-import { NodeRuntime } from "@effect/platform-node"
-import { Effect } from "effect"
+import { Command } from "@effect/cli"
+import { NodeContext, NodeRuntime } from "@effect/platform-node"
+import { Effect, Layer } from "effect"
 
-Effect.void.pipe(NodeRuntime.runMain)
+import { handleCheckCommandError } from "./cli/CheckCommand.js"
+import { rootCommand } from "./cli/RootCommand.js"
+import { GraphRepositoryLive } from "./services/Layers.js"
+
+const MainLayer = Layer.merge(GraphRepositoryLive, NodeContext.layer)
+
+const program = rootCommand.pipe(
+  Command.run({
+    name: "specable",
+    version: "0.0.0"
+  })
+)
+
+program(process.argv).pipe(
+  Effect.catchAll((error) => handleCheckCommandError(error)),
+  Effect.provide(MainLayer),
+  NodeRuntime.runMain
+)

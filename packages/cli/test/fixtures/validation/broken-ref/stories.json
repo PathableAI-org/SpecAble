@@ -1,0 +1,14 @@
+{
+  "primitives": [
+    {
+      "type": "Story",
+      "id": "story-broken",
+      "name": "Broken story",
+      "status": "Active",
+      "actor": "actor-missing",
+      "capability": "cap-missing",
+      "expectedResult": "result-missing",
+      "workflows": ["workflow-missing"]
+    }
+  ]
+}
