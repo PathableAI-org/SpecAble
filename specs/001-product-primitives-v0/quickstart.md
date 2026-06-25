@@ -25,38 +25,66 @@ pnpm build
 
 ## Run against bundled generic example
 
-```bash
-# Interactive stdout report
-pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid
+> **CLI availability (US2)**: Until User Story 3 lands, `specable check` requires `--validate-only` or `--integrity-only`. A bare `check` (no scope flag) exits `2`. `--out` and `--summary-only` are also US3.
 
-# Write shareable artifacts
-pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid --out /tmp/specable-out
-ls /tmp/specable-out
-# summary.md  validation.json  integrity-report.json  integrity-report.md  check-result.json
+```bash
+# Validation stdout report
+pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid --validate-only
+
+# Validation + integrity stdout report
+pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid --integrity-only
 ```
 
-**Expected**: exit code `0`; zero Active validation failures; summary preview on stdout; files written only with `--out`.
+**Expected**: exit code `0`; zero Active validation failures; integrity warnings may appear with `--integrity-only`.
+
+<!-- US3: default full check, --out artifacts, --summary-only -->
+<!--
+pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid
+pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid --out /tmp/specable-out
+-->
 
 ## Validate invalid example
 
 ```bash
-pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/invalid
+pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/invalid --integrity-only
 ```
 
-**Expected**: exit code `1`; Active failures listed with primitive IDs; Draft issues as warnings; summary preview still shows **Known Modeling Gaps** if summary path runs (default full check).
+**Expected**: exit code `1`; Active failures listed in validation output with primitive IDs; Draft issues as validation warnings; integrity warnings alone do not change exit code.
+
+## Integrity-specific scenarios (Session 2026-06-25)
+
+After US2 implementation, verify with engineered fixtures:
+
+```bash
+# Duplicate normalized names → integrity warning only (exit 0 if no Active failures)
+pnpm --filter @specable/cli exec specable check packages/cli/test/fixtures/integrity/duplicate-name --integrity-only
+
+# Disconnected Actor → not an orphan; exit 0
+pnpm --filter @specable/cli exec specable check packages/cli/test/fixtures/integrity/disconnected-actor-not-orphan --integrity-only
+
+# Zero-edge Story → orphan warning on stdout (integrity-report.json with --out is US3)
+pnpm --filter @specable/cli exec specable check packages/cli/test/fixtures/integrity/orphan-story --integrity-only
+```
+
+**Expected behaviors**:
+
+- Name normalization: trim + lowercase; `" Schedule Session "` matches `"schedule session"`
+- Likely duplicates: Jaccard ≥ 0.8 on word tokens
+- Orphans: type-aware; disconnected Actors excluded
+- `validation.json` and `integrity-report.json` do not duplicate Active under-linked failures
 
 ## Scoped commands
 
 ```bash
 pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid --validate-only
 pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid --integrity-only
-pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid --summary-only
+# --summary-only and default full check: User Story 3 (not yet available)
 ```
 
 ## CoachBridge synthetic example
 
 ```bash
-pnpm --filter @specable/cli exec specable check packages/cli/examples/coachbridge-synthetic/valid --out /tmp/coachbridge-out
+pnpm --filter @specable/cli exec specable check packages/cli/examples/coachbridge-synthetic/valid --integrity-only
 ```
 
 **Expected**: validates offline with fictional entities only; no external credentials.
@@ -68,7 +96,7 @@ pnpm --filter @specable/cli exec specable check packages/cli/examples/coachbridg
 3. Run:
 
 ```bash
-pnpm --filter @specable/cli exec specable check ./my-graph
+pnpm --filter @specable/cli exec specable check ./my-graph --validate-only
 ```
 
 ## Development loop

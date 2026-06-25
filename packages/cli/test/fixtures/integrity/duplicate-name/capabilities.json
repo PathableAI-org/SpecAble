@@ -1,0 +1,18 @@
+{
+  "primitives": [
+    {
+      "type": "Capability",
+      "id": "cap-schedule",
+      "name": "Schedule Session",
+      "status": "Draft",
+      "description": "Schedule a session"
+    },
+    {
+      "type": "Capability",
+      "id": "cap-schedule-session",
+      "name": " Schedule Session ",
+      "status": "Draft",
+      "description": "Duplicate normalized name"
+    }
+  ]
+}

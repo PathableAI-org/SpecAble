@@ -1,8 +1,8 @@
 # Implementation Plan: SpecAble v0 — Product Primitive Graph
 
-**Branch**: `001-product-primitives-v0` | **Date**: 2026-06-24 | **Spec**: [spec.md](./spec.md)
+**Branch**: `001-product-primitives-v0` | **Date**: 2026-06-25 | **Spec**: [spec.md](./spec.md)
 
-**Input**: Feature specification from `/specs/001-product-primitives-v0/spec.md` (updated with Session 2026-06-24 clarifications: `@specable/domain` package split, Schema literal unions, annotation-first validation, JSON-only fixtures, exit code policy, duplicate-name warnings)
+**Input**: Feature specification from `/specs/001-product-primitives-v0/spec.md` (Session 2026-06-25 clarifications: name normalization, likely-duplicate Jaccard rule, type-aware orphan detection, workflow derivability via capabilities, validation/integrity artifact split, duplicate-id at load boundary, advisory output routing)
 
 ## Summary
 
@@ -48,7 +48,7 @@ Technical approach: Effect Schema with annotations for semantic meaning and fiel
 | X. Narrow v1 | Does scope avoid PM SaaS, full UI, cloud platform, or vendor replacement ambitions? | ✅ |
 | Technical standards | Are TypeScript, pnpm, schema validation, and required test categories addressed? | ✅ |
 
-**Post-design re-check (2026-06-24)**: All gates pass. Session 2026-06-24 clarifications resolve the prior Principle V single-package exception and align fixture format (JSON-only), exit semantics, and integrity warning severity with contracts.
+**Post-design re-check (2026-06-25)**: All gates pass. Session 2026-06-25 clarifications align integrity heuristics (orphans, duplicate names, workflow derivability) and artifact ownership (`validation.json` vs `integrity-report.json`) with contracts; drafting-friendly orphan rules preserve disconnected Actors during graph authoring.
 
 ## Project Structure
 
@@ -183,9 +183,9 @@ Aligned with constitution v1.1.0 (Session 2026-06-25 PR review):
 
 ## Phase 0 — Research
 
-Completed in [research.md](./research.md). Updated 2026-06-24 for two-package layout, Schema union conventions, JSON-only fixtures, exit codes, and duplicate-name warning severity. No remaining `NEEDS CLARIFICATION`.
+Completed in [research.md](./research.md). Updated 2026-06-25 for integrity heuristics (R10–R11, R20–R21), name normalization, orphan semantics, and validation/integrity artifact split. No remaining `NEEDS CLARIFICATION`.
 
-Key decisions: `@specable/domain` + `@specable/cli`, Effect Schema literal unions (no TS `enum`), annotation-first field validation, **JSON-only** graph fixtures, `@effect/cli check`, stdout + `--out`, exit codes FR-060, Changesets for both packages, Fallow scoped to `packages/domain` and `packages/cli`.
+Key decisions: `@specable/domain` + `@specable/cli`, Effect Schema literal unions (no TS `enum`), annotation-first field validation, **JSON-only** graph fixtures, `@effect/cli check`, stdout + `--out`, exit codes FR-060, name normalization (trim + lowercase), likely duplicates (Jaccard ≥ 0.8), type-aware orphans, workflow derivability via capability traversal, validation-owned Active failures, Changesets for both packages, Fallow scoped to `packages/domain` and `packages/cli`.
 
 ## Phase 1 — Design & Contracts
 
@@ -203,7 +203,7 @@ Key decisions: `@specable/domain` + `@specable/cli`, Effect Schema literal union
 2. **`@specable/domain` package** — workspace scaffolding, Schema literal unions, primitive schemas with annotations, references, `FixtureDecodeError`, codegen exports, minimal decode tests.
 3. **Graph loader (`@specable/cli`)** — JSON per-type files → `ProductGraph` via `GraphRepository` (public) and `GraphLoader` (file-backed implementation); Layer wiring in `services/`.
 4. **Validation engine** — status-aware required field + relationship rules (FR-010–FR-026); consumes domain types.
-5. **Integrity engine** — duplicate names (warnings), likely duplicates, triples, advisories, workflow derivations.
+5. **Integrity engine** — duplicate names (warnings, trim+lowercase normalization), likely duplicates (Jaccard ≥ 0.8), type-aware orphans, workflow derivability warnings, `duplicateStoryTriples` summary (failures owned by validation); no duplicate Active under-linked entries in `integrity-report.json`.
 6. **Story + summary** — template text, Markdown sections, preview truncation.
 7. **CLI** — `specable check` wiring, stdout/`--out` writers, exit codes (FR-060).
 8. **Examples + tests** — generic + coachbridge synthetic; SC-003 engineered fixtures in `@specable/cli`.
@@ -215,8 +215,9 @@ Key decisions: `@specable/domain` + `@specable/cli`, Effect Schema literal union
 | Schema decode per primitive (complex compositions) | `@specable/domain` (minimal) |
 | Schema decode per primitive file (fixture integration) | `@specable/cli` |
 | Graph traversal / index lookups | `@specable/cli` |
-| Missing-link + orphan detection with severity | `@specable/cli` |
-| Duplicate names + likely duplicates + story triples | `@specable/cli` |
+| Active under-linked failures (validation only) | `@specable/cli` |
+| Orphan + duplicate name + likely-duplicate + workflow derivability (integrity warnings) | `@specable/cli` |
+| Duplicate Active story triple failures (validation) + triple summary (integrity) | `@specable/cli` |
 | Summary determinism + gap sections | `@specable/cli` |
 | Loader behavior for missing type files | `@specable/cli` |
 | CLI exit codes and `--out` artifacts | `@specable/cli` |
@@ -233,16 +234,16 @@ Key decisions: `@specable/domain` + `@specable/cli`, Effect Schema literal union
 
 - [x] Root `package.json` + `pnpm-workspace.yaml` (`packages/*`)
 - [x] TS configs (root + `packages/cli/*`)
-- [ ] TS configs for `packages/domain/*` + root references updated
+- [x] TS configs for `packages/domain/*` + root references updated
 - [x] `eslint.config.mjs` with `@effect/eslint-plugin`
 - [x] `vitest.config.ts` + `@effect/vitest` setup
 - [x] `scripts/clean.mjs`
-- [ ] `.fallowrc.json` (workspaces → `packages/domain`, `packages/cli`)
+- [x] `.fallowrc.json` (workspaces → `packages/domain`, `packages/cli`)
 - [x] `.changeset/config.json` (`PathableAI-org/SpecAble`)
 - [x] `.github/actions/setup` + workflows (`check`, `fallow-audit`, `release`, `snapshot`)
-- [ ] `AGENTS.md` updated for two-package layout (`@specable/domain` + `@specable/cli`)
+- [x] `AGENTS.md` updated for two-package layout (`@specable/domain` + `@specable/cli`)
 - [x] `README.md` sections: commands, package layout, Effect guidance, publishing, template adaptation
 
 ## Phase 2
 
-Task breakdown in [tasks.md](./tasks.md) — **requires refresh** via `/speckit-tasks` to relocate Phase 2 domain tasks from `packages/cli/src/domain/` to `packages/domain/src/` and replace enum tasks with Schema literal union tasks.
+Task breakdown in [tasks.md](./tasks.md) — Phase 2 domain tasks complete; US2 integrity tasks (T065–T077) refreshed for Session 2026-06-25 orphan/artifact-split semantics.

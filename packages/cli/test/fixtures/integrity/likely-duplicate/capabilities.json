@@ -1,0 +1,18 @@
+{
+  "primitives": [
+    {
+      "type": "Capability",
+      "id": "cap-schedule-session-block",
+      "name": "Coach Schedule Session Block",
+      "status": "Draft",
+      "description": "Schedule a session block"
+    },
+    {
+      "type": "Capability",
+      "id": "cap-schedule-session-block-extra",
+      "name": "Coach Schedule Session Block Extra",
+      "status": "Draft",
+      "description": "Likely duplicate via Jaccard"
+    }
+  ]
+}

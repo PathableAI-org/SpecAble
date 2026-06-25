@@ -28,11 +28,12 @@
 **Stdout sections** (deterministic order):
 1. Header (`SpecAble check` + project path)
 2. Validation status summary
-3. Validation failures (if any)
-4. Validation warnings (if any)
-5. Integrity failures (if any)
-6. Integrity warnings (if any)
-7. Summary preview (Markdown truncated to documented max lines, e.g. 80)
+3. Validation failures (if any) — includes Active under-linked, broken refs, duplicate IDs, duplicate story triples
+4. Validation warnings (if any) — Draft incompleteness, per-primitive advisories
+5. Integrity warnings (if any) — orphans, duplicate names, likely duplicates, workflow derivability gaps
+6. Summary preview (Markdown truncated to documented max lines, e.g. 80)
+
+Active validation failures are **not** repeated in an integrity failures section; integrity output is integrity-specific warnings plus optional `duplicateStoryTriples` summary context on stdout when present.
 
 **Exit codes** (FR-060):
 

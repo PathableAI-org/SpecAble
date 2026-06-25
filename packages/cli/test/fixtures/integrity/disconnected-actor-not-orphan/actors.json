@@ -1,0 +1,12 @@
+{
+  "primitives": [
+    {
+      "type": "Actor",
+      "id": "actor-disconnected",
+      "name": "Coach",
+      "status": "Draft",
+      "category": "Human",
+      "description": "Identified during planning before stories exist"
+    }
+  ]
+}
