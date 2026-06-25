@@ -210,16 +210,16 @@ Per constitution v1.1.0 and [plan.md](./plan.md) (Session 2026-06-25):
 
 ### Tests for User Story 4
 
-- [ ] T089 [P] [US4] Add example graph integration tests in `packages/cli/test/examples/examples.test.ts` (generic + coachbridge valid/invalid)
+- [X] T089 [P] [US4] Add example graph integration tests in `packages/cli/test/examples/examples.test.ts` (generic + coachbridge valid/invalid)
 
 ### Implementation for User Story 4
 
-- [ ] T090 [P] [US4] Create generic valid graph fixtures in `packages/cli/examples/generic/valid/` (all nine type YAML files + optional `graph.yaml`)
-- [ ] T091 [P] [US4] Create generic invalid graph fixtures in `packages/cli/examples/generic/invalid/` demonstrating Draft warnings and Active failures
-- [ ] T092 [P] [US4] Create CoachBridge-inspired valid fixtures in `packages/cli/examples/coachbridge-synthetic/valid/` using fictional data only
-- [ ] T093 [P] [US4] Create CoachBridge-inspired invalid fixtures in `packages/cli/examples/coachbridge-synthetic/invalid/`
-- [ ] T094 [US4] Write comprehension checklist and usage notes in `packages/cli/examples/generic/README.md` for SC-005
-- [ ] T095 [US4] Write synthetic-data disclaimer and scenario notes in `packages/cli/examples/coachbridge-synthetic/README.md`
+- [X] T090 [P] [US4] Create generic valid graph fixtures in `packages/cli/examples/generic/valid/` (all nine type YAML files + optional `graph.yaml`)
+- [X] T091 [P] [US4] Create generic invalid graph fixtures in `packages/cli/examples/generic/invalid/` demonstrating Draft warnings and Active failures
+- [X] T092 [P] [US4] Create CoachBridge-inspired valid fixtures in `packages/cli/examples/coachbridge-synthetic/valid/` using fictional data only
+- [X] T093 [P] [US4] Create CoachBridge-inspired invalid fixtures in `packages/cli/examples/coachbridge-synthetic/invalid/`
+- [X] T094 [US4] Write comprehension checklist and usage notes in `packages/cli/examples/generic/README.md` for SC-005
+- [X] T095 [US4] Write synthetic-data disclaimer and scenario notes in `packages/cli/examples/coachbridge-synthetic/README.md`
 
 **Checkpoint**: Quickstart commands in `specs/001-product-primitives-v0/quickstart.md` succeed against bundled examples.
 

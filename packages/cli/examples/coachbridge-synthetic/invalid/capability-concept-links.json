@@ -1,0 +1,14 @@
+{
+  "primitives": [
+    {
+      "type": "CapabilityConceptLink",
+      "id": "ccl-onboarding-profile",
+      "name": "Onboarding creates profile",
+      "status": "Active",
+      "capability": "cap-complete-onboarding",
+      "domainConcept": "concept-coach-profile",
+      "role": "Creates",
+      "importance": "Primary"
+    }
+  ]
+}

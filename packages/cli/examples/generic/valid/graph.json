@@ -1,0 +1,5 @@
+{
+  "name": "Generic Scheduling Example",
+  "schemaVersion": 1,
+  "description": "Domain-neutral appointment scheduling graph demonstrating all nine Product Primitive types"
+}

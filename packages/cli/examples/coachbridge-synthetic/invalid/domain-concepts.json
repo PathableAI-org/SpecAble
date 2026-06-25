@@ -1,0 +1,11 @@
+{
+  "primitives": [
+    {
+      "type": "DomainConcept",
+      "id": "concept-coach-profile",
+      "name": "Coach Profile",
+      "status": "Active",
+      "definition": "Public profile describing a coach's focus areas and availability"
+    }
+  ]
+}

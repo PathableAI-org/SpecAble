@@ -1,0 +1,15 @@
+{
+  "primitives": [
+    {
+      "type": "Persona",
+      "id": "persona-busy-professional",
+      "name": "Busy Professional",
+      "status": "Active",
+      "description": "Customer persona who values quick self-service booking",
+      "primaryActors": ["actor-customer"],
+      "goalsOrPainPoints": "Book appointments quickly between meetings without phone calls",
+      "evidence": "Synthetic user interviews",
+      "confidence": "Validated"
+    }
+  ]
+}

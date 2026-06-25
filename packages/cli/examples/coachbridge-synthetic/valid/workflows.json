@@ -1,0 +1,28 @@
+{
+  "primitives": [
+    {
+      "type": "Workflow",
+      "id": "workflow-onboarding",
+      "name": "Coach Onboarding",
+      "status": "Active",
+      "description": "New coach completes Riverside platform onboarding",
+      "objectives": ["obj-coach-retention"],
+      "primaryActors": ["actor-morgan-coach"],
+      "capabilities": ["cap-complete-onboarding"],
+      "stories": ["story-complete-onboarding"],
+      "sequenceNotes": "Coach signs in, completes profile fields, and publishes availability"
+    },
+    {
+      "type": "Workflow",
+      "id": "workflow-session-scheduling",
+      "name": "Session Scheduling",
+      "status": "Active",
+      "description": "Participant schedules a coaching session",
+      "objectives": ["obj-coach-retention"],
+      "primaryActors": ["actor-taylor-participant"],
+      "capabilities": ["cap-schedule-session"],
+      "stories": ["story-schedule-session"],
+      "sequenceNotes": "Participant views coach availability and confirms a session time"
+    }
+  ]
+}

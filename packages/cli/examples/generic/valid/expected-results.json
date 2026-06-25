@@ -1,0 +1,13 @@
+{
+  "primitives": [
+    {
+      "type": "ExpectedResult",
+      "id": "result-appointment-booked",
+      "name": "Appointment Is Booked",
+      "status": "Active",
+      "definition": "An appointment is confirmed in the scheduling system",
+      "capabilities": ["cap-book-appointment"],
+      "objectives": ["obj-scheduling-friction"]
+    }
+  ]
+}

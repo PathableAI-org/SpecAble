@@ -1,0 +1,13 @@
+{
+  "primitives": [
+    {
+      "type": "Objective",
+      "id": "obj-coach-retention",
+      "name": "Improve coach retention",
+      "status": "Active",
+      "description": "Help coaches stay engaged on the Riverside platform",
+      "successCriteria": "Coaches complete onboarding and schedule at least one session per month",
+      "workflows": ["workflow-onboarding", "workflow-session-scheduling"]
+    }
+  ]
+}

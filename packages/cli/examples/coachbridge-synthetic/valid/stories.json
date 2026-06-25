@@ -1,0 +1,24 @@
+{
+  "primitives": [
+    {
+      "type": "Story",
+      "id": "story-complete-onboarding",
+      "name": "Coach completes onboarding",
+      "status": "Active",
+      "actor": "actor-morgan-coach",
+      "capability": "cap-complete-onboarding",
+      "expectedResult": "result-profile-published",
+      "workflows": ["workflow-onboarding"]
+    },
+    {
+      "type": "Story",
+      "id": "story-schedule-session",
+      "name": "Participant schedules session",
+      "status": "Active",
+      "actor": "actor-taylor-participant",
+      "capability": "cap-schedule-session",
+      "expectedResult": "result-session-confirmed",
+      "workflows": ["workflow-session-scheduling"]
+    }
+  ]
+}

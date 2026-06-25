@@ -1,0 +1,13 @@
+{
+  "primitives": [
+    {
+      "type": "ExpectedResult",
+      "id": "result-profile-published",
+      "name": "Coach Profile Is Published",
+      "status": "Active",
+      "definition": "Coach profile is visible to participants on Riverside",
+      "capabilities": ["cap-complete-onboarding"],
+      "objectives": ["obj-coach-retention"]
+    }
+  ]
+}

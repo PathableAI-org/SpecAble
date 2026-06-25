@@ -1,0 +1,16 @@
+{
+  "primitives": [
+    {
+      "type": "Workflow",
+      "id": "workflow-booking",
+      "name": "Booking Flow",
+      "status": "Active",
+      "description": "Customer selects a time and confirms an appointment",
+      "objectives": ["obj-scheduling-friction"],
+      "primaryActors": ["actor-customer"],
+      "capabilities": ["cap-book-appointment"],
+      "stories": ["story-book-appointment"],
+      "sequenceNotes": "Customer opens scheduler, picks a slot, and receives confirmation"
+    }
+  ]
+}

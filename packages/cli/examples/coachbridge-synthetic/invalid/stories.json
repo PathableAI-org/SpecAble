@@ -1,0 +1,14 @@
+{
+  "primitives": [
+    {
+      "type": "Story",
+      "id": "story-complete-onboarding",
+      "name": "Coach completes onboarding",
+      "status": "Active",
+      "actor": "actor-morgan-coach",
+      "capability": "cap-complete-onboarding",
+      "expectedResult": "result-missing",
+      "workflows": ["workflow-onboarding"]
+    }
+  ]
+}
