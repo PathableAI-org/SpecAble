@@ -2,7 +2,7 @@ import { NodeFileSystem } from "@effect/platform-node"
 import * as FileSystem from "@effect/platform/FileSystem"
 import { assert, describe, expect, it } from "@effect/vitest"
 import { FixtureDecodeError } from "@specable/domain/errors.js"
-import { Effect } from "effect"
+import { Effect, Option } from "effect"
 import * as path from "node:path"
 import { fileURLToPath } from "node:url"
 
@@ -24,6 +24,7 @@ describe("GraphLoader", () => {
       expect(graph.primitives).toHaveLength(1)
       expect(graph.primitives[0]?.type).toBe("Actor")
       expect(graph.index.byType.get("Objective")).toBeUndefined()
+      expect(Option.isNone(graph.metadata)).toBe(true)
     }).pipe(Effect.provide(nodeFileSystemLayer)))
 
   it.effect("fails when the project directory is missing", () =>

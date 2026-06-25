@@ -163,3 +163,23 @@
 - Fail on any integrity failure — rejected; orphans/missing links may already surface as Active validation failures; duplicate names remain advisory.
 - Strict mode failing on warnings — deferred post-v0 (`--strict`).
 
+## R18 — TypeScript type safety (no `any`, minimal casts)
+
+**Decision**: Library and CLI code MUST NOT use `any`. Type assertions (`as`) and unchecked casts MUST be avoided; prefer generics, Schema-inferred types, branded IDs, and closed-over helpers (for example `fixtureFile<A, I>()` with a typed `decode` closure) so heterogeneous registries stay type-safe without widening.
+
+**Rationale**: PR review on graph loader (2026-06-25). `any` and casts hide fixture/registry bugs until runtime and erode strict-mode value. Effect Schema and generic factories cover heterogeneous per-type files without escape hatches.
+
+**Alternatives considered**:
+- `Schema<any>` + `as PrimitiveFileSchema` in fixture registry — rejected; violates strict typing without adding safety.
+- Single union schema for all fixture files — rejected; loses per-file type validation aligned with fixture contract.
+
+## R19 — Graph storage abstraction (`GraphRepository` over `GraphLoader`)
+
+**Decision**: Expose a repository-shaped Effect service (`GraphRepository.load(projectPath) → ProductGraph`) as the consumer dependency. File-backed JSON loading (`GraphLoader`, `FileSystem`, Node platform Layers) is an implementation detail composed in `services/Layers.ts`. Validation, integrity, summary, and CLI commands MUST depend on `GraphRepository`, not on loader or filesystem modules directly.
+
+**Rationale**: PR review (2026-06-25). JSON-on-disk is the first storage adapter, not the domain contract. Future adapters (SQL, Notion, MCP) can swap loader implementations without rewriting graph consumers.
+
+**Alternatives considered**:
+- Export `GraphLoaderLive` as the primary Layer — rejected; leaks file-backed mechanics to feature modules.
+- Merge loader into CLI command — rejected; violates library-first and testability.
+

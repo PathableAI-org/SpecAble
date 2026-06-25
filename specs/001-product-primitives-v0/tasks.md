@@ -24,6 +24,15 @@ description: "Task list for SpecAble v0 — Product Primitive Graph"
 - **CLI package**: `packages/cli/src/` (graph, validation, integrity, summary, CLI), `packages/cli/test/` (comprehensive tests), `packages/cli/examples/` (bundled graphs)
 - **Repository root**: CI, TS configs, ESLint, scripts, docs
 
+## Implementation conventions
+
+Per constitution v1.1.0 and [plan.md](./plan.md) (Session 2026-06-25):
+
+- **Never use `any`**: Use generics, Schema types, branded IDs, or `unknown` with narrowing.
+- **Avoid type casts**: Prefer generic factories and closed-over decode helpers over `as` assertions. Document and test any unavoidable cast at an external boundary.
+- **Hide storage behind abstractions**: Feature modules depend on `GraphRepository`, not `GraphLoader` or filesystem code. Compose `GraphRepositoryLive` in `services/Layers.ts`.
+- **Do not suppress unused-dependency findings** in Fallow for packages that should be referenced; wire dependencies or remove them.
+
 ---
 
 ## Phase 1: Setup (Shared Infrastructure)
@@ -97,7 +106,7 @@ description: "Task list for SpecAble v0 — Product Primitive Graph"
 - [X] T046 Create fixture filename registry in `packages/cli/src/graph/FixtureFiles.ts` per `specs/001-product-primitives-v0/contracts/fixture-format.md`
 - [X] T047 Create JSON decode helpers in `packages/cli/src/graph/JsonDecode.ts` (parse + Schema decode with file paths via domain schemas)
 - [X] T048 Implement `GraphLoader` service Layer in `packages/cli/src/graph/GraphLoader.ts` (load per-type files, missing file → empty, build index)
-- [X] T049 Create `FileSystem`/`GraphLoaderLive` Layer wiring in `packages/cli/src/services/Layers.ts` using `@effect/platform-node`
+- [X] T049 Create `FileSystem`/`GraphRepositoryLive` Layer wiring in `packages/cli/src/services/Layers.ts` using `@effect/platform-node` (`GraphLoader` composed internally; consumers use `GraphRepository`)
 
 ### Tests and CLI codegen
 

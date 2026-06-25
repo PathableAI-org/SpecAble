@@ -26,7 +26,7 @@ Technical approach: Effect Schema with annotations for semantic meaning and fiel
 
 **Performance Goals**: Generic valid example validates in <5s on typical laptop (SC-002)
 
-**Constraints**: No Notion/MCP/cloud runtime deps; deterministic summary/story generation; stdout-default CLI; strict TS (`strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`); closed-set values as Schema literal unions only (FR-057); domain package is schema-only (FR-058)
+**Constraints**: No Notion/MCP/cloud runtime deps; deterministic summary/story generation; stdout-default CLI; strict TS (`strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`); closed-set values as Schema literal unions only (FR-057); domain package is schema-only (FR-058); **no `any`**; **avoid type casts**; **hide storage I/O behind repository services** (constitution v1.1.0)
 
 **Scale/Scope**: v0 supports tens–low hundreds of primitives per graph; two bundled examples + invalid variants; 9 primitive types + relationship roles
 
@@ -118,12 +118,12 @@ SpecAble/
         │   ├── index.ts
         │   ├── cli/
         │   │   └── CheckCommand.ts
-        │   ├── graph/           # ProductGraph, GraphLoader, JSON decode
+        │   ├── graph/           # ProductGraph, GraphRepository, GraphLoader (internal), JSON decode
         │   ├── validation/      # Status-aware rules (consumes domain schemas)
         │   ├── integrity/
         │   ├── summary/
         │   ├── story/
-        │   └── services/
+        │   └── services/        # Layer composition (GraphRepositoryLive, FileSystemLive)
         ├── test/                # comprehensive @effect/vitest suites
         └── examples/
             ├── generic/{valid,invalid}/
@@ -171,6 +171,16 @@ SpecAble/
 - **Branded types**: Use `Schema.brand` for opaque values that are semantically distinct despite sharing a representation, especially canonical primitive IDs (`PrimitiveId`). Do not brand human prose/labels such as names, descriptions, notes, evidence, story text, or tags. Adapter-specific IDs (for example Notion page IDs, SQL row IDs, Confluence page IDs) must be separate adapter-layer brands, not aliases of `PrimitiveId`.
 - **Logic boundary**: Cross-primitive graph rules, status-aware severity, integrity heuristics, and artifact generation are **not** in `@specable/domain`; they consume decoded domain types in `@specable/cli`.
 
+### TypeScript and service conventions (`@specable/cli`)
+
+Aligned with constitution v1.1.0 (Session 2026-06-25 PR review):
+
+- **No `any`**: Use generics, Schema-inferred types, branded IDs, or `unknown` with narrowing. Registries (for example per-type fixture files) SHOULD use generic factory helpers with closed-over decode functions—not widened `Schema<any>` plus casts.
+- **Avoid type casts**: Prefer typed helpers (`fixtureFile<A, I>()`, generic `loadFixtureFile`, Schema decode) so compile-time types flow without `as`. Document and test any unavoidable cast at an external boundary.
+- **No `null`**: Use `Option` for optional values (for example missing `graph.json` metadata), `Effect.fail` for expected errors, not `null` returns.
+- **Hide implementation behind abstractions**: Downstream modules (validation, integrity, summary, CLI commands) depend on **`GraphRepository`** (load contract returning `ProductGraph`), not on **`GraphLoader`** or filesystem details. File-backed JSON loading and Node `FileSystem` wiring live in `services/Layers.ts` as composition roots only.
+- **Layer exports**: Publish `GraphRepositoryLive` / `GraphServicesLive` to consumers; keep loader and platform layers internal to composition unless a test or adapter explicitly needs them.
+
 ## Phase 0 — Research
 
 Completed in [research.md](./research.md). Updated 2026-06-24 for two-package layout, Schema union conventions, JSON-only fixtures, exit codes, and duplicate-name warning severity. No remaining `NEEDS CLARIFICATION`.
@@ -191,7 +201,7 @@ Key decisions: `@specable/domain` + `@specable/cli`, Effect Schema literal union
 
 1. **Repo bootstrap** — template scripts, TS configs, ESLint, CI, AGENTS.md, Changesets, Fallow config (Phase 1 largely complete; extend for `packages/domain`).
 2. **`@specable/domain` package** — workspace scaffolding, Schema literal unions, primitive schemas with annotations, references, `FixtureDecodeError`, codegen exports, minimal decode tests.
-3. **Graph loader (`@specable/cli`)** — JSON per-type files → `ProductGraph` Layer using domain schemas.
+3. **Graph loader (`@specable/cli`)** — JSON per-type files → `ProductGraph` via `GraphRepository` (public) and `GraphLoader` (file-backed implementation); Layer wiring in `services/`.
 4. **Validation engine** — status-aware required field + relationship rules (FR-010–FR-026); consumes domain types.
 5. **Integrity engine** — duplicate names (warnings), likely duplicates, triples, advisories, workflow derivations.
 6. **Story + summary** — template text, Markdown sections, preview truncation.

@@ -3,7 +3,7 @@ import type { Primitive } from "@specable/domain"
 import type { FixtureDecodeError } from "@specable/domain/errors.js"
 
 import * as FileSystem from "@effect/platform/FileSystem"
-import { Effect } from "effect"
+import { Effect, Option } from "effect"
 import * as path from "node:path"
 
 import { type DuplicateIdError, GraphProjectNotFoundError } from "../errors.js"
@@ -51,23 +51,23 @@ const assertProjectDirectory = (
 const loadOptionalMetadata = (
   fs: FileSystem.FileSystem,
   projectPath: string
-): Effect.Effect<GraphMetadata | null, FixtureDecodeError | PlatformError> =>
+): Effect.Effect<Option.Option<GraphMetadata>, FixtureDecodeError | PlatformError> =>
   Effect.gen(function*() {
     const metadataPath = path.join(projectPath, GRAPH_METADATA_FILE)
     const exists = yield* fs.exists(metadataPath)
 
     if (!exists) {
-      return null
+      return Option.none()
     }
 
     const content = yield* fs.readFileString(metadataPath)
     const decoded = yield* decodeJsonContent(metadataPath, GraphMetadataSchema, content)
 
-    return {
+    return Option.some({
       schemaVersion: decoded.schemaVersion,
       ...(decoded.name !== undefined ? { name: decoded.name } : {}),
       ...(decoded.description !== undefined ? { description: decoded.description } : {})
-    }
+    })
   })
 
 export const loadProductGraph = (

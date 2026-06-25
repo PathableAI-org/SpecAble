@@ -1,6 +1,6 @@
 import type { Primitive, PrimitiveBase, PrimitiveType } from "@specable/domain"
 
-import { Effect } from "effect"
+import { Effect, type Option } from "effect"
 
 import { DuplicateIdError } from "../errors.js"
 
@@ -21,7 +21,7 @@ export type PrimitiveRecord = Primitive
 
 export interface ProductGraph {
   readonly index: GraphIndex
-  readonly metadata: GraphMetadata | null
+  readonly metadata: Option.Option<GraphMetadata>
   readonly primitives: readonly PrimitiveRecord[]
   readonly projectPath: string
 }

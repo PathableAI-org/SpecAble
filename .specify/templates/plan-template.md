@@ -117,6 +117,14 @@ ios/ or android/
 **Structure Decision**: [Document the selected structure and reference the real
 directories captured above]
 
+### TypeScript and service conventions
+
+Per `.specify/memory/constitution.md` v1.1.0+:
+
+- **No `any`**: Use generics, Schema-inferred types, or `unknown` with narrowing.
+- **Avoid type casts**: Prefer typed factories and Schema decode; document unavoidable casts at boundaries.
+- **Hide storage I/O**: Expose repository/store-shaped services to consumers; compose file/adapter implementations in `services/` Layers only.
+
 ## Complexity Tracking
 
 > **Fill ONLY if Constitution Check has violations that must be justified**
