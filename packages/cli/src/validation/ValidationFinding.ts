@@ -15,7 +15,12 @@ export const ValidationFindingCode = Schema.Literal(
   "broken-reference",
   "duplicate-id",
   "duplicate-story-triple",
-  "invalid-literal"
+  "invalid-literal",
+  "disconnected-actor",
+  "implementation-shaped-domain-concept",
+  "implementation-specific",
+  "vague-expected-result",
+  "missing-evidence"
 ).annotations({
   description: "Machine-readable validation finding code",
   identifier: "ValidationFindingCode",

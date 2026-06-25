@@ -76,14 +76,19 @@ export const findDuplicateStoryTriples = (graph: ProductGraph): readonly Validat
   return findings
 }
 
-export const duplicateIdFinding = (id: PrimitiveBase.PrimitiveId, type: string): ValidationFinding => ({
-  code: "duplicate-id",
-  field: "id",
-  message: `Duplicate primitive ID "${id}" encountered while loading the graph project`,
-  primitiveId: id,
-  primitiveType: isPrimitiveType(type) ? type : "Actor",
-  severity: "failure"
-})
+export const duplicateIdFinding = (id: PrimitiveBase.PrimitiveId, type: string): ValidationFinding => {
+  const primitiveType = isPrimitiveType(type) ? type : "Actor"
+  const typeDetail = isPrimitiveType(type) ? "" : ` (reported type "${type}")`
+
+  return {
+    code: "duplicate-id",
+    field: "id",
+    message: `Duplicate primitive ID "${id}"${typeDetail} encountered while loading the graph project`,
+    primitiveId: id,
+    primitiveType,
+    severity: "failure"
+  }
+}
 
 const isPrimitiveType = (value: string): value is PrimitiveType =>
   value === "Objective" ||

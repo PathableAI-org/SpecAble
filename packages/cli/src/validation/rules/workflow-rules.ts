@@ -55,7 +55,7 @@ export const evaluateWorkflowRules = (workflow: Workflow): readonly RuleIssue[] 
       requiredFieldIssue(
         "Workflow",
         workflow.id,
-        "description",
+        "description|sequenceNotes",
         "Active Workflow must include description or sequence notes"
       )
     )

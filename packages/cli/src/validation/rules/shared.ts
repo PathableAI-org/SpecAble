@@ -49,7 +49,7 @@ export const advisoryIssue = (
   primitiveId: PrimitiveId,
   field: string,
   message: string,
-  code: ValidationFindingCode = "missing-field"
+  code: ValidationFindingCode
 ): RuleIssue => ({
   code,
   field,

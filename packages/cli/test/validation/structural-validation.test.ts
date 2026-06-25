@@ -6,9 +6,10 @@ import { Effect } from "effect"
 import * as path from "node:path"
 import { fileURLToPath } from "node:url"
 
+import { DuplicateIdError } from "../../src/errors.js"
 import { loadProductGraph } from "../../src/graph/GraphLoader.js"
 import { findBrokenReferences, findDuplicateStoryTriples } from "../../src/validation/StructuralValidation.js"
-import { validateProductGraph } from "../../src/validation/ValidationService.js"
+import { validationResultFromDuplicateId } from "../../src/validation/ValidationService.js"
 import { ids, makeTestGraph } from "../fixtures/validation/helpers.js"
 
 const testDir = path.dirname(fileURLToPath(import.meta.url))
@@ -95,27 +96,23 @@ describe("StructuralValidation", () => {
     expect(findings.every((finding) => finding.code === "duplicate-story-triple")).toBe(true)
   })
 
-  it.effect("maps duplicate IDs at load time into validation failures via validate-only flow", () =>
+  it.effect("maps duplicate IDs at load time into validation failures", () =>
     Effect.gen(function*() {
       const fs = yield* FileSystem.FileSystem
       const duplicateFixture = path.join(testDir, "../fixtures/graph-duplicate-id")
       const error = yield* loadProductGraph(fs, duplicateFixture).pipe(Effect.flip)
 
-      expect(error._tag).toBe("DuplicateIdError")
+      expect(error).toBeInstanceOf(DuplicateIdError)
+      if (!(error instanceof DuplicateIdError)) {
+        return
+      }
 
-      const result = validateProductGraph(
-        makeTestGraph([
-          {
-            category: "Human",
-            description: "Coach",
-            id: PrimitiveBase.makePrimitiveId("actor-coach"),
-            name: "Coach",
-            status: "Active",
-            type: "Actor"
-          }
-        ])
-      )
+      const result = validationResultFromDuplicateId(error.id, error.type)
 
-      expect(result.summary.passed).toBe(true)
+      expect(result.summary.passed).toBe(false)
+      expect(result.summary.failureCount).toBe(1)
+      expect(result.failures).toHaveLength(1)
+      expect(result.failures[0]?.code).toBe("duplicate-id")
+      expect(result.failures[0]?.primitiveId).toBe("actor-coach")
     }).pipe(Effect.provide(nodeFileSystemLayer)))
 })

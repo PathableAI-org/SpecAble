@@ -24,7 +24,8 @@ export const evaluateExpectedResultRules = (
         "ExpectedResult",
         expectedResult.id,
         "name",
-        "Expected Result name should be state-like rather than vague or task-like"
+        "Expected Result name should be state-like rather than vague or task-like",
+        "vague-expected-result"
       )
     )
   }
@@ -68,7 +69,8 @@ export const evaluateExpectedResultRules = (
         "ExpectedResult",
         expectedResult.id,
         "definition",
-        "Expected Result appears implementation-specific"
+        "Expected Result appears implementation-specific",
+        "implementation-specific"
       )
     )
   }
@@ -79,7 +81,8 @@ export const evaluateExpectedResultRules = (
         "ExpectedResult",
         expectedResult.id,
         "name",
-        "Expected Result name is indistinguishable from a Domain Concept name"
+        "Expected Result name is indistinguishable from a Domain Concept name",
+        "vague-expected-result"
       )
     )
   }

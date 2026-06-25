@@ -26,7 +26,8 @@ export const evaluateActorRules = (actor: Actor, graph: ProductGraph): readonly 
         "Actor",
         actor.id,
         "relationships",
-        "Active Actor is not connected to any Workflow, Capability, Story, or Expected Result"
+        "Active Actor is not connected to any Workflow, Capability, Story, or Expected Result",
+        "disconnected-actor"
       )
     )
   }

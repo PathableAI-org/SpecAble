@@ -28,7 +28,8 @@ export const evaluateDomainConceptRules = (
         "DomainConcept",
         concept.id,
         "evidence",
-        "Domain Concept has no related Capability Concept Links and no evidence reference"
+        "Domain Concept has no related Capability Concept Links and no evidence reference",
+        "missing-evidence"
       )
     )
   }
@@ -39,7 +40,8 @@ export const evaluateDomainConceptRules = (
         "DomainConcept",
         concept.id,
         "name",
-        "Domain Concept appears implementation-shaped rather than semantic"
+        "Domain Concept appears implementation-shaped rather than semantic",
+        "implementation-shaped-domain-concept"
       )
     )
   }

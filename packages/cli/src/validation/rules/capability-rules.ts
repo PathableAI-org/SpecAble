@@ -64,7 +64,7 @@ export const evaluateCapabilityRules = (
         capability.id,
         "name",
         "Capability appears implementation-specific",
-        "missing-field"
+        "implementation-specific"
       )
     )
   }
