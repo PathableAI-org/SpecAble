@@ -6,8 +6,4 @@ alwaysApply: true
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
 at specs/001-product-primitives-v0/plan.md
-
-Implementation constraints (constitution v1.1.0): never use `any`; avoid type
-casts; hide storage I/O behind repository services (see plan.md § TypeScript
-and service conventions).
 <!-- SPECKIT END -->

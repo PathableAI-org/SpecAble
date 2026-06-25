@@ -1,7 +1,7 @@
 # Research: SpecAble v0 — Product Primitive Graph
 
 **Feature**: `001-product-primitives-v0`  
-**Date**: 2026-06-23 (updated 2026-06-24 — JSON fixtures, exit codes, duplicate-name warnings)
+**Date**: 2026-06-23 (updated 2026-06-25 — integrity heuristics, artifact split)
 
 ## R1 — Monorepo layout for v0
 
@@ -86,14 +86,16 @@
 **Alternatives considered**:
 - No Changesets until v0.1 — rejected; harder to retrofits publishing metadata.
 
-## R10 — Likely duplicate detection
+## R10 — Name normalization and likely duplicate detection
 
-**Decision**: v0 baseline uses normalized exact name match within a primitive type; token-overlap similarity (Jaccard ≥ 0.8 on normalized word tokens) flags “likely duplicate” warnings only.
+**Decision**: Duplicate normalized names within a primitive type use **trim + lowercase** on the full display name; internal spacing and punctuation are preserved (e.g., `"Schedule  Session"` ≠ `"Schedule Session"`). Exact normalized matches are integrity **warnings** only (FR-034a). Likely duplicates use **Jaccard similarity ≥ 0.8** on word tokens (whitespace-split after trim+lowercase); also integrity **warnings** only.
 
-**Rationale**: Spec assumption; keeps behavior deterministic and testable without ML.
+**Rationale**: Clarified in spec session 2026-06-25. Deterministic, testable heuristics without ML; trim+lowercase matches emerging validation code patterns.
 
 **Alternatives considered**:
-- Levenshtein-only — rejected; noisier on short names.
+- Collapse internal whitespace — rejected; spec preserves punctuation/spacing distinctions.
+- Levenshtein-only fuzzy match — rejected; noisier on short names.
+- Unicode NFKC normalization — deferred; v0 ASCII-focused product names sufficient.
 
 ## R10a — Duplicate normalized name severity
 
@@ -107,9 +109,13 @@
 
 ## R11 — Workflow derivability for Expected Results / Domain Concepts
 
-**Decision**: Derive workflow-level Expected Results and Domain Concepts by traversing linked Capabilities and their Capability Concept Links and Expected Result edges. If none derivable, emit integrity **warning** for Active workflows (not hard failure unless explicit relations also missing and derivation empty).
+**Decision**: A workflow's Expected Results and Domain Concepts are **derivable** when traversing its linked Capabilities yields ≥1 Expected Result (via capability `expectedResults` refs) and ≥1 Domain Concept (via capability `domainConcepts` refs or Capability Concept Links). If not derivable and not explicitly populated on the workflow, emit integrity warning `missing-workflow-derivation` (not a validation failure).
 
-**Rationale**: FR-016 allows explicit or derived relations; derivation reduces fixture burden while still surfacing gaps.
+**Rationale**: FR-016 clarified in spec session 2026-06-25; reduces fixture burden while surfacing modeling gaps.
+
+**Alternatives considered**:
+- Require explicit workflow fields only — rejected; contradicts FR-016 derived-relation allowance.
+- Story-centric derivation — rejected; capabilities are the canonical workflow membership source.
 
 ## R12 — Package exports/codegen
 
@@ -182,4 +188,24 @@
 **Alternatives considered**:
 - Export `GraphLoaderLive` as the primary Layer — rejected; leaks file-backed mechanics to feature modules.
 - Merge loader into CLI command — rejected; violates library-first and testability.
+
+## R20 — Orphan primitive detection
+
+**Decision**: Integrity reports a primitive as **orphan** only when it has zero inbound and zero outbound typed relationship edges **and** its type cannot meaningfully stand alone without relationships. Disconnected **Actors** are never orphans (valid during drafting before stories/workflows exist). **Draft Objectives** may stand alone (FR-021). Join-like types (Story, Capability Concept Link) and other relationship-dependent types without edges are orphans. Orphans are integrity **warnings**, not validation failures.
+
+**Rationale**: Spec session 2026-06-25; the tool supports drafting graphs incrementally—unlinked Actors are expected, not errors.
+
+**Alternatives considered**:
+- Any zero-edge primitive is orphan — rejected; too noisy for drafting workflows.
+- Orphan = missing canonical required relationship — rejected; overlaps validation-owned Active under-linked failures.
+
+## R21 — Validation vs integrity artifact split
+
+**Decision**: `validation.json` owns Active under-linked failures, broken references, duplicate IDs, duplicate Active story triples, and per-primitive advisory warnings (FR-013–FR-026). `integrity-report.json` contains integrity-specific findings only (orphans, duplicate names, likely duplicates, workflow derivability gaps, cross-primitive advisories)—**no duplicate Active validation failure entries**. `duplicateStoryTriples` in integrity output is a summary section for fix-up context; severity and exit code `1` come from validation `duplicate-story-triple` findings. `summary.md` gap sections may reference both sources.
+
+**Rationale**: Spec session 2026-06-25; single-purpose artifacts avoid contradictory severity and simplify CI consumption.
+
+**Alternatives considered**:
+- Duplicate Active failures in both artifacts — rejected; redundant and risks severity drift.
+- Integrity owns all missing-link findings — rejected; Active under-linked rules are validation failures per FR-007.
 

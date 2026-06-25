@@ -1,0 +1,10 @@
+{
+  "primitives": [
+    {
+      "type": "Story",
+      "id": "story-orphan",
+      "name": "Orphan draft story",
+      "status": "Draft"
+    }
+  ]
+}

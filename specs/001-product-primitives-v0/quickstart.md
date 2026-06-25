@@ -43,7 +43,29 @@ ls /tmp/specable-out
 pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/invalid
 ```
 
-**Expected**: exit code `1`; Active failures listed with primitive IDs; Draft issues as warnings; summary preview still shows **Known Modeling Gaps** if summary path runs (default full check).
+**Expected**: exit code `1`; Active failures listed in validation output with primitive IDs; Draft issues as validation warnings; integrity warnings (duplicate names, orphans, etc.) do not alone change exit code; summary preview still shows **Known Modeling Gaps** if summary path runs (default full check).
+
+## Integrity-specific scenarios (Session 2026-06-25)
+
+After US2 implementation, verify with engineered fixtures:
+
+```bash
+# Duplicate normalized names → integrity warning only (exit 0 if no Active failures)
+pnpm --filter @specable/cli exec specable check packages/cli/test/fixtures/integrity/duplicate-name --validate-only
+
+# Disconnected Actor → not an orphan; exit 0
+pnpm --filter @specable/cli exec specable check packages/cli/test/fixtures/integrity/disconnected-actor
+
+# Zero-edge Story → orphan warning in integrity-report.json
+pnpm --filter @specable/cli exec specable check packages/cli/test/fixtures/integrity/orphan-story --integrity-only --out /tmp/orphan-out
+```
+
+**Expected behaviors**:
+
+- Name normalization: trim + lowercase; `" Schedule Session "` matches `"schedule session"`
+- Likely duplicates: Jaccard ≥ 0.8 on word tokens
+- Orphans: type-aware; disconnected Actors excluded
+- `validation.json` and `integrity-report.json` do not duplicate Active under-linked failures
 
 ## Scoped commands
 

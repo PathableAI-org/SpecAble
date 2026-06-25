@@ -1,7 +1,7 @@
 # Data Model: SpecAble v0 — Product Primitive Graph
 
 **Feature**: `001-product-primitives-v0`  
-**Date**: 2026-06-23 (updated 2026-06-24, 2026-06-25)
+**Date**: 2026-06-23 (updated 2026-06-25)
 
 ## Package boundaries
 
@@ -164,7 +164,53 @@ Or string ID shorthand: `"actor-coach"`.
 
 Reference `id` values are canonical `PrimitiveId` values after Schema decode. They are not backend object identifiers.
 
-Broken refs (unknown ID) → **failure** regardless of status.
+Broken refs (unknown ID) → **failure** regardless of status (validation-owned).
+
+## Name normalization (integrity)
+
+Duplicate and likely-duplicate detection compare **normalized** display names within a primitive type:
+
+1. `trim()` leading/trailing whitespace
+2. `toLowerCase()` on the full string
+3. Internal spacing and punctuation **preserved** (no collapse)
+
+Likely duplicates: Jaccard similarity ≥ 0.8 on whitespace-split word tokens after normalization.
+
+## Orphan detection (integrity)
+
+A primitive is an **orphan** when:
+
+1. Zero inbound **and** zero outbound typed relationship edges, **and**
+2. Its type cannot meaningfully stand alone without relationships
+
+**Exclusions**:
+
+- Disconnected **Actors** — never classified as orphans (drafting-friendly)
+- **Draft Objectives** standing alone — not orphans (FR-021)
+
+Orphans → integrity **warning** in `integrity-report.json`.
+
+Active missing required relationships → validation **failure** in `validation.json` (not orphans).
+
+## Workflow derivability (integrity)
+
+For Active Workflows, `expectedResults` and `domainConcepts` may be explicit or **derivable** by traversing linked Capabilities:
+
+- Expected Result derivable if any linked Capability references ≥1 Expected Result
+- Domain Concept derivable if any linked Capability references ≥1 Domain Concept (direct ref or via Capability Concept Link)
+
+If not explicit and not derivable → integrity warning `missing-workflow-derivation`.
+
+## Artifact ownership
+
+| Finding category | Owner artifact | Severity (typical) |
+|------------------|----------------|-------------------|
+| Active under-linked, broken refs, duplicate ID, duplicate story triple | `validation.json` | failure |
+| Draft incompleteness, per-primitive advisories (FR-013–FR-026) | `validation.json` | warning |
+| Orphans, duplicate names, likely duplicates, workflow derivability gaps | `integrity-report.json` | warning |
+| `duplicateStoryTriples` summary | `integrity-report.json` | informational (failures in validation) |
+
+`summary.md` **Known Modeling Gaps** references both sources without duplicating full finding objects (FR-039).
 
 ## Graph project layout
 
@@ -203,9 +249,8 @@ ValidationResult
 └── summary: { failureCount, warningCount, passed: boolean }
 
 IntegrityReport
-├── failures: IntegrityFinding[]
-├── warnings: IntegrityFinding[]
-└── duplicateStoryTriples: StoryTripleConflict[]
+├── warnings: IntegrityFinding[]     # integrity-specific heuristics only
+└── duplicateStoryTriples: StoryTripleConflict[]   # summary; failures owned by validation
 
 ProductSummary
 ├── markdown: string
@@ -222,9 +267,11 @@ ProductSummary
 | Broken reference | failure | failure | failure if referenced |
 | Duplicate ID | failure | failure | failure |
 | Duplicate Active story triple | failure | failure | n/a |
-| Duplicate normalized name (same type) | warning | warning | warning |
-| Likely duplicate name (fuzzy) | warning | warning | warning |
-| Advisory quality heuristics | warning | warning | ignored |
+| Duplicate normalized name (same type) | warning (integrity) | warning (integrity) | warning (integrity) |
+| Likely duplicate name (Jaccard ≥ 0.8) | warning (integrity) | warning (integrity) | warning (integrity) |
+| Orphan (zero-edge, type cannot stand alone) | warning (integrity) | warning (integrity) | ignored |
+| Workflow derivability gap | warning (integrity) | warning (integrity) | ignored |
+| Advisory quality heuristics | warning (validation) | warning (validation) | ignored |
 
 Duplicate normalized names are integrity **warnings** only (FR-034a); they do not alone cause CLI exit code `1`.
 

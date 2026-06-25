@@ -148,30 +148,30 @@ Per constitution v1.1.0 and [plan.md](./plan.md) (Session 2026-06-25):
 
 ## Phase 4: User Story 2 — Inspect Graph Relationship Integrity (Priority: P2)
 
-**Goal**: Integrity report for missing links, orphans, duplicate names/triples, and advisory quality warnings.
+**Goal**: Integrity report for orphans, duplicate names, likely duplicates, workflow derivability gaps, and advisory cross-references. Active under-linked failures and duplicate story triple **failures** remain validation-owned.
 
-**Independent Test**: Engineered fixtures surface orphan capability, duplicate story triple, duplicate names, and persona evidence warnings.
+**Independent Test**: Engineered fixtures surface orphan Story (not disconnected Actor), duplicate names, duplicate story triple summary, and workflow derivability warning; `validation.json` and `integrity-report.json` do not duplicate Active failures.
 
 ### Tests for User Story 2
 
-- [ ] T065 [P] [US2] Add integrity fixtures in `packages/cli/test/fixtures/integrity/` (orphan, duplicate-name, duplicate-triple, advisory)
-- [ ] T066 [P] [US2] Add integrity report tests in `packages/cli/test/integrity/integrity-report.test.ts`
-- [ ] T067 [P] [US2] Add workflow derivation warning tests in `packages/cli/test/integrity/workflow-derivation.test.ts`
+- [X] T065 [P] [US2] Add integrity fixtures in `packages/cli/test/fixtures/integrity/` (orphan-story, disconnected-actor-not-orphan, duplicate-name, likely-duplicate, workflow-derivation-gap)
+- [X] T066 [P] [US2] Add integrity report tests in `packages/cli/test/integrity/integrity-report.test.ts`
+- [X] T067 [P] [US2] Add workflow derivation warning tests in `packages/cli/test/integrity/workflow-derivation.test.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T068 [US2] Create integrity finding types in `packages/cli/src/integrity/IntegrityFinding.ts`
-- [ ] T069 [US2] Implement duplicate name and likely-duplicate detection in `packages/cli/src/integrity/DuplicateDetection.ts`
-- [ ] T070 [US2] Implement duplicate Active story triple detection in `packages/cli/src/integrity/StoryTripleDetection.ts`
-- [ ] T071 [US2] Implement orphan/under-linked detection in `packages/cli/src/integrity/OrphanDetection.ts`
-- [ ] T072 [US2] Implement advisory heuristics in `packages/cli/src/integrity/AdvisoryRules.ts` (capability breadth, domain concept implementation-shaped names, vague expected results, persona evidence)
-- [ ] T073 [US2] Implement workflow Expected Result / Domain Concept derivability checks in `packages/cli/src/integrity/WorkflowDerivation.ts`
-- [ ] T074 [US2] Compose `IntegrityService` in `packages/cli/src/integrity/IntegrityService.ts`
-- [ ] T075 [US2] Add integrity JSON/Markdown encoders in `packages/cli/src/integrity/IntegrityReport.ts`
-- [ ] T076 [US2] Implement stdout integrity renderer in `packages/cli/src/cli/render/IntegrityOutput.ts`
-- [ ] T077 [US2] Wire `--integrity-only` mode in `packages/cli/src/cli/CheckCommand.ts`
+- [X] T068 [US2] Create integrity finding types in `packages/cli/src/integrity/IntegrityFinding.ts`
+- [X] T069 [US2] Implement duplicate name and likely-duplicate detection in `packages/cli/src/integrity/DuplicateDetection.ts` (trim+lowercase normalization; Jaccard ≥ 0.8 on word tokens)
+- [X] T070 [US2] Build `duplicateStoryTriples` summary for `integrity-report.json` from validation `duplicate-story-triple` findings in `packages/cli/src/integrity/StoryTripleSummary.ts` (do not re-detect or duplicate failure severity)
+- [X] T071 [US2] Implement type-aware orphan detection in `packages/cli/src/integrity/OrphanDetection.ts` (zero-edge + type cannot stand alone; exclude disconnected Actors and standalone Draft Objectives)
+- [X] T072 [US2] Implement advisory heuristics in `packages/cli/src/integrity/AdvisoryRules.ts` (capability breadth, domain concept implementation-shaped names, vague expected results, persona evidence)
+- [X] T073 [US2] Implement workflow Expected Result / Domain Concept derivability checks in `packages/cli/src/integrity/WorkflowDerivation.ts` (traverse linked Capabilities; warn when not explicit and not derivable)
+- [X] T074 [US2] Compose `IntegrityService` in `packages/cli/src/integrity/IntegrityService.ts`
+- [X] T075 [US2] Add integrity JSON/Markdown encoders in `packages/cli/src/integrity/IntegrityReport.ts`
+- [X] T076 [US2] Implement stdout integrity renderer in `packages/cli/src/cli/render/IntegrityOutput.ts`
+- [X] T077 [US2] Wire `--integrity-only` mode in `packages/cli/src/cli/CheckCommand.ts`
 
-**Checkpoint**: `--integrity-only` reports triple duplicates and advisory warnings with correct severity.
+**Checkpoint**: `--integrity-only` reports integrity-specific warnings (orphans, duplicate names, derivability) with correct artifact split; duplicate story triple failures remain in validation only.
 
 ---
 
