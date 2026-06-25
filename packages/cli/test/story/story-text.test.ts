@@ -1,7 +1,13 @@
 import { describe, expect, it } from "@effect/vitest"
 import { PrimitiveBase } from "@specable/domain"
 
-import { displayNameFor, generateStoryText, resolveStoryText } from "../../src/story/StoryText.js"
+import {
+  displayNameFor,
+  formatStoryMetadataComment,
+  generateStoryText,
+  resolveStoryText,
+  sanitizeStoryMetadataToken
+} from "../../src/story/StoryText.js"
 import { ids, makeTestGraph } from "../fixtures/validation/helpers.js"
 
 describe("StoryText", () => {
@@ -149,5 +155,29 @@ describe("StoryText", () => {
 
     expect(resolved?.textSource).toBe("generated")
     expect(resolved?.generated).toBe(true)
+  })
+
+  it("sanitizes primitive IDs embedded in story metadata comments", () => {
+    expect(sanitizeStoryMetadataToken("actor-coach")).toBe("actor-coach")
+    expect(sanitizeStoryMetadataToken("evil-->\ninject")).toBe("evil--&gt;inject")
+    expect(sanitizeStoryMetadataToken("a<b>&c")).toBe("a&lt;b&gt;&amp;c")
+
+    const comment = formatStoryMetadataComment(PrimitiveBase.makePrimitiveId("story-->x"), {
+      actorId: PrimitiveBase.makePrimitiveId("actor\n1"),
+      capabilityId: PrimitiveBase.makePrimitiveId("cap<2>"),
+      expectedResultId: PrimitiveBase.makePrimitiveId("result&3"),
+      generated: true,
+      text: "ignored",
+      textSource: "generated"
+    })
+
+    const closeIndex = comment.lastIndexOf("-->")
+    expect(closeIndex).toBe(comment.length - 3)
+    expect(comment.indexOf("-->")).toBe(closeIndex)
+    expect(comment).not.toContain("\n")
+    expect(comment).toContain("story--&gt;x")
+    expect(comment).toContain("actor1")
+    expect(comment).toContain("cap&lt;2&gt;")
+    expect(comment).toContain("result&amp;3")
   })
 })

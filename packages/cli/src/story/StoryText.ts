@@ -88,8 +88,22 @@ export const resolveStoryText = (graph: ProductGraph, story: Story): StoryTextRe
   }
 }
 
+/** Escape primitive IDs for safe inclusion in HTML comment metadata tokens. */
+export const sanitizeStoryMetadataToken = (value: string): string =>
+  value
+    .replace(/[\0\r\n]/g, "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+
 export const formatStoryMetadataComment = (
   storyId: PrimitiveId,
   result: StoryTextResult
-): string =>
-  `<!-- specable:story ${storyId} generated=${result.generated} actor=${result.actorId} capability=${result.capabilityId} expectedResult=${result.expectedResultId} -->`
+): string => {
+  const safeStoryId = sanitizeStoryMetadataToken(storyId)
+  const safeActorId = sanitizeStoryMetadataToken(result.actorId)
+  const safeCapabilityId = sanitizeStoryMetadataToken(result.capabilityId)
+  const safeExpectedResultId = sanitizeStoryMetadataToken(result.expectedResultId)
+
+  return `<!-- specable:story ${safeStoryId} generated=${result.generated} actor=${safeActorId} capability=${safeCapabilityId} expectedResult=${safeExpectedResultId} -->`
+}
