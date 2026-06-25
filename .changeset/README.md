@@ -1,6 +1,6 @@
 # Changesets workflow
 
-SpecAble uses [Changesets](https://github.com/changesets/changesets) to record release notes and semver bumps for `@specable/cli`. We are **pre-MVP**: changes accumulate on `main`, but nothing is published to npm until maintainers deliberately start the alpha line.
+SpecAble uses [Changesets](https://github.com/changesets/changesets) to record release notes and semver bumps for `@specable/cli`. We are **pre-MVP**: changeset files accumulate on `main`, but no versioning or npm publish runs until maintainers deliberately start the alpha line.
 
 ## Phases
 
@@ -12,22 +12,16 @@ Contributors add a changeset with each publishable PR:
 pnpm changeset
 ```
 
-When changesets land on `main`, CI (`.github/workflows/release.yml`) opens or updates a **Version Packages** pull request. That PR:
+Merged `.changeset/*.md` files stay on `main`. Package versions on `main` remain `0.0.0`; no `CHANGELOG.md` bumps land on `main`. The **Release** workflow (`.github/workflows/release.yml`) does **not** run on push to `main`.
 
-- Applies pending changesets to `CHANGELOG.md`
-- Bumps `packages/cli/package.json` version
-- Deletes consumed `.changeset/*.md` files
-
-**Do not merge the Version Packages PR until we are ready for the first alpha release.** While it stays open, more merges to `main` keep updating it with additional changesets. Package versions on `main` remain `0.0.0`.
-
-No npm publish runs in this phase (`publish` is omitted from the Changesets action).
+No npm publish runs in this phase.
 
 ### 2. First alpha release (MVP)
 
-When MVP is ready, maintainers run this **once** on `main` before merging the Version Packages PR:
+When MVP is ready, maintainers run this **once** on `main`:
 
 ```sh
-pnpm changeset pre enter alpha
+pnpm changeset-pre-enter-alpha
 git add .changeset/pre.json
 git commit -m "chore: enter alpha prerelease mode"
 git push
@@ -37,17 +31,19 @@ This creates `.changeset/pre.json`. While it exists, `changeset version` produce
 
 Then:
 
-1. Merge the **Version Packages** PR (versions become `x.y.z-alpha.0`).
-2. Run **Publish to npm** (`.github/workflows/publish.yml` → *workflow_dispatch*) or merge a follow-up that triggers publish.
+1. Manually run the **Release** workflow (`.github/workflows/release.yml` → *workflow_dispatch*).
+2. Review the resulting **Version Packages** pull request (or direct version commit, depending on Actions permissions).
+3. Merge the version bump (versions become `x.y.z-alpha.0`).
+4. Run **Publish to npm** (`.github/workflows/publish.yml` → *workflow_dispatch*).
 
-Subsequent alpha releases: add changesets in PRs → merge to `main` → merge updated Version Packages PR → run publish workflow. Versions increment `alpha.0`, `alpha.1`, …
+Subsequent alpha releases: add changesets in PRs → merge to `main` → dispatch Release → merge Version Packages PR → run publish workflow. Versions increment `alpha.0`, `alpha.1`, …
 
 ### 3. Stable release (post-alpha)
 
 When alpha is complete:
 
 ```sh
-pnpm changeset pre exit
+pnpm changeset-pre-exit
 pnpm changeset-version
 git add -A
 git commit -m "chore: exit alpha prerelease mode"
@@ -67,11 +63,15 @@ Merge that commit, then publish. Versions drop the `-alpha.N` suffix (e.g. `1.0.
 
 ## Why not prerelease mode on `main` from day one?
 
-Changesets [documents](https://github.com/changesets/changesets/blob/main/docs/prereleases.md) that running prerelease mode on the default branch without a separate stable line can block normal versioning until you exit. For a greenfield package at `0.0.0`, we instead:
+Changesets [documents](https://github.com/changesets/changesets/blob/main/docs/prereleases.md) that running prerelease mode on the default branch without a separate stable line can block normal versioning until you exit. Prerelease mode controls version **format** (`-alpha.N`), not whether versioning runs at all.
 
-1. Accumulate `.changeset/*.md` files on `main` with version-only CI.
-2. Enter `alpha` only at the MVP cut.
+For a greenfield package at `0.0.0`, we instead:
+
+1. Accumulate `.changeset/*.md` files on `main` with no release CI.
+2. Enter `alpha` only at the MVP cut, then dispatch Release manually.
 3. Publish manually via workflow dispatch until we enable automatic publish after alpha stabilizes.
+
+When dispatching Release, you may need **Settings → Actions → General → Workflow permissions → "Allow GitHub Actions to create and approve pull requests"**, or a `PAT` secret, for the Version Packages PR pattern.
 
 ## Snapshot releases (optional)
 
