@@ -11,6 +11,25 @@ import { FIXTURE_FILES, GRAPH_METADATA_FILE, GraphMetadataSchema } from "./Fixtu
 import { decodeJsonContent } from "./JsonDecode.js"
 import { buildGraphIndex, type GraphMetadata, type ProductGraph } from "./ProductGraph.js"
 
+const loadFixtureFile = (
+  fs: FileSystem.FileSystem,
+  projectPath: string,
+  fixture: (typeof FIXTURE_FILES)[number]
+): Effect.Effect<readonly Primitive[], FixtureDecodeError | PlatformError> =>
+  Effect.gen(function*() {
+    const filePath = path.join(projectPath, fixture.fileName)
+    const exists = yield* fs.exists(filePath)
+
+    if (!exists) {
+      return []
+    }
+
+    const content = yield* fs.readFileString(filePath)
+    const decoded = yield* fixture.decode(filePath, content)
+
+    return decoded.primitives
+  })
+
 const assertProjectDirectory = (
   fs: FileSystem.FileSystem,
   projectPath: string
@@ -65,17 +84,9 @@ export const loadProductGraph = (
     const primitives: Primitive[] = []
 
     for (const fixture of FIXTURE_FILES) {
-      const filePath = path.join(projectPath, fixture.fileName)
-      const exists = yield* fs.exists(filePath)
+      const loaded = yield* loadFixtureFile(fs, projectPath, fixture)
 
-      if (!exists) {
-        continue
-      }
-
-      const content = yield* fs.readFileString(filePath)
-      const decoded = yield* decodeJsonContent(filePath, fixture.schema, content)
-
-      for (const primitive of decoded.primitives) {
+      for (const primitive of loaded) {
         primitives.push(primitive)
       }
     }

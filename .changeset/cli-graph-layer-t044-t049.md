@@ -2,4 +2,4 @@
 "@specable/cli": patch
 ---
 
-Add CLI graph loading layer: tagged errors, JSON fixture decode, ProductGraph indexing, GraphLoader service, and Node FileSystem Layer wiring (T044–T049).
+Add CLI graph loading layer with GraphRepository abstraction, typed fixture registry (no casts), loader integration tests, and Node FileSystem Layer wiring (T044–T051).

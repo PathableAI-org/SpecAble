@@ -1,0 +1,10 @@
+{
+  "primitives": [
+    {
+      "type": "Objective",
+      "id": "actor-coach",
+      "name": "Duplicate id objective",
+      "status": "Draft"
+    }
+  ]
+}

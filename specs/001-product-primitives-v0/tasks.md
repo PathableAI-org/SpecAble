@@ -102,7 +102,7 @@ description: "Task list for SpecAble v0 — Product Primitive Graph"
 ### Tests and CLI codegen
 
 - [ ] T050 [P] Add minimal schema encode/decode tests in `packages/domain/test/schema-decode.test.ts` (complex compositions only per FR-059)
-- [ ] T051 [P] Add loader integration tests in `packages/cli/test/graph/graph-loader.test.ts` (missing type file, broken YAML, fixture decode via domain schemas)
+- [X] T051 [P] Add loader integration tests in `packages/cli/test/graph/graph-loader.test.ts` (missing type file, broken JSON, fixture decode via domain schemas)
 - [ ] T052 Run `@effect/build-utils` codegen in `packages/cli/package.json`, update root `package.json` scripts for both packages, and generate exports via `pnpm codegen`
 
 **Checkpoint**: `@specable/domain` builds and exports schemas; graph loads synthetic test fixtures in `@specable/cli`; domain decode tests and loader tests pass.

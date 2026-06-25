@@ -1,4 +1,7 @@
 
+export * as RootCommand from "./cli/RootCommand.js"
+
+
 export * as errors from "./errors.js"
 
 
@@ -6,6 +9,9 @@ export * as FixtureFiles from "./graph/FixtureFiles.js"
 
 
 export * as GraphLoader from "./graph/GraphLoader.js"
+
+
+export * as GraphRepository from "./graph/GraphRepository.js"
 
 
 export * as JsonDecode from "./graph/JsonDecode.js"

@@ -9,7 +9,7 @@ const decodeFailureMessage = (error: ParseError): string =>
 
 const decodeSchema = <A, I>(
   filePath: string,
-  schema: Schema.Schema<A, I>,
+  schema: Schema.Schema<A, I, never>,
   parsed: unknown
 ): Effect.Effect<A, FixtureDecodeError> => {
   const result = Schema.decodeUnknownEither(schema)(parsed)
@@ -33,7 +33,7 @@ export const parseJsonString = (
 
 export const decodeJsonContent = <A, I>(
   filePath: string,
-  schema: Schema.Schema<A, I>,
+  schema: Schema.Schema<A, I, never>,
   content: string
 ): Effect.Effect<A, FixtureDecodeError> =>
   Effect.gen(function*() {
@@ -43,6 +43,6 @@ export const decodeJsonContent = <A, I>(
 
 export const decodeJsonFile = <A, I>(
   filePath: string,
-  schema: Schema.Schema<A, I>,
+  schema: Schema.Schema<A, I, never>,
   content: string
 ): Effect.Effect<A, FixtureDecodeError> => decodeJsonContent(filePath, schema, content)

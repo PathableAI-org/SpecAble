@@ -19,10 +19,7 @@
   "ignoreDependencies": [
     "@babel/plugin-transform-export-namespace-from",
     "@babel/plugin-transform-modules-commonjs",
-    "babel-plugin-annotate-pure-calls",
-    "@effect/cli",
-    "@effect/vitest",
-    "yaml"
+    "babel-plugin-annotate-pure-calls"
   ],
   "duplicates": {
     "minOccurrences": 3

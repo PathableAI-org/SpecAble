@@ -1,3 +1,6 @@
+import type { FixtureDecodeError } from "@specable/domain/errors.js"
+import type { Effect } from "effect"
+
 import { Schema } from "@effect/schema"
 import {
   Actor,
@@ -8,16 +11,15 @@ import {
   Objective,
   Persona,
   type Primitive,
-  type PrimitiveType,
   Story,
   Workflow
 } from "@specable/domain"
 
-type PrimitiveFileSchema = Schema.Schema<{ readonly primitives: readonly Primitive[] }, unknown>
+import { decodeJsonContent } from "./JsonDecode.js"
 
-export const makePrimitiveFileSchema = <A>(
-  itemSchema: Schema.Schema<A>
-): Schema.Schema<{ readonly primitives: readonly A[] }> =>
+export const makePrimitiveFileSchema = <A, I>(
+  itemSchema: Schema.Schema<A, I, never>
+): Schema.Schema<{ readonly primitives: readonly A[] }, { readonly primitives: readonly I[] }, never> =>
   Schema.Struct({
     primitives: Schema.Array(itemSchema)
   })
@@ -30,66 +32,41 @@ export const GraphMetadataSchema = Schema.Struct({
   schemaVersion: Schema.Number
 })
 
-export interface FixtureFileEntry {
+export interface FixtureFileEntry<A extends Primitive = Primitive> {
+  readonly decode: (
+    filePath: string,
+    content: string
+  ) => Effect.Effect<{ readonly primitives: readonly A[] }, FixtureDecodeError>
   readonly fileName: string
-  readonly primitiveType: PrimitiveType
-  readonly schema: PrimitiveFileSchema
+  readonly primitiveType: A["type"]
 }
 
 export type GraphMetadataDecoded = typeof GraphMetadataSchema.Type
 
-// Per-type schemas decode to distinct primitive shapes; unify at the graph boundary.
-const asPrimitiveFileSchema = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- registry unifies typed per-file schemas
-  itemSchema: Schema.Schema<any, any, never>
-): PrimitiveFileSchema => makePrimitiveFileSchema(itemSchema) as PrimitiveFileSchema
+export const fixtureFile = <A extends Primitive, I>(
+  fileName: string,
+  primitiveType: A["type"],
+  itemSchema: Schema.Schema<A, I, never>
+): FixtureFileEntry<A> => {
+  const schema = makePrimitiveFileSchema(itemSchema)
 
-export const FIXTURE_FILES: readonly FixtureFileEntry[] = [
-  {
-    fileName: "objectives.json",
-    primitiveType: "Objective",
-    schema: asPrimitiveFileSchema(Objective)
-  },
-  {
-    fileName: "actors.json",
-    primitiveType: "Actor",
-    schema: asPrimitiveFileSchema(Actor)
-  },
-  {
-    fileName: "personas.json",
-    primitiveType: "Persona",
-    schema: asPrimitiveFileSchema(Persona)
-  },
-  {
-    fileName: "domain-concepts.json",
-    primitiveType: "DomainConcept",
-    schema: asPrimitiveFileSchema(DomainConcept)
-  },
-  {
-    fileName: "capabilities.json",
-    primitiveType: "Capability",
-    schema: asPrimitiveFileSchema(Capability)
-  },
-  {
-    fileName: "capability-concept-links.json",
-    primitiveType: "CapabilityConceptLink",
-    schema: asPrimitiveFileSchema(CapabilityConceptLink)
-  },
-  {
-    fileName: "expected-results.json",
-    primitiveType: "ExpectedResult",
-    schema: asPrimitiveFileSchema(ExpectedResult)
-  },
-  {
-    fileName: "workflows.json",
-    primitiveType: "Workflow",
-    schema: asPrimitiveFileSchema(Workflow)
-  },
-  {
-    fileName: "stories.json",
-    primitiveType: "Story",
-    schema: asPrimitiveFileSchema(Story)
+  return {
+    decode: (filePath, content) => decodeJsonContent(filePath, schema, content),
+    fileName,
+    primitiveType
   }
-]
+}
+
+export const FIXTURE_FILES = [
+  fixtureFile("objectives.json", "Objective", Objective),
+  fixtureFile("actors.json", "Actor", Actor),
+  fixtureFile("personas.json", "Persona", Persona),
+  fixtureFile("domain-concepts.json", "DomainConcept", DomainConcept),
+  fixtureFile("capabilities.json", "Capability", Capability),
+  fixtureFile("capability-concept-links.json", "CapabilityConceptLink", CapabilityConceptLink),
+  fixtureFile("expected-results.json", "ExpectedResult", ExpectedResult),
+  fixtureFile("workflows.json", "Workflow", Workflow),
+  fixtureFile("stories.json", "Story", Story)
+] as const
 
 export type FixtureFileName = (typeof FIXTURE_FILES)[number]["fileName"]

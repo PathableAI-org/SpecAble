@@ -1,0 +1,11 @@
+{
+  "primitives": [
+    {
+      "type": "Actor",
+      "id": "actor-coach",
+      "name": "Coach",
+      "status": "NotAStatus",
+      "category": "Human"
+    }
+  ]
+}
