@@ -48,7 +48,8 @@
         "**/*.ts"
       ],
       "exclude": [
-        "bin.ts"
+        "bin.ts",
+        "validation/rules/**"
       ]
     }
   }

@@ -126,21 +126,21 @@ Per constitution v1.1.0 and [plan.md](./plan.md) (Session 2026-06-25):
 
 ### Tests for User Story 1
 
-- [ ] T053 [P] [US1] Add validation fixture helpers in `packages/cli/test/fixtures/validation/` (valid, draft-warn, active-fail, broken-ref)
-- [ ] T054 [P] [US1] Add structural validation tests in `packages/cli/test/validation/structural-validation.test.ts`
-- [ ] T055 [P] [US1] Add status-aware rule tests in `packages/cli/test/validation/status-aware-rules.test.ts` covering Draft warnings vs Active failures
+- [X] T053 [P] [US1] Add validation fixture helpers in `packages/cli/test/fixtures/validation/` (valid, draft-warn, active-fail, broken-ref)
+- [X] T054 [P] [US1] Add structural validation tests in `packages/cli/test/validation/structural-validation.test.ts`
+- [X] T055 [P] [US1] Add status-aware rule tests in `packages/cli/test/validation/status-aware-rules.test.ts` covering Draft warnings vs Active failures
 
 ### Implementation for User Story 1
 
-- [ ] T056 [US1] Create finding types in `packages/cli/src/validation/ValidationFinding.ts` (severity, code, primitiveType, primitiveId, field, message)
-- [ ] T057 [US1] Implement structural checks in `packages/cli/src/validation/StructuralValidation.ts` (duplicate IDs, broken refs, missing required fields)
-- [ ] T058 [US1] Implement per-type Active rules in `packages/cli/src/validation/rules/` (split files per primitive type per FR-010–FR-026)
-- [ ] T059 [US1] Implement status-aware evaluator in `packages/cli/src/validation/StatusAwareValidation.ts` (Draft→warning, Active→failure, Deprecated exemptions)
-- [ ] T060 [US1] Compose `ValidationService` in `packages/cli/src/validation/ValidationService.ts` returning `ValidationResult`
-- [ ] T061 [US1] Add validation JSON encoder in `packages/cli/src/validation/ValidationReport.ts` matching `specs/001-product-primitives-v0/contracts/output-artifacts.md`
-- [ ] T062 [US1] Implement stdout validation renderer in `packages/cli/src/cli/render/ValidationOutput.ts`
-- [ ] T063 [US1] Wire `--validate-only` path in `packages/cli/src/cli/CheckCommand.ts` using `@effect/cli`
-- [ ] T064 [US1] Create Node entrypoint in `packages/cli/src/bin.ts` running `CheckCommand` via `@effect/platform-node`
+- [X] T056 [US1] Create finding types in `packages/cli/src/validation/ValidationFinding.ts` (severity, code, primitiveType, primitiveId, field, message)
+- [X] T057 [US1] Implement structural checks in `packages/cli/src/validation/StructuralValidation.ts` (duplicate IDs, broken refs, missing required fields)
+- [X] T058 [US1] Implement per-type Active rules in `packages/cli/src/validation/rules/` (split files per primitive type per FR-010–FR-026)
+- [X] T059 [US1] Implement status-aware evaluator in `packages/cli/src/validation/StatusAwareValidation.ts` (Draft→warning, Active→failure, Deprecated exemptions)
+- [X] T060 [US1] Compose `ValidationService` in `packages/cli/src/validation/ValidationService.ts` returning `ValidationResult`
+- [X] T061 [US1] Add validation JSON encoder in `packages/cli/src/validation/ValidationReport.ts` matching `specs/001-product-primitives-v0/contracts/output-artifacts.md`
+- [X] T062 [US1] Implement stdout validation renderer in `packages/cli/src/cli/render/ValidationOutput.ts`
+- [X] T063 [US1] Wire `--validate-only` path in `packages/cli/src/cli/CheckCommand.ts` using `@effect/cli`
+- [X] T064 [US1] Create Node entrypoint in `packages/cli/src/bin.ts` running `CheckCommand` via `@effect/platform-node`
 
 **Checkpoint**: `specable check <fixture> --validate-only` prints status, failures, and warnings; exit code 1 on Active failures.
 

@@ -1,0 +1,10 @@
+{
+  "primitives": [
+    {
+      "type": "Objective",
+      "id": "obj-draft",
+      "name": "Draft objective",
+      "status": "Draft"
+    }
+  ]
+}

@@ -1,8 +1,10 @@
 import type { ParseError } from "@effect/schema/ParseResult"
 
 import { ArrayFormatter, Schema } from "@effect/schema"
-import { FixtureDecodeError } from "@specable/domain/errors.js"
+import { errors as domainErrors } from "@specable/domain"
 import { Effect } from "effect"
+
+type FixtureDecodeError = domainErrors.FixtureDecodeError
 
 const decodeFailureMessage = (error: ParseError): string =>
   ArrayFormatter.formatErrorSync(error)[0]?.message ?? "Schema decode failed"
@@ -15,7 +17,7 @@ const decodeSchema = <A, I>(
   const result = Schema.decodeUnknownEither(schema)(parsed)
   return result._tag === "Right"
     ? Effect.succeed(result.right)
-    : Effect.fail(new FixtureDecodeError({ filePath, message: decodeFailureMessage(result.left) }))
+    : Effect.fail(new domainErrors.FixtureDecodeError({ filePath, message: decodeFailureMessage(result.left) }))
 }
 
 export const parseJsonString = (
@@ -24,7 +26,7 @@ export const parseJsonString = (
 ): Effect.Effect<unknown, FixtureDecodeError> =>
   Effect.try({
     catch: (cause) =>
-      new FixtureDecodeError({
+      new domainErrors.FixtureDecodeError({
         filePath,
         message: cause instanceof Error ? cause.message : "Invalid JSON"
       }),
