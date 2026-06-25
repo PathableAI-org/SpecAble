@@ -29,7 +29,7 @@ export const GRAPH_METADATA_FILE = "graph.json"
 export const GraphMetadataSchema = Schema.Struct({
   description: Schema.optional(Schema.String),
   name: Schema.optional(Schema.String),
-  schemaVersion: Schema.Number
+  schemaVersion: Schema.Literal(1)
 })
 
 export interface FixtureFileEntry<A extends Primitive = Primitive> {
