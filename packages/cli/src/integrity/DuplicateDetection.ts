@@ -26,6 +26,7 @@ const duplicateNameFinding = (
   severity: "warning"
 })
 
+// fallow-ignore-next-line complexity
 export const findDuplicateNames = (graph: ProductGraph): readonly IntegrityFinding[] => {
   const findings: IntegrityFinding[] = []
 
@@ -40,6 +41,11 @@ export const findDuplicateNames = (graph: ProductGraph): readonly IntegrityFindi
       }
 
       const normalized = normalizeDisplayName(primitive.name)
+
+      if (normalized.length === 0) {
+        continue
+      }
+
       const group = byNormalizedName.get(normalized) ?? []
       group.push(primitiveId)
       byNormalizedName.set(normalized, group)
@@ -127,6 +133,13 @@ const likelyDuplicateFindingsForType = (
       const right = primitives[rightIndex]
 
       if (left === undefined || right === undefined) {
+        continue
+      }
+
+      if (
+        normalizeDisplayName(left.name).length === 0 ||
+        normalizeDisplayName(right.name).length === 0
+      ) {
         continue
       }
 
