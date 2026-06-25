@@ -1,0 +1,13 @@
+{
+  "primitives": [
+    {
+      "type": "Objective",
+      "id": "obj-scheduling",
+      "name": "Improve scheduling",
+      "status": "Active",
+      "description": "Reduce manual scheduling work",
+      "successCriteria": "Coaches spend less time coordinating sessions",
+      "workflows": ["workflow-scheduling"]
+    }
+  ]
+}

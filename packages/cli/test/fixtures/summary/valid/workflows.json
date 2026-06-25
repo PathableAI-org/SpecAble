@@ -1,0 +1,16 @@
+{
+  "primitives": [
+    {
+      "type": "Workflow",
+      "id": "workflow-scheduling",
+      "name": "Session Scheduling",
+      "status": "Active",
+      "description": "Coach schedules a session with a participant",
+      "objectives": ["obj-scheduling"],
+      "primaryActors": ["actor-coach"],
+      "capabilities": ["cap-schedule"],
+      "stories": ["story-a"],
+      "sequenceNotes": "Coach opens scheduler and confirms session"
+    }
+  ]
+}

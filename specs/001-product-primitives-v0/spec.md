@@ -25,12 +25,6 @@
 
 ### Session 2026-06-24
 
-- Q: Where should domain models live in Phase 2? → A: In a dedicated workspace package (`@specable/domain`) that `@specable/cli` depends on—not embedded under `packages/cli/src/domain/`.
-- Q: How should enumerated domain values be represented? → A: Effect Schema literal unions (Schema union types); native TypeScript `enum` declarations are prohibited.
-- Q: What is the preferred representation for closed-set domain values? → A: Always prefer Schema union types over native TypeScript enums.
-- Q: What is the scope boundary of `@specable/domain` vs `@specable/cli`? → A: `@specable/domain` holds primitive schemas, Schema literal unions, reference types, and domain tagged errors only; graph types, loaders, validation, integrity, summary, and CLI stay in `@specable/cli`. The only logic in `@specable/domain` is that embedded in Effect Schema itself.
-- Q: How should schemas express semantic meaning and field-level validation? → A: Leverage Effect Schema annotations to describe semantic meaning and encode validation wherever Schema supports it; logic beyond Schema capabilities belongs in downstream packages that consume these schemas.
-- Q: What testing is required in `@specable/domain`? → A: Minimal—focused on encode/decode round-trips for complex schema cases only; comprehensive validation and graph behavior tests live in consuming packages.
 - Q: What severity should duplicate normalized names within a primitive type receive? → A: Integrity **warnings** only—report in the integrity report but do not fail validation or cause a non-zero CLI exit code on names alone.
 - Q: What CLI exit code policy should `specable check` use? → A: Exit `0` when no Active validation failures; exit `1` on Active validation failures or broken references; exit `2` on usage/runtime/decode errors; integrity warnings alone (duplicate names, likely duplicates, advisory flags) never fail exit.
 - Q: What fixture file encoding should v0 graph projects use? → A: **JSON only** for primitive type files and optional project metadata—not YAML. v0 loader, bundled examples, and documentation MUST use JSON fixtures exclusively.
@@ -137,10 +131,6 @@ A new user opens bundled example primitive graphs to understand how to model pro
 **Scope and architecture**
 
 - **FR-001**: The release MUST model product intent using the canonical Product Primitives ontology without a reduced divergent relationship model. Supported v0 types: Objective, Actor, Persona, Domain Concept, Capability, Capability Concept Link, Expected Result, Workflow, and Story.
-- **FR-056**: Domain primitive schemas, closed-set value types (e.g., `status`, actor category, concept role/importance, persona confidence), reference types, and domain-level tagged errors MUST live in a dedicated workspace package (`@specable/domain`). `@specable/cli` MUST depend on `@specable/domain` for domain types. Graph types (`ProductGraph`, indexes), loaders, status-aware validation engines, integrity analysis, summary generation, and CLI/I/O adapters MUST remain in `@specable/cli` or other downstream packages—not in `@specable/domain`.
-- **FR-057**: All closed-set domain values MUST be defined as Effect Schema literal unions, not native TypeScript `enum` declarations. Schema union types are the canonical representation for enumerated domain fields.
-- **FR-058**: `@specable/domain` MUST encode semantic meaning and field-level constraints using Effect Schema annotations and built-in Schema validation features to the fullest practical extent. The only executable logic in `@specable/domain` is that provided by Effect Schema (decode, encode, filters, refinements, annotations). Cross-primitive graph rules, status-aware severity, integrity analysis, derivation, and artifact generation MUST be implemented in downstream packages that consume `@specable/domain` schemas.
-- **FR-059**: `@specable/domain` test coverage MUST be minimal—limited to verifying encode/decode behavior for complex or non-obvious schema compositions. Comprehensive validation, graph traversal, integrity, summary, and CLI behavior tests MUST live in consuming packages (primarily `@specable/cli`).
 - **FR-002**: The primitive graph MUST be the source of truth; Stories, summaries, PRDs, tickets, and handoff documents MUST be treated as outputs or communication artifacts, not authoritative inputs.
 - **FR-003**: The core library MUST operate on local fixture files without requiring Notion, Confluence, Linear, Jira, GitHub, Figma, MCP, cloud hosting, authentication, or write-back automation at runtime. Canonical relationship rules are sourced from the Notion Product Primitives ontology definition but encoded locally for offline validation.
 - **FR-004**: Product Experience Context, Design Impact Review, design artifacts, Figma handoff, roadmap generation, vertical slice planning, and implementation task generation MUST be out of scope for this release (MAY be referenced only as future extensions).
@@ -265,7 +255,7 @@ A new user opens bundled example primitive graphs to understand how to model pro
 - **Expected Result**: Observable changed state with producing capabilities and supported objectives.
 - **Workflow**: Operational sequence linking objectives, primary actors, capabilities, and stories with sequence notes.
 - **Story**: Human-readable derived planning artifact from Actor + Capability + Expected Result (+ Workflow membership). Stored text preferred in summaries; otherwise deterministic template text satisfies Active validation.
-- **Primitive status**: `Draft` | `Active` | `Deprecated` (Schema literal union); controls validation strictness.
+- **Primitive status**: `Draft` | `Active` | `Deprecated`; controls validation strictness.
 - **Relationship edge**: Typed link between primitives per canonical ontology; carries integrity and derivation rules.
 - **Validation finding**: Structured issue with severity (`warning` | `failure`) for fields, relationships, broken references, duplicate IDs, duplicate Active story triples, or per-primitive advisory quality flags (FR-013–FR-026) on a specific primitive ID; emitted in `validation.json`.
 - **Integrity finding**: Structured issue for cross-primitive graph heuristics—missing links, orphans (zero-edge primitives whose type cannot stand alone without relationships; excludes disconnected Actors and standalone Draft Objectives), duplicate normalized names (warning), likely duplicates via Jaccard ≥ 0.8 on word tokens (warning), workflow derivation gaps (FR-016), and related graph-level advisories; emitted in `integrity-report.json`. Duplicate Active story triple failures are validation findings; integrity output includes a `duplicateStoryTriples` summary only.
@@ -288,9 +278,7 @@ A new user opens bundled example primitive graphs to understand how to model pro
 ## Assumptions
 
 - Primary users are product owners, product engineers, and technical writers modeling intent locally before any Notion or PM tool adapters exist.
-- Phase 2 foundational work introduces `@specable/domain` as a separate workspace package for domain models; `@specable/cli` consumes it. Closed-set fields use Effect Schema literal unions exclusively—native TypeScript `enum` is not used.
-- `@specable/domain` is schema-only: semantic meaning and field constraints are expressed via Effect Schema annotations and built-in validation; graph loading, status-aware rules, integrity, and summaries are downstream concerns.
-- `@specable/domain` carries minimal tests (complex encode/decode cases only); behavioral test suites belong in `@specable/cli`.
+- Implementation architecture (library packaging, schema technology, test boundaries) is defined in [plan.md](./plan.md); this specification describes user-visible product behavior only.
 - Canonical relationship rules match the Notion Product Primitives ontology; v0 encodes those rules locally—Notion is a specification source, not a runtime dependency.
 - Fixture files use **JSON only** in a graph project folder with **one file per primitive type** plus optional project metadata; exact filenames and metadata schema will be defined during planning but MUST remain storage-provider agnostic. YAML fixture input is explicitly out of scope for v0.
 - Stable IDs are globally unique strings within a graph project; duplicate IDs are validation failures enforced at the storage/repository boundary (loaders fail on first duplicate; CLI maps to exit `1`).

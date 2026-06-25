@@ -1,0 +1,11 @@
+{
+  "primitives": [
+    {
+      "type": "DomainConcept",
+      "id": "concept-session",
+      "name": "Session",
+      "status": "Active",
+      "definition": "A scheduled coaching session"
+    }
+  ]
+}

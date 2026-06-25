@@ -1,0 +1,14 @@
+{
+  "primitives": [
+    {
+      "type": "CapabilityConceptLink",
+      "id": "ccl-schedule-session",
+      "name": "Schedule session link",
+      "status": "Active",
+      "capability": "cap-schedule",
+      "domainConcept": "concept-session",
+      "role": "Creates",
+      "importance": "Primary"
+    }
+  ]
+}

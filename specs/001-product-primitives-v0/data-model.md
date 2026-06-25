@@ -20,7 +20,7 @@
 
 Storage mechanics (per-type JSON files, paths, `JSON.parse`) MUST NOT leak past `GraphLoader` into validation, integrity, or CLI adapters.
 
-Closed-set fields (`status`, `category`, `role`, `importance`, `confidence`, etc.) are **Schema literal unions** in `@specable/domain` — not native TypeScript `enum`. Field semantics and Schema-supported validation use Effect Schema annotations (FR-058).
+Closed-set fields (`status`, `category`, `role`, `importance`, `confidence`, etc.) are **Schema literal unions** in `@specable/domain` — not native TypeScript `enum`. Field semantics and Schema-supported validation use Effect Schema annotations (AC-003 in [plan.md](./plan.md)).
 
 Opaque canonical primitive IDs are branded as `PrimitiveId` in `@specable/domain`. Human-authored prose and display strings remain unbranded. Adapter-specific IDs (for example SQL row IDs, Notion page IDs, Confluence page IDs) are adapter-layer concerns and must not leak into domain primitive schemas.
 

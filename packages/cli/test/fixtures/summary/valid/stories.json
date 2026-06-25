@@ -1,0 +1,14 @@
+{
+  "primitives": [
+    {
+      "type": "Story",
+      "id": "story-a",
+      "name": "Coach schedules session",
+      "status": "Active",
+      "actor": "actor-coach",
+      "capability": "cap-schedule",
+      "expectedResult": "result-scheduled",
+      "workflows": ["workflow-scheduling"]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "primitives": [
+    {
+      "type": "Persona",
+      "id": "persona-coach",
+      "name": "Busy Coach",
+      "status": "Active",
+      "description": "Coach persona with validated evidence",
+      "primaryActors": ["actor-coach"],
+      "goalsOrPainPoints": "Schedule sessions quickly with limited admin time",
+      "evidence": "Interview notes",
+      "confidence": "Validated"
+    }
+  ]
+}
