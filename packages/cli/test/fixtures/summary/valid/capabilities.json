@@ -1,0 +1,15 @@
+{
+  "primitives": [
+    {
+      "type": "Capability",
+      "id": "cap-schedule",
+      "name": "Schedule Session",
+      "status": "Active",
+      "description": "Schedule a coaching session",
+      "actors": ["actor-coach"],
+      "expectedResults": ["result-scheduled"],
+      "workflows": ["workflow-scheduling"],
+      "domainConcepts": ["concept-session"]
+    }
+  ]
+}

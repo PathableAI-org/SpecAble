@@ -71,6 +71,19 @@ export class OutputWriteError extends Schema.TaggedError<OutputWriteError>("Outp
   }
 ) {}
 
+export class ScopeFlagConflictError extends Schema.TaggedError<ScopeFlagConflictError>(
+  "ScopeFlagConflictError"
+)(
+  "ScopeFlagConflictError",
+  {
+    message: Schema.String.annotations({
+      description: "Human-readable explanation of conflicting CLI scope flags",
+      identifier: "ScopeFlagConflictMessage",
+      title: "Message"
+    })
+  }
+) {}
+
 export class ValidationFailedError extends Schema.TaggedError<ValidationFailedError>("ValidationFailedError")(
   "ValidationFailedError",
   {

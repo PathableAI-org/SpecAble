@@ -7,7 +7,7 @@
 
 **Decision**: Two workspace packages: `@specable/domain` at `packages/domain` (primitive schemas, Schema literal unions, references, domain decode errors) and `@specable/cli` at `packages/cli` (graph, validation, integrity, summary, CLI). CLI depends on domain.
 
-**Rationale**: Clarified in spec session 2026-06-24 (FR-056). Aligns with constitution Principle V (library-first). Domain schemas are reusable by future MCP adapters without coupling to CLI/I/O. Phase 1 bootstrap used a single CLI package; Phase 2 adds the domain package before foundational schema work.
+**Rationale**: Clarified in spec session 2026-06-24 (AC-001 in plan.md). Aligns with constitution Principle V (library-first).
 
 **Alternatives considered**:
 - Single `@specable/cli` with internal `domain/` module — rejected after 2026-06-24 clarification; deferred extraction no longer matches spec.
@@ -25,7 +25,7 @@
 
 ## R3 — Schema system
 
-**Decision**: `@effect/schema` (Effect Schema) for all primitive types, closed-set values, relationship payloads, CLI output DTOs, and fixture decoding. Closed-set domain values use `Schema.Literal` unions — native TypeScript `enum` is prohibited (FR-057). Semantic meaning and field-level validation use Schema annotations and built-in filters/refinements wherever practical (FR-058).
+**Decision**: `@effect/schema` (Effect Schema) for all primitive types, closed-set values, relationship payloads, CLI output DTOs, and fixture decoding. Closed-set domain values use `Schema.Literal` unions — native TypeScript `enum` is prohibited (AC-002). Semantic meaning and field-level validation use Schema annotations and built-in filters/refinements wherever practical (AC-003).
 
 **Rationale**: Constitution requires explicit schemas; Effect Schema integrates with tagged errors and `@effect/cli` decoding. Annotation-first approach keeps validation logic in Schema for simple constraints; cross-primitive rules stay in `@specable/cli`.
 
@@ -127,7 +127,7 @@
 
 **Decision**: `@specable/domain` contains primitive schemas, Schema literal unions (`packages/domain/src/unions/`), `Reference`, `PrimitiveBase`, nine primitive schemas, and `FixtureDecodeError`. No graph types, loaders, validation engines, or Node platform imports.
 
-**Rationale**: FR-056, FR-058. Only logic embedded in Effect Schema lives in domain; downstream packages consume decoded types.
+**Rationale**: AC-001, AC-003 in plan.md. Only logic embedded in Effect Schema lives in domain; downstream packages consume decoded types.
 
 **Alternatives considered**:
 - Include `ProductGraph` in domain — rejected; graph indexing is not a domain model concern.
@@ -137,7 +137,7 @@
 
 **Decision**: Minimal tests in `@specable/domain` — encode/decode round-trips for complex or non-obvious schema compositions only. Comprehensive behavioral tests in `@specable/cli`.
 
-**Rationale**: FR-059. Domain package is declarative; behavioral coverage belongs with consuming packages.
+**Rationale**: AC-004 in plan.md. Domain package is declarative; behavioral coverage belongs with consuming packages.
 
 ## R15 — Schema annotations and relationship semantics
 

@@ -110,7 +110,7 @@ Per constitution v1.1.0 and [plan.md](./plan.md) (Session 2026-06-25):
 
 ### Tests and CLI codegen
 
-- [X] T050 [P] Add minimal schema encode/decode tests in `packages/domain/test/schema-decode.test.ts` (complex compositions only per FR-059)
+- [X] T050 [P] Add minimal schema encode/decode tests in `packages/domain/test/schema-decode.test.ts` (complex compositions only per AC-004)
 - [X] T051 [P] Add loader integration tests in `packages/cli/test/graph/graph-loader.test.ts` (missing type file, broken JSON, fixture decode via domain schemas)
 - [X] T052 Run `@effect/build-utils` codegen in `packages/cli/package.json`, update root `package.json` scripts for both packages, and generate exports via `pnpm codegen`
 
@@ -183,20 +183,20 @@ Per constitution v1.1.0 and [plan.md](./plan.md) (Session 2026-06-25):
 
 ### Tests for User Story 3
 
-- [ ] T078 [P] [US3] Add story text template tests in `packages/cli/test/story/story-text.test.ts`
-- [ ] T079 [P] [US3] Add summary determinism tests in `packages/cli/test/summary/summary-generator.test.ts`
-- [ ] T080 [P] [US3] Add CLI output artifact tests in `packages/cli/test/cli/check-output.test.ts` (`--out` files, stdout preview, exit codes)
+- [X] T078 [P] [US3] Add story text template tests in `packages/cli/test/story/story-text.test.ts`
+- [X] T079 [P] [US3] Add summary determinism tests in `packages/cli/test/summary/summary-generator.test.ts`
+- [X] T080 [P] [US3] Add CLI output artifact tests in `packages/cli/test/cli/check-output.test.ts` (`--out` files, stdout preview, exit codes)
 
 ### Implementation for User Story 3
 
-- [ ] T081 [US3] Implement deterministic story text generator in `packages/cli/src/story/StoryText.ts` (`As a {Actor}, I can {Capability} so that {Expected Result}.`)
-- [ ] T082 [US3] Implement summary section builders in `packages/cli/src/summary/SummarySections.ts` (objectives, workflows, actors/personas, capabilities, domain concepts, expected results, stories, gaps)
-- [ ] T083 [US3] Implement `SummaryGenerator` in `packages/cli/src/summary/SummaryGenerator.ts` with failure/warning gap sections
-- [ ] T084 [US3] Implement summary preview truncation in `packages/cli/src/summary/SummaryPreview.ts` for stdout
-- [ ] T085 [US3] Implement artifact writers in `packages/cli/src/cli/output/ArtifactWriter.ts` (`summary.md`, `validation.json`, `integrity-report.json`, `integrity-report.md`, `check-result.json`)
-- [ ] T086 [US3] Implement combined stdout orchestration in `packages/cli/src/cli/render/CheckOutput.ts` (deterministic section order)
-- [ ] T087 [US3] Complete default `check` command and flags (`--summary-only`, `--out`) in `packages/cli/src/cli/CheckCommand.ts` per `specs/001-product-primitives-v0/contracts/cli-commands.md`
-- [ ] T088 [US3] Export public library APIs from generated `packages/cli/src/index.ts` via `pnpm codegen`
+- [X] T081 [US3] Implement deterministic story text generator in `packages/cli/src/story/StoryText.ts` (`As a {Actor}, I can {Capability} so that {Expected Result}.`)
+- [X] T082 [US3] Implement summary section builders in `packages/cli/src/summary/SummarySections.ts` (objectives, workflows, actors/personas, capabilities, domain concepts, expected results, stories, gaps)
+- [X] T083 [US3] Implement `SummaryGenerator` in `packages/cli/src/summary/SummaryGenerator.ts` with failure/warning gap sections
+- [X] T084 [US3] Implement summary preview truncation in `packages/cli/src/summary/SummaryPreview.ts` for stdout
+- [X] T085 [US3] Implement artifact writers in `packages/cli/src/cli/output/ArtifactWriter.ts` (`summary.md`, `validation.json`, `integrity-report.json`, `integrity-report.md`, `check-result.json`)
+- [X] T086 [US3] Implement combined stdout orchestration in `packages/cli/src/cli/render/CheckOutput.ts` (deterministic section order)
+- [X] T087 [US3] Complete default `check` command and flags (`--summary-only`, `--out`) in `packages/cli/src/cli/CheckCommand.ts` per `specs/001-product-primitives-v0/contracts/cli-commands.md`
+- [X] T088 [US3] Export public library APIs from generated `packages/cli/src/index.ts` via `pnpm codegen`
 
 **Checkpoint**: Default `specable check` prints validation + integrity + preview; `--out` writes artifacts; SC-007 determinism tests pass.
 

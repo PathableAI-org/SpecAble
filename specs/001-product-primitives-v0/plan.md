@@ -26,7 +26,7 @@ Technical approach: Effect Schema with annotations for semantic meaning and fiel
 
 **Performance Goals**: Generic valid example validates in <5s on typical laptop (SC-002)
 
-**Constraints**: No Notion/MCP/cloud runtime deps; deterministic summary/story generation; stdout-default CLI; strict TS (`strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`); closed-set values as Schema literal unions only (FR-057); domain package is schema-only (FR-058); **no `any`**; **avoid type casts**; **hide storage I/O behind repository services** (constitution v1.1.0)
+**Constraints**: No Notion/MCP/cloud runtime deps; deterministic summary/story generation; stdout-default CLI; strict TS (`strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`); closed-set values as Schema literal unions only (AC-002); domain package is schema-only (AC-003); **no `any`**; **avoid type casts**; **hide storage I/O behind repository services** (constitution v1.1.0)
 
 **Scale/Scope**: v0 supports tens–low hundreds of primitives per graph; two bundled examples + invalid variants; 9 primitive types + relationship roles
 
@@ -130,7 +130,7 @@ SpecAble/
             └── coachbridge-synthetic/{valid,invalid}/
 ```
 
-**Structure Decision**: Phase 2 introduces `@specable/domain` as a dedicated workspace package per FR-056–FR-059. The domain package contains **only** Effect Schema definitions (primitive types, Schema literal unions for closed sets, references, annotations) and domain decode errors. Executable logic beyond Schema (graph indexing, status-aware validation, integrity, summaries, I/O) lives in `@specable/cli`. Native TypeScript `enum` is prohibited; use `Schema.Literal` unions (FR-057).
+**Structure Decision**: Phase 2 introduces `@specable/domain` as a dedicated workspace package per architecture constraints AC-001–AC-004 (formerly spec FR-056–FR-059). The domain package contains **only** Effect Schema definitions (primitive types, Schema literal unions for closed sets, references, annotations) and domain decode errors. Executable logic beyond Schema (graph indexing, status-aware validation, integrity, summaries, I/O) lives in `@specable/cli`. Native TypeScript `enum` is prohibited; use `Schema.Literal` unions (AC-002).
 
 ### Package dependency graph
 
@@ -228,7 +228,16 @@ Key decisions: `@specable/domain` + `@specable/cli`, Effect Schema literal union
 |-----------|------------|-------------------------------------|
 | IV. MCP-first: CLI only in v0 | Spec explicitly defers MCP; CLI proves validate/summary slice first | Building MCP server before CLI completes vertical slice without user-visible CLI demo |
 | Snapshot workflow included but non-blocking | Template parity for future pkg.pr.new previews | Omitting workflow entirely would require re-adding CI later; template skip-on-missing-app pattern is low cost |
-| Two packages vs one | FR-056 mandates `@specable/domain`; aligns with library-first and reuse for future MCP adapter | Keeping all schemas inside CLI couples domain model to CLI release cycle and blocks clean agent/library consumption |
+| Two packages vs one | AC-001 mandates `@specable/domain`; aligns with library-first and reuse for future MCP adapter | Keeping all schemas inside CLI couples domain model to CLI release cycle and blocks clean agent/library consumption |
+
+## Architecture Constraints (from spec session 2026-06-24)
+
+These implementation constraints were removed from [spec.md](./spec.md) to keep the feature specification technology-agnostic. They govern Phase 2 package layout and schema conventions.
+
+- **AC-001**: Domain primitive schemas, closed-set value types (e.g., `status`, actor category, concept role/importance, persona confidence), reference types, and domain-level tagged errors MUST live in a dedicated workspace package (`@specable/domain`). `@specable/cli` MUST depend on `@specable/domain` for domain types. Graph types (`ProductGraph`, indexes), loaders, status-aware validation engines, integrity analysis, summary generation, and CLI/I/O adapters MUST remain in `@specable/cli` or other downstream packages—not in `@specable/domain`.
+- **AC-002**: All closed-set domain values MUST be defined as Effect Schema literal unions, not native TypeScript `enum` declarations. Schema union types are the canonical representation for enumerated domain fields.
+- **AC-003**: `@specable/domain` MUST encode semantic meaning and field-level constraints using Effect Schema annotations and built-in Schema validation features to the fullest practical extent. The only executable logic in `@specable/domain` is that provided by Effect Schema (decode, encode, filters, refinements, annotations). Cross-primitive graph rules, status-aware severity, integrity analysis, derivation, and artifact generation MUST be implemented in downstream packages that consume `@specable/domain` schemas.
+- **AC-004**: `@specable/domain` test coverage MUST be minimal—limited to verifying encode/decode behavior for complex or non-obvious schema compositions. Comprehensive validation, graph traversal, integrity, summary, and CLI behavior tests MUST live in consuming packages (primarily `@specable/cli`).
 
 ## Repository boilerplate checklist (implementation)
 

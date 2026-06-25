@@ -1,0 +1,13 @@
+{
+  "primitives": [
+    {
+      "type": "ExpectedResult",
+      "id": "result-scheduled",
+      "name": "Session Is Scheduled",
+      "status": "Active",
+      "definition": "Session is scheduled in the system",
+      "capabilities": ["cap-schedule"],
+      "objectives": ["obj-scheduling"]
+    }
+  ]
+}

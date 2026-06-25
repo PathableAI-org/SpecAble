@@ -2,21 +2,55 @@ import { Args, Command, Options } from "@effect/cli"
 import { isPlatformError } from "@effect/platform/Error"
 import { Schema } from "@effect/schema"
 import { errors as domainErrors } from "@specable/domain"
-import { Effect } from "effect"
+import { Effect, Option } from "effect"
 
-import { GraphProjectNotFoundError, ValidationFailedError } from "../errors.js"
+import type { IntegrityResult } from "../integrity/IntegrityFinding.js"
+
+import {
+  GraphProjectNotFoundError,
+  OutputWriteError,
+  ScopeFlagConflictError,
+  ValidationFailedError
+} from "../errors.js"
 import { GraphRepository } from "../graph/GraphRepository.js"
-import { analyzeProductGraphIntegrity } from "../integrity/IntegrityService.js"
 import { validateProductGraph, validationResultFromDuplicateId } from "../validation/ValidationService.js"
-import { renderIntegrityOutput } from "./render/IntegrityOutput.js"
-import { renderValidationOutput } from "./render/ValidationOutput.js"
+import { buildCheckArtifactsContext, type CheckArtifactsContext, type LoadedGraph } from "./CheckArtifactsPlan.js"
+import { writeCheckArtifacts } from "./output/ArtifactWriter.js"
+import { type CheckOutputMode, renderCheckOutput } from "./render/CheckOutput.js"
 
 const projectDir = Args.directory({ name: "projectDir" })
 const validateOnly = Options.boolean("validate-only")
 const integrityOnly = Options.boolean("integrity-only")
+const summaryOnly = Options.boolean("summary-only")
+const outDir = Options.directory("out").pipe(Options.optional)
 
-const fullCheckUnavailableMessage =
-  "Full check (validation + integrity + summary) is not available yet. Re-run with --validate-only or --integrity-only."
+const scopeFlagConflictMessage = "Use at most one of --validate-only, --integrity-only, or --summary-only."
+
+const countScopeFlags = (
+  isValidateOnly: boolean,
+  isIntegrityOnly: boolean,
+  isSummaryOnly: boolean
+): number => [isValidateOnly, isIntegrityOnly, isSummaryOnly].filter(Boolean).length
+
+const resolveCheckOutputMode = (
+  isValidateOnly: boolean,
+  isIntegrityOnly: boolean,
+  isSummaryOnly: boolean
+): CheckOutputMode => {
+  if (isValidateOnly) {
+    return "validate-only"
+  }
+
+  if (isIntegrityOnly) {
+    return "integrity-only"
+  }
+
+  if (isSummaryOnly) {
+    return "summary-only"
+  }
+
+  return "full"
+}
 
 const loadValidatedGraph = (projectPath: string) =>
   Effect.gen(function*() {
@@ -49,60 +83,96 @@ const assertValidationPassed = (
       })
     )
 
-const runValidateOnlyCommand = (projectPath: string) =>
-  Effect.gen(function*() {
-    const { validation } = yield* loadValidatedGraph(projectPath)
+// fallow-ignore-next-line complexity
+const resolveArtifactWrite = (
+  outputDir: string | undefined,
+  loaded: LoadedGraph,
+  context: CheckArtifactsContext
+): undefined | {
+  readonly integrity: IntegrityResult
+  readonly outDir: string
+  readonly summaryMarkdown: string
+} => {
+  if (
+    outputDir === undefined || loaded.graph === undefined || context.integrity === undefined
+    || context.summaryMarkdown === undefined
+  ) {
+    return undefined
+  }
 
-    yield* renderValidationOutput(projectPath, validation)
-    yield* assertValidationPassed(validation)
+  return {
+    integrity: context.integrity,
+    outDir: outputDir,
+    summaryMarkdown: context.summaryMarkdown
+  }
+}
+
+const writeArtifactsWhenRequested = (
+  projectPath: string,
+  outputDir: string | undefined,
+  loaded: LoadedGraph,
+  context: CheckArtifactsContext
+) => {
+  const artifactWrite = resolveArtifactWrite(outputDir, loaded, context)
+
+  if (artifactWrite === undefined) {
+    return Effect.void
+  }
+
+  return writeCheckArtifacts({
+    integrity: artifactWrite.integrity,
+    outDir: artifactWrite.outDir,
+    projectDir: projectPath,
+    summaryMarkdown: artifactWrite.summaryMarkdown,
+    validation: loaded.validation
   })
+}
 
-const runIntegrityOnlyCommand = (projectPath: string) =>
+const runCheckCommand = (
+  projectPath: string,
+  isValidateOnly: boolean,
+  isIntegrityOnly: boolean,
+  isSummaryOnly: boolean,
+  outputDir: string | undefined
+) =>
   Effect.gen(function*() {
-    const loaded = yield* loadValidatedGraph(projectPath)
-
-    yield* renderValidationOutput(projectPath, loaded.validation)
-
-    if (loaded.graph !== undefined) {
-      const integrity = analyzeProductGraphIntegrity(loaded.graph, loaded.validation)
-      yield* renderIntegrityOutput(integrity)
+    if (countScopeFlags(isValidateOnly, isIntegrityOnly, isSummaryOnly) > 1) {
+      return yield* Effect.fail(new ScopeFlagConflictError({ message: scopeFlagConflictMessage }))
     }
 
+    const mode = resolveCheckOutputMode(isValidateOnly, isIntegrityOnly, isSummaryOnly)
+    const loaded = yield* loadValidatedGraph(projectPath)
+    const context = buildCheckArtifactsContext(loaded, mode, outputDir)
+
+    yield* renderCheckOutput({
+      integrity: context.integrity,
+      mode,
+      projectPath,
+      summaryPreview: context.summaryPreview,
+      validation: loaded.validation
+    })
+
+    yield* writeArtifactsWhenRequested(projectPath, outputDir, loaded, context)
     yield* assertValidationPassed(loaded.validation)
   })
 
-// fallow-ignore-next-line complexity
-const runCheckByMode = (
-  projectPath: string,
-  isValidateOnly: boolean,
-  isIntegrityOnly: boolean
-) => {
-  if (isValidateOnly && isIntegrityOnly) {
-    return Effect.zipRight(
-      Effect.sync(() => console.error("Use only one of --validate-only or --integrity-only.")),
-      Effect.sync(() => process.exit(2))
-    )
-  }
-
-  if (isValidateOnly) {
-    return runValidateOnlyCommand(projectPath)
-  }
-
-  if (isIntegrityOnly) {
-    return runIntegrityOnlyCommand(projectPath)
-  }
-
-  return Effect.zipRight(
-    Effect.sync(() => console.error(fullCheckUnavailableMessage)),
-    Effect.sync(() => process.exit(2))
-  )
-}
-
 export const checkCommand = Command.make(
   "check",
-  { integrityOnly, projectDir, validateOnly },
-  ({ integrityOnly: isIntegrityOnly, projectDir: projectPath, validateOnly: isValidateOnly }) =>
-    runCheckByMode(projectPath, isValidateOnly, isIntegrityOnly)
+  { integrityOnly, outDir, projectDir, summaryOnly, validateOnly },
+  ({
+    integrityOnly: isIntegrityOnly,
+    outDir: outputDir,
+    projectDir: projectPath,
+    summaryOnly: isSummaryOnly,
+    validateOnly: isValidateOnly
+  }) =>
+    runCheckCommand(
+      projectPath,
+      isValidateOnly,
+      isIntegrityOnly,
+      isSummaryOnly,
+      Option.getOrUndefined(outputDir)
+    )
 ).pipe(Command.withDescription("Validate a local product primitive graph project"))
 
 const exitWithCode = (code: 1 | 2, message?: string): Effect.Effect<void> =>
@@ -112,7 +182,7 @@ const exitWithCode = (code: 1 | 2, message?: string): Effect.Effect<void> =>
   )
 
 // fallow-ignore-next-line complexity
-const resolveCheckCommandExit = (
+export const resolveCheckCommandExit = (
   error: unknown
 ): undefined | { readonly code: 1 | 2; readonly message?: string } => {
   if (Schema.is(GraphProjectNotFoundError)(error)) {
@@ -128,6 +198,14 @@ const resolveCheckCommandExit = (
 
   if (Schema.is(ValidationFailedError)(error)) {
     return { code: 1 }
+  }
+
+  if (Schema.is(OutputWriteError)(error)) {
+    return { code: 2, message: `Output write error for ${error.path}: ${error.message}` }
+  }
+
+  if (Schema.is(ScopeFlagConflictError)(error)) {
+    return { code: 2, message: error.message }
   }
 
   if (isPlatformError(error)) {

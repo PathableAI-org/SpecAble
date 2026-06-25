@@ -23,25 +23,35 @@ pnpm test
 pnpm build
 ```
 
+## Run against summary fixture (US3 default check)
+
+```bash
+# Default: validation + integrity + summary preview on stdout
+pnpm build
+pnpm --filter @specable/cli exec specable check packages/cli/test/fixtures/summary/valid
+
+# Write shareable artifacts
+pnpm --filter @specable/cli exec specable check packages/cli/test/fixtures/summary/valid --out /tmp/specable-out
+```
+
+**Expected**: exit code `0`; zero Active validation failures; stdout includes validation status, integrity warnings (if any), and a truncated summary preview; `--out` writes `summary.md`, `validation.json`, `integrity-report.json`, `integrity-report.md`, and `check-result.json`.
+
 ## Run against bundled generic example
 
-> **CLI availability (US2)**: Until User Story 3 lands, `specable check` requires `--validate-only` or `--integrity-only`. A bare `check` (no scope flag) exits `2`. `--out` and `--summary-only` are also US3.
+> **Note**: Bundled `packages/cli/examples/*` graphs ship in User Story 4. Until then, use scoped flags against any graph project folder or the summary fixture above.
 
 ```bash
 # Validation stdout report
-pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid --validate-only
+pnpm --filter @specable/cli exec specable check packages/cli/test/fixtures/summary/valid --validate-only
 
 # Validation + integrity stdout report
-pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid --integrity-only
+pnpm --filter @specable/cli exec specable check packages/cli/test/fixtures/summary/valid --integrity-only
+
+# Summary preview only
+pnpm --filter @specable/cli exec specable check packages/cli/test/fixtures/summary/valid --summary-only
 ```
 
 **Expected**: exit code `0`; zero Active validation failures; integrity warnings may appear with `--integrity-only`.
-
-<!-- US3: default full check, --out artifacts, --summary-only -->
-<!--
-pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid
-pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid --out /tmp/specable-out
--->
 
 ## Validate invalid example
 
