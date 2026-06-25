@@ -32,8 +32,7 @@
     "@effect/platform": "^0.96.2",
     "@effect/platform-node": "^0.107.0",
     "@effect/schema": "^0.75.5",
-    "effect": "^3.21.4",
-    "yaml": "^2.8.0"
+    "effect": "^3.21.4"
   },
   "devDependencies": {
     "@effect/vitest": "^0.29.0"
@@ -45,7 +44,12 @@
       ]
     },
     "generateIndex": {
-      "include": []
+      "include": [
+        "**/*.ts"
+      ],
+      "exclude": [
+        "bin.ts"
+      ]
     }
   }
 }

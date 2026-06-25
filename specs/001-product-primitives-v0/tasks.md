@@ -92,12 +92,12 @@ description: "Task list for SpecAble v0 — Product Primitive Graph"
 
 ### CLI graph layer (`@specable/cli` — consumes domain schemas)
 
-- [ ] T044 [P] Create CLI-layer tagged errors in `packages/cli/src/errors.ts` (`GraphProjectNotFoundError`, `DuplicateIdError`, `BrokenReferenceError`, `ValidationFailedError`, `OutputWriteError`)
-- [ ] T045 Create `ProductGraph` and `GraphIndex` types in `packages/cli/src/graph/ProductGraph.ts` using decoded `@specable/domain` types
-- [ ] T046 Create fixture filename registry in `packages/cli/src/graph/FixtureFiles.ts` per `specs/001-product-primitives-v0/contracts/fixture-format.md`
-- [ ] T047 Create YAML decode helpers in `packages/cli/src/graph/YamlDecode.ts` (parse + Schema decode with file paths via domain schemas)
-- [ ] T048 Implement `GraphLoader` service Layer in `packages/cli/src/graph/GraphLoader.ts` (load per-type files, missing file → empty, build index)
-- [ ] T049 Create `FileSystem`/`GraphLoaderLive` Layer wiring in `packages/cli/src/services/Layers.ts` using `@effect/platform-node`
+- [X] T044 [P] Create CLI-layer tagged errors in `packages/cli/src/errors.ts` (`GraphProjectNotFoundError`, `DuplicateIdError`, `BrokenReferenceError`, `ValidationFailedError`, `OutputWriteError`)
+- [X] T045 Create `ProductGraph` and `GraphIndex` types in `packages/cli/src/graph/ProductGraph.ts` using decoded `@specable/domain` types
+- [X] T046 Create fixture filename registry in `packages/cli/src/graph/FixtureFiles.ts` per `specs/001-product-primitives-v0/contracts/fixture-format.md`
+- [X] T047 Create JSON decode helpers in `packages/cli/src/graph/JsonDecode.ts` (parse + Schema decode with file paths via domain schemas)
+- [X] T048 Implement `GraphLoader` service Layer in `packages/cli/src/graph/GraphLoader.ts` (load per-type files, missing file → empty, build index)
+- [X] T049 Create `FileSystem`/`GraphLoaderLive` Layer wiring in `packages/cli/src/services/Layers.ts` using `@effect/platform-node`
 
 ### Tests and CLI codegen
 
