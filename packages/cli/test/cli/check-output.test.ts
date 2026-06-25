@@ -7,14 +7,22 @@ import * as os from "node:os"
 import * as path from "node:path"
 import { fileURLToPath } from "node:url"
 
+import {
+  buildCheckArtifactsContext,
+  needsIntegrityAnalysis,
+  needsSummaryMarkdown,
+  needsSummaryPreview
+} from "../../src/cli/CheckArtifactsPlan.js"
+import { resolveCheckCommandExit } from "../../src/cli/CheckCommand.js"
 import { writeCheckArtifacts } from "../../src/cli/output/ArtifactWriter.js"
 import { formatCheckOutput } from "../../src/cli/render/CheckOutput.js"
-import { ValidationFailedError } from "../../src/errors.js"
+import { ScopeFlagConflictError, ValidationFailedError } from "../../src/errors.js"
 import { loadProductGraph } from "../../src/graph/GraphLoader.js"
 import { analyzeProductGraphIntegrity } from "../../src/integrity/IntegrityService.js"
 import { generateSummaryMarkdown } from "../../src/summary/SummaryGenerator.js"
 import { truncateSummaryPreview } from "../../src/summary/SummaryPreview.js"
 import { validateProductGraph } from "../../src/validation/ValidationService.js"
+import { makeSummaryGraph } from "../fixtures/summary/helpers.js"
 
 const testDir = path.dirname(fileURLToPath(import.meta.url))
 const fixturesDir = path.join(testDir, "../fixtures/summary/valid")
@@ -135,5 +143,77 @@ describe("CheckOutput", () => {
         throw new ValidationFailedError({ failureCount: failed.summary.failureCount })
       }
     }).toThrow()
+  })
+
+  it("maps ScopeFlagConflictError to exit code 2", () => {
+    const resolution = resolveCheckCommandExit(
+      new ScopeFlagConflictError({ message: "conflicting scope flags" })
+    )
+
+    expect(resolution).toEqual({ code: 2, message: "conflicting scope flags" })
+  })
+})
+
+describe("CheckArtifactsPlan", () => {
+  it("skips integrity and summary work for validate-only without --out", () => {
+    const graph = makeSummaryGraph()
+    const validation = validateProductGraph(graph)
+    const context = buildCheckArtifactsContext(
+      { graph, validation },
+      "validate-only",
+      undefined
+    )
+
+    expect(needsIntegrityAnalysis("validate-only", undefined)).toBe(false)
+    expect(needsSummaryMarkdown("validate-only", undefined)).toBe(false)
+    expect(needsSummaryPreview("validate-only")).toBe(false)
+    expect(context.integrity).toBeUndefined()
+    expect(context.summaryMarkdown).toBeUndefined()
+    expect(context.summaryPreview).toBeUndefined()
+  })
+
+  it("computes integrity for integrity-only without summary artifacts", () => {
+    const graph = makeSummaryGraph()
+    const validation = validateProductGraph(graph)
+    const context = buildCheckArtifactsContext(
+      { graph, validation },
+      "integrity-only",
+      undefined
+    )
+
+    expect(context.integrity).toBeDefined()
+    expect(context.summaryMarkdown).toBeUndefined()
+    expect(context.summaryPreview).toBeUndefined()
+  })
+
+  it("computes summary preview only when summary output is requested", () => {
+    const graph = makeSummaryGraph()
+    const validation = validateProductGraph(graph)
+    const context = buildCheckArtifactsContext(
+      { graph, validation },
+      "summary-only",
+      undefined
+    )
+
+    expect(context.integrity).toBeDefined()
+    expect(context.summaryMarkdown).toBeDefined()
+    expect(context.summaryPreview).toBeDefined()
+    expect(needsSummaryPreview("integrity-only")).toBe(false)
+  })
+
+  it("computes full artifacts when --out is provided in validate-only mode", () => {
+    const graph = makeSummaryGraph()
+    const validation = validateProductGraph(graph)
+    const context = buildCheckArtifactsContext(
+      { graph, validation },
+      "validate-only",
+      "/tmp/specable-out"
+    )
+
+    expect(needsIntegrityAnalysis("validate-only", "/tmp/specable-out")).toBe(true)
+    expect(needsSummaryMarkdown("validate-only", "/tmp/specable-out")).toBe(true)
+    expect(context.integrity).toBeDefined()
+    expect(context.summaryMarkdown).toBeDefined()
+    expect(context.summaryPreview).toBeUndefined()
   })
 })

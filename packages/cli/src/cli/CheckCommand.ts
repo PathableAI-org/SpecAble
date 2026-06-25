@@ -4,16 +4,17 @@ import { Schema } from "@effect/schema"
 import { errors as domainErrors } from "@specable/domain"
 import { Effect, Option } from "effect"
 
-import type { ProductGraph } from "../graph/ProductGraph.js"
 import type { IntegrityResult } from "../integrity/IntegrityFinding.js"
-import type { ValidationResult } from "../validation/ValidationFinding.js"
 
-import { GraphProjectNotFoundError, OutputWriteError, ValidationFailedError } from "../errors.js"
+import {
+  GraphProjectNotFoundError,
+  OutputWriteError,
+  ScopeFlagConflictError,
+  ValidationFailedError
+} from "../errors.js"
 import { GraphRepository } from "../graph/GraphRepository.js"
-import { analyzeProductGraphIntegrity } from "../integrity/IntegrityService.js"
-import { generateSummaryMarkdown } from "../summary/SummaryGenerator.js"
-import { truncateSummaryPreview } from "../summary/SummaryPreview.js"
 import { validateProductGraph, validationResultFromDuplicateId } from "../validation/ValidationService.js"
+import { buildCheckArtifactsContext, type CheckArtifactsContext, type LoadedGraph } from "./CheckArtifactsPlan.js"
 import { writeCheckArtifacts } from "./output/ArtifactWriter.js"
 import { type CheckOutputMode, renderCheckOutput } from "./render/CheckOutput.js"
 
@@ -82,36 +83,6 @@ const assertValidationPassed = (
       })
     )
 
-interface CheckArtifactsContext {
-  readonly integrity: IntegrityResult | undefined
-  readonly summaryMarkdown: string | undefined
-  readonly summaryPreview: string | undefined
-}
-
-interface LoadedGraph {
-  readonly graph: ProductGraph | undefined
-  readonly validation: ValidationResult
-}
-
-const buildCheckArtifactsContext = (loaded: LoadedGraph): CheckArtifactsContext => {
-  if (loaded.graph === undefined) {
-    return {
-      integrity: undefined,
-      summaryMarkdown: undefined,
-      summaryPreview: undefined
-    }
-  }
-
-  const integrity = analyzeProductGraphIntegrity(loaded.graph, loaded.validation)
-  const summaryMarkdown = generateSummaryMarkdown(loaded.graph, loaded.validation, integrity)
-
-  return {
-    integrity,
-    summaryMarkdown,
-    summaryPreview: truncateSummaryPreview(summaryMarkdown)
-  }
-}
-
 // fallow-ignore-next-line complexity
 const resolveArtifactWrite = (
   outputDir: string | undefined,
@@ -159,12 +130,19 @@ const writeArtifactsWhenRequested = (
 
 const runCheckCommand = (
   projectPath: string,
-  mode: CheckOutputMode,
+  isValidateOnly: boolean,
+  isIntegrityOnly: boolean,
+  isSummaryOnly: boolean,
   outputDir: string | undefined
 ) =>
   Effect.gen(function*() {
+    if (countScopeFlags(isValidateOnly, isIntegrityOnly, isSummaryOnly) > 1) {
+      return yield* Effect.fail(new ScopeFlagConflictError({ message: scopeFlagConflictMessage }))
+    }
+
+    const mode = resolveCheckOutputMode(isValidateOnly, isIntegrityOnly, isSummaryOnly)
     const loaded = yield* loadValidatedGraph(projectPath)
-    const context = buildCheckArtifactsContext(loaded)
+    const context = buildCheckArtifactsContext(loaded, mode, outputDir)
 
     yield* renderCheckOutput({
       integrity: context.integrity,
@@ -178,26 +156,6 @@ const runCheckCommand = (
     yield* assertValidationPassed(loaded.validation)
   })
 
-// fallow-ignore-next-line complexity
-const runCheckByMode = (
-  projectPath: string,
-  isValidateOnly: boolean,
-  isIntegrityOnly: boolean,
-  isSummaryOnly: boolean,
-  outputDir: string | undefined
-) => {
-  if (countScopeFlags(isValidateOnly, isIntegrityOnly, isSummaryOnly) > 1) {
-    return Effect.zipRight(
-      Effect.sync(() => console.error(scopeFlagConflictMessage)),
-      Effect.sync(() => process.exit(2))
-    )
-  }
-
-  const mode = resolveCheckOutputMode(isValidateOnly, isIntegrityOnly, isSummaryOnly)
-
-  return runCheckCommand(projectPath, mode, outputDir)
-}
-
 export const checkCommand = Command.make(
   "check",
   { integrityOnly, outDir, projectDir, summaryOnly, validateOnly },
@@ -208,7 +166,7 @@ export const checkCommand = Command.make(
     summaryOnly: isSummaryOnly,
     validateOnly: isValidateOnly
   }) =>
-    runCheckByMode(
+    runCheckCommand(
       projectPath,
       isValidateOnly,
       isIntegrityOnly,
@@ -224,7 +182,7 @@ const exitWithCode = (code: 1 | 2, message?: string): Effect.Effect<void> =>
   )
 
 // fallow-ignore-next-line complexity
-const resolveCheckCommandExit = (
+export const resolveCheckCommandExit = (
   error: unknown
 ): undefined | { readonly code: 1 | 2; readonly message?: string } => {
   if (Schema.is(GraphProjectNotFoundError)(error)) {
@@ -244,6 +202,10 @@ const resolveCheckCommandExit = (
 
   if (Schema.is(OutputWriteError)(error)) {
     return { code: 2, message: `Output write error for ${error.path}: ${error.message}` }
+  }
+
+  if (Schema.is(ScopeFlagConflictError)(error)) {
+    return { code: 2, message: error.message }
   }
 
   if (isPlatformError(error)) {

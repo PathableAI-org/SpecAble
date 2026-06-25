@@ -1,4 +1,7 @@
 
+export * as CheckArtifactsPlan from "./cli/CheckArtifactsPlan.js"
+
+
 export * as CheckCommand from "./cli/CheckCommand.js"
 
 
