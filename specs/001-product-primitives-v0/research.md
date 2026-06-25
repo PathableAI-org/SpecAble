@@ -173,6 +173,17 @@
 - `Schema<any>` + `as PrimitiveFileSchema` in fixture registry — rejected; violates strict typing without adding safety.
 - Single union schema for all fixture files — rejected; loses per-file type validation aligned with fixture contract.
 
+## R20 — Effect error management and CLI exit translation
+
+**Decision**: Expected failures flow through the Effect error channel as tagged, serializable errors (`Effect.fail`). Defects (`Effect.die`) are reserved for programmer bugs and unrecoverable states. Library modules (`domain/`, `graph/`, `validation/`, `integrity/`, `summary/`) and thin CLI command adapters (`src/cli/*Command.ts`) MUST NOT call `process.exit` or write directly to `console`. User-facing stderr and exit codes (R17 / FR-060) are applied once at the runtime boundary (`src/bin.ts` plus a small `CliExit` helper).
+
+**Rationale**: Effect separates expected errors from defects so services stay testable without mocking `process`. Centralizing exit translation keeps FR-060 mapping consistent and prevents command modules from mixing business failure with process termination. Aligns with [Effect error management](https://effect.website/docs/error-management/).
+
+**Alternatives considered**:
+- `process.exit` in command handlers — rejected; untestable, bypasses Effect composition, and scatters exit-code policy.
+- `console.error` at each failure site — rejected; duplicates messaging policy; prefer `Effect.fail` with tagged errors and boundary `Console.error`.
+- `orDie` on all service errors — rejected; platform and validation failures are expected and must remain recoverable in tests.
+
 ## R19 — Graph storage abstraction (`GraphRepository` over `GraphLoader`)
 
 **Decision**: Expose a repository-shaped Effect service (`GraphRepository.load(projectPath) → ProductGraph`) as the consumer dependency. File-backed JSON loading (`GraphLoader`, `FileSystem`, Node platform Layers) is an implementation detail composed in `services/Layers.ts`. Validation, integrity, summary, and CLI commands MUST depend on `GraphRepository`, not on loader or filesystem modules directly.

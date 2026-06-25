@@ -1,12 +1,11 @@
 import { NodeFileSystem } from "@effect/platform-node"
 import * as FileSystem from "@effect/platform/FileSystem"
-import { describe, expect, it } from "@effect/vitest"
+import { assert, describe, expect, it } from "@effect/vitest"
 import { PrimitiveBase } from "@specable/domain"
 import { Effect } from "effect"
 import * as path from "node:path"
 import { fileURLToPath } from "node:url"
 
-import { DuplicateIdError } from "../../src/errors.js"
 import { loadProductGraph } from "../../src/graph/GraphLoader.js"
 import { findBrokenReferences, findDuplicateStoryTriples } from "../../src/validation/StructuralValidation.js"
 import { validationResultFromDuplicateId } from "../../src/validation/ValidationService.js"
@@ -102,8 +101,8 @@ describe("StructuralValidation", () => {
       const duplicateFixture = path.join(testDir, "../fixtures/graph-duplicate-id")
       const error = yield* loadProductGraph(fs, duplicateFixture).pipe(Effect.flip)
 
-      expect(error).toBeInstanceOf(DuplicateIdError)
-      if (!(error instanceof DuplicateIdError)) {
+      assert(error._tag === "DuplicateIdError")
+      if (error._tag !== "DuplicateIdError") {
         return
       }
 

@@ -180,6 +180,8 @@ Aligned with constitution v1.1.0 (Session 2026-06-25 PR review):
 - **No `null`**: Use `Option` for optional values (for example missing `graph.json` metadata), `Effect.fail` for expected errors, not `null` returns.
 - **Hide implementation behind abstractions**: Downstream modules (validation, integrity, summary, CLI commands) depend on **`GraphRepository`** (load contract returning `ProductGraph`), not on **`GraphLoader`** or filesystem details. File-backed JSON loading and Node `FileSystem` wiring live in `services/Layers.ts` as composition roots only.
 - **Layer exports**: Publish `GraphRepositoryLive` / `GraphServicesLive` to consumers; keep loader and platform layers internal to composition unless a test or adapter explicitly needs them.
+- **Effect error channels**: Expected failures use tagged `Schema.TaggedError` values and `Effect.fail`. Defects (`Effect.die`) are for unexpected bugs only. Domain, validation, integrity, summary, and command modules MUST NOT call `process.exit` or write directly to `console`.
+- **CLI exit mapping at the boundary**: Map tagged errors and platform failures to FR-060 exit codes (`0` / `1` / `2`) only in `src/bin.ts` or `src/cli/CliExit.ts`. Commands return `Effect` failures; the boundary renders stderr and terminates the process. See [research.md](./research.md) R20 and [Effect error management](https://effect.website/docs/error-management/).
 
 ## Phase 0 — Research
 

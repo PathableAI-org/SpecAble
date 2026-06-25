@@ -4,7 +4,7 @@ import { Command } from "@effect/cli"
 import { NodeContext, NodeRuntime } from "@effect/platform-node"
 import { Effect, Layer } from "effect"
 
-import { handleCheckCommandError } from "./cli/CheckCommand.js"
+import { finalizeCliExit } from "./cli/CliExit.js"
 import { rootCommand } from "./cli/RootCommand.js"
 import { GraphRepositoryLive } from "./services/Layers.js"
 
@@ -18,7 +18,7 @@ const program = rootCommand.pipe(
 )
 
 program(process.argv).pipe(
-  Effect.catchAll((error) => handleCheckCommandError(error)),
   Effect.provide(MainLayer),
+  finalizeCliExit,
   NodeRuntime.runMain
 )

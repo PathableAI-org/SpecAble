@@ -30,7 +30,7 @@ export const parseJsonString = (
         filePath,
         message: cause instanceof Error ? cause.message : "Invalid JSON"
       }),
-    try: () => JSON.parse(content) as unknown
+    try: (): unknown => JSON.parse(content)
   })
 
 export const decodeJsonContent = <A, I>(

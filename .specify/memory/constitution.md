@@ -239,6 +239,16 @@ operational or UX expansion.
   data, tagged errors or `Effect.fail` for expected failures, and defects only for
   unrecoverable bugs.
 
+**Effect error management**
+
+- Expected failures MUST use tagged errors and `Effect.fail`; defects (`Effect.die`)
+  are for unexpected, unrecoverable bugs only.
+- Domain, validation, integrity, summary, and CLI command modules MUST NOT call
+  `process.exit` or write directly to `console`; surface failures through the Effect
+  error channel.
+- CLI exit codes and stderr messaging MUST be translated at the runtime boundary
+  (`bin.ts` and a dedicated exit helper), not inside command handlers.
+
 **Storage and service abstractions**
 
 - Graph and adapter I/O MUST expose repository- or store-shaped services to consumers

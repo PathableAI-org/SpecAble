@@ -1,5 +1,17 @@
+import type { FixtureDecodeError } from "@specable/domain/errors.js"
+
 import { Schema } from "@effect/schema"
 import { PrimitiveBase } from "@specable/domain"
+
+/** Tagged CLI failures translated to FR-060 exit codes in `cli/CliExit.ts`. */
+export type CliCheckFailure =
+  | BrokenReferenceError
+  | CheckScopeUnavailableError
+  | DuplicateIdError
+  | FixtureDecodeError
+  | GraphProjectNotFoundError
+  | OutputWriteError
+  | ValidationFailedError
 
 export class BrokenReferenceError extends Schema.TaggedError<BrokenReferenceError>("BrokenReferenceError")(
   "BrokenReferenceError",
@@ -22,6 +34,19 @@ export class BrokenReferenceError extends Schema.TaggedError<BrokenReferenceErro
       description: "Referenced primitive ID that does not exist in the graph",
       identifier: "BrokenReferenceTargetId",
       title: "Target ID"
+    })
+  }
+) {}
+
+export class CheckScopeUnavailableError extends Schema.TaggedError<CheckScopeUnavailableError>(
+  "CheckScopeUnavailableError"
+)(
+  "CheckScopeUnavailableError",
+  {
+    message: Schema.String.annotations({
+      description: "Human-readable explanation that the requested check scope is not implemented yet",
+      identifier: "CheckScopeUnavailableMessage",
+      title: "Message"
     })
   }
 ) {}

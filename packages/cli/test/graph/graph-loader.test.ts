@@ -1,12 +1,10 @@
 import { NodeFileSystem } from "@effect/platform-node"
 import * as FileSystem from "@effect/platform/FileSystem"
 import { assert, describe, expect, it } from "@effect/vitest"
-import { FixtureDecodeError } from "@specable/domain/errors.js"
 import { Effect, Option } from "effect"
 import * as path from "node:path"
 import { fileURLToPath } from "node:url"
 
-import { DuplicateIdError, GraphProjectNotFoundError } from "../../src/errors.js"
 import { loadProductGraph } from "../../src/graph/GraphLoader.js"
 import { GraphRepository } from "../../src/graph/GraphRepository.js"
 import { GraphRepositoryLive } from "../../src/services/Layers.js"
@@ -42,7 +40,7 @@ describe("GraphLoader", () => {
       const fs = yield* FileSystem.FileSystem
       const error = yield* loadProductGraph(fs, path.join(fixturesDir, "graph-invalid-json")).pipe(Effect.flip)
 
-      expect(error).toBeInstanceOf(FixtureDecodeError)
+      assert(error._tag === "FixtureDecodeError")
     }).pipe(Effect.provide(nodeFileSystemLayer)))
 
   it.effect("fails on schema decode errors with FixtureDecodeError", () =>
@@ -50,7 +48,7 @@ describe("GraphLoader", () => {
       const fs = yield* FileSystem.FileSystem
       const error = yield* loadProductGraph(fs, path.join(fixturesDir, "graph-invalid-schema")).pipe(Effect.flip)
 
-      expect(error).toBeInstanceOf(FixtureDecodeError)
+      assert(error._tag === "FixtureDecodeError")
     }).pipe(Effect.provide(nodeFileSystemLayer)))
 
   it.effect("fails when duplicate primitive ids are indexed", () =>
@@ -58,7 +56,7 @@ describe("GraphLoader", () => {
       const fs = yield* FileSystem.FileSystem
       const error = yield* loadProductGraph(fs, path.join(fixturesDir, "graph-duplicate-id")).pipe(Effect.flip)
 
-      expect(error).toBeInstanceOf(DuplicateIdError)
+      assert(error._tag === "DuplicateIdError")
       if (error._tag === "DuplicateIdError") {
         expect(error.id).toBe("actor-coach")
       }
@@ -82,7 +80,7 @@ describe("GraphRepository", () => {
         const missingPath = path.join(fixturesDir, "does-not-exist")
         const error = yield* repository.load(missingPath).pipe(Effect.flip)
 
-        expect(error).toBeInstanceOf(GraphProjectNotFoundError)
+        assert(error._tag === "GraphProjectNotFoundError")
       }))
   })
 })

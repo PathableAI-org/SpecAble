@@ -31,6 +31,7 @@ Per constitution v1.1.0 and [plan.md](./plan.md) (Session 2026-06-25):
 - **Never use `any`**: Use generics, Schema types, branded IDs, or `unknown` with narrowing.
 - **Avoid type casts**: Prefer generic factories and closed-over decode helpers over `as` assertions. Document and test any unavoidable cast at an external boundary.
 - **Hide storage behind abstractions**: Feature modules depend on `GraphRepository`, not `GraphLoader` or filesystem code. Compose `GraphRepositoryLive` in `services/Layers.ts`.
+- **Effect error channels**: Use tagged `Effect.fail` for expected failures; `Effect.die` only for defects. No `process.exit` or direct `console` usage outside `bin.ts` / `CliExit.ts` (see plan.md and research.md R20).
 - **Do not suppress unused-dependency findings** in Fallow for packages that should be referenced; wire dependencies or remove them.
 
 ---

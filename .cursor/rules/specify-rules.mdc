@@ -8,6 +8,7 @@ shell commands, and other important information, read the current plan
 at specs/001-product-primitives-v0/plan.md
 
 Implementation constraints (constitution v1.1.0): never use `any`; avoid type
-casts; hide storage I/O behind repository services (see plan.md § TypeScript
-and service conventions).
+casts; hide storage I/O behind repository services; use tagged `Effect.fail` for
+expected failures and map CLI exit codes only at `bin.ts` / `CliExit.ts` (see
+plan.md § TypeScript and service conventions, research.md R20).
 <!-- SPECKIT END -->

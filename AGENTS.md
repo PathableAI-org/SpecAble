@@ -54,6 +54,8 @@ Importing `@specable/cli` must not execute the CLI or acquire live resources. Ru
 - Name important operations with `Effect.fn` when it improves tracing.
 - Use Effects instead of Promise-based service contracts.
 - Use defects only for unexpected, unrecoverable failures.
+- Fail with tagged errors in command and service code; do not call `process.exit` or `console` outside the runtime boundary (`src/bin.ts`, `src/cli/CliExit.ts`).
+- Map tagged errors to CLI exit codes only at the boundary (see `research.md` R20).
 - Avoid `any`, unchecked casts, floating Effects, and hidden requirements.
 - Keep library modules (`domain/`, `graph/`, `validation/`, etc.) free of CLI-specific output formatting where possible.
 
@@ -71,6 +73,8 @@ Before implementing an unfamiliar Effect pattern:
 4. Confirm the API against the installed package types in `node_modules/effect`.
 
 Prefer patterns compatible with the versions recorded in `pnpm-lock.yaml`.
+
+For CLI commands: return `Effect.fail` with tagged errors for expected failures (missing project, decode errors, validation failures, unsupported scope). Reserve `process.exit` for `bin.ts` / `CliExit.ts` only. See [Effect error management](https://effect.website/docs/error-management/).
 
 ## Commands
 

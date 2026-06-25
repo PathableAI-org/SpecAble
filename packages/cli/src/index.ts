@@ -2,6 +2,9 @@
 export * as CheckCommand from "./cli/CheckCommand.js"
 
 
+export * as CliExit from "./cli/CliExit.js"
+
+
 export * as RootCommand from "./cli/RootCommand.js"
 
 
