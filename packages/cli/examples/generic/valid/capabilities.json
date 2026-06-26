@@ -1,0 +1,15 @@
+{
+  "primitives": [
+    {
+      "type": "Capability",
+      "id": "cap-book-appointment",
+      "name": "Book Appointment",
+      "status": "Active",
+      "description": "Customer books an appointment with a service provider",
+      "actors": ["actor-customer", "actor-provider"],
+      "expectedResults": ["result-appointment-booked"],
+      "workflows": ["workflow-booking"],
+      "domainConcepts": ["concept-appointment"]
+    }
+  ]
+}

@@ -38,20 +38,24 @@ pnpm --filter @specable/cli exec specable check packages/cli/test/fixtures/summa
 
 ## Run against bundled generic example
 
-> **Note**: Bundled `packages/cli/examples/*` graphs ship in User Story 4. Until then, use scoped flags against any graph project folder or the summary fixture above.
-
 ```bash
+# Default: validation + integrity + summary preview on stdout
+pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid
+
+# Write shareable artifacts (see SC-005 comprehension checklist in examples/generic/README.md)
+pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid --out /tmp/specable-generic-out
+
 # Validation stdout report
-pnpm --filter @specable/cli exec specable check packages/cli/test/fixtures/summary/valid --validate-only
+pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid --validate-only
 
 # Validation + integrity stdout report
-pnpm --filter @specable/cli exec specable check packages/cli/test/fixtures/summary/valid --integrity-only
+pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid --integrity-only
 
 # Summary preview only
-pnpm --filter @specable/cli exec specable check packages/cli/test/fixtures/summary/valid --summary-only
+pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid --summary-only
 ```
 
-**Expected**: exit code `0`; zero Active validation failures; integrity warnings may appear with `--integrity-only`.
+**Expected**: exit code `0`; zero Active validation failures; stdout includes validation status, integrity warnings (if any), and a truncated summary preview; `--out` writes `summary.md`, `validation.json`, `integrity-report.json`, `integrity-report.md`, and `check-result.json`.
 
 ## Validate invalid example
 
@@ -83,21 +87,17 @@ pnpm --filter @specable/cli exec specable check packages/cli/test/fixtures/integ
 - Orphans: type-aware; disconnected Actors excluded
 - `validation.json` and `integrity-report.json` do not duplicate Active under-linked failures
 
-## Scoped commands
-
-```bash
-pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid --validate-only
-pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid --integrity-only
-# --summary-only and default full check: User Story 3 (not yet available)
-```
-
 ## CoachBridge synthetic example
 
 ```bash
-pnpm --filter @specable/cli exec specable check packages/cli/examples/coachbridge-synthetic/valid --integrity-only
+# Default full check
+pnpm --filter @specable/cli exec specable check packages/cli/examples/coachbridge-synthetic/valid
+
+# Invalid variant (expect exit code 1)
+pnpm --filter @specable/cli exec specable check packages/cli/examples/coachbridge-synthetic/invalid
 ```
 
-**Expected**: validates offline with fictional entities only; no external credentials.
+**Expected**: validates offline with fictional entities only; no external credentials. See `packages/cli/examples/coachbridge-synthetic/README.md` for the synthetic-data disclaimer.
 
 ## Create a local graph project
 
@@ -140,4 +140,4 @@ After reading `summary.md` from the generic valid example, a new reviewer should
 3. Explain difference between Draft and Active validation behavior.
 4. Point to where modeling gaps would appear if present.
 
-Document answers in `packages/cli/examples/generic/README.md` during implementation.
+Answers are documented in `packages/cli/examples/generic/README.md`.

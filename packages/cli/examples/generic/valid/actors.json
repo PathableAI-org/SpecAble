@@ -1,0 +1,20 @@
+{
+  "primitives": [
+    {
+      "type": "Actor",
+      "id": "actor-provider",
+      "name": "Service Provider",
+      "status": "Active",
+      "category": "Human",
+      "description": "Human who offers a bookable service"
+    },
+    {
+      "type": "Actor",
+      "id": "actor-customer",
+      "name": "Customer",
+      "status": "Active",
+      "category": "Human",
+      "description": "Human who books an appointment"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "primitives": [
+    {
+      "type": "DomainConcept",
+      "id": "concept-appointment",
+      "name": "Appointment",
+      "status": "Active",
+      "definition": "A scheduled time slot between a service provider and a customer"
+    }
+  ]
+}

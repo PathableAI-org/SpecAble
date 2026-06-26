@@ -1,0 +1,19 @@
+{
+  "primitives": [
+    {
+      "type": "Objective",
+      "id": "obj-scheduling-friction",
+      "name": "Reduce scheduling friction",
+      "status": "Active",
+      "description": "Make it easier for customers to book appointments with service providers",
+      "successCriteria": "Customers complete bookings with fewer steps and less back-and-forth",
+      "workflows": ["workflow-booking"]
+    },
+    {
+      "type": "Objective",
+      "id": "obj-draft-explore",
+      "name": "Explore future integrations",
+      "status": "Draft"
+    }
+  ]
+}

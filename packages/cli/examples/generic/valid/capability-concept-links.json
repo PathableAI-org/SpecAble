@@ -1,0 +1,14 @@
+{
+  "primitives": [
+    {
+      "type": "CapabilityConceptLink",
+      "id": "ccl-book-appointment",
+      "name": "Book appointment link",
+      "status": "Active",
+      "capability": "cap-book-appointment",
+      "domainConcept": "concept-appointment",
+      "role": "Creates",
+      "importance": "Primary"
+    }
+  ]
+}

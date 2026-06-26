@@ -1,0 +1,22 @@
+{
+  "primitives": [
+    {
+      "type": "ExpectedResult",
+      "id": "result-profile-published",
+      "name": "Coach Profile Is Published",
+      "status": "Active",
+      "definition": "Coach profile is visible to participants on Riverside",
+      "capabilities": ["cap-complete-onboarding"],
+      "objectives": ["obj-coach-retention"]
+    },
+    {
+      "type": "ExpectedResult",
+      "id": "result-session-confirmed",
+      "name": "Coaching Session Is Confirmed",
+      "status": "Active",
+      "definition": "A coaching session is confirmed for coach and participant",
+      "capabilities": ["cap-schedule-session"],
+      "objectives": ["obj-coach-retention"]
+    }
+  ]
+}

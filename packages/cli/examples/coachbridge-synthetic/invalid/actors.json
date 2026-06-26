@@ -1,0 +1,12 @@
+{
+  "primitives": [
+    {
+      "type": "Actor",
+      "id": "actor-morgan-coach",
+      "name": "Morgan Coach",
+      "status": "Active",
+      "category": "Human",
+      "description": "Fictional human coach on the Riverside platform"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "primitives": [
+    {
+      "type": "DomainConcept",
+      "id": "concept-coaching-session",
+      "name": "Coaching Session",
+      "status": "Active",
+      "definition": "A scheduled one-on-one coaching interaction on the Riverside platform"
+    },
+    {
+      "type": "DomainConcept",
+      "id": "concept-coach-profile",
+      "name": "Coach Profile",
+      "status": "Active",
+      "definition": "Public profile describing a coach's focus areas and availability"
+    }
+  ]
+}

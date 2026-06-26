@@ -1,0 +1,24 @@
+{
+  "primitives": [
+    {
+      "type": "CapabilityConceptLink",
+      "id": "ccl-onboarding-profile",
+      "name": "Onboarding creates profile",
+      "status": "Active",
+      "capability": "cap-complete-onboarding",
+      "domainConcept": "concept-coach-profile",
+      "role": "Creates",
+      "importance": "Primary"
+    },
+    {
+      "type": "CapabilityConceptLink",
+      "id": "ccl-schedule-session",
+      "name": "Scheduling creates session",
+      "status": "Active",
+      "capability": "cap-schedule-session",
+      "domainConcept": "concept-coaching-session",
+      "role": "Creates",
+      "importance": "Primary"
+    }
+  ]
+}

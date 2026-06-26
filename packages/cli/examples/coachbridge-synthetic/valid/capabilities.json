@@ -1,0 +1,26 @@
+{
+  "primitives": [
+    {
+      "type": "Capability",
+      "id": "cap-complete-onboarding",
+      "name": "Complete Coach Onboarding",
+      "status": "Active",
+      "description": "Coach completes profile setup and platform orientation",
+      "actors": ["actor-morgan-coach"],
+      "expectedResults": ["result-profile-published"],
+      "workflows": ["workflow-onboarding"],
+      "domainConcepts": ["concept-coach-profile"]
+    },
+    {
+      "type": "Capability",
+      "id": "cap-schedule-session",
+      "name": "Schedule Coaching Session",
+      "status": "Active",
+      "description": "Participant books a coaching session with an available coach",
+      "actors": ["actor-morgan-coach", "actor-taylor-participant"],
+      "expectedResults": ["result-session-confirmed"],
+      "workflows": ["workflow-session-scheduling"],
+      "domainConcepts": ["concept-coaching-session"]
+    }
+  ]
+}

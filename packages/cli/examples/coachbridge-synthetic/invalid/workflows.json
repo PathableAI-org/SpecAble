@@ -1,0 +1,16 @@
+{
+  "primitives": [
+    {
+      "type": "Workflow",
+      "id": "workflow-onboarding",
+      "name": "Coach Onboarding",
+      "status": "Active",
+      "description": "New coach completes Riverside platform onboarding",
+      "objectives": ["obj-coach-retention"],
+      "primaryActors": ["actor-morgan-coach"],
+      "capabilities": ["cap-complete-onboarding"],
+      "stories": ["story-complete-onboarding"],
+      "sequenceNotes": "Coach signs in, completes profile fields, and publishes availability"
+    }
+  ]
+}

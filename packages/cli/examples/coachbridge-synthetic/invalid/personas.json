@@ -1,0 +1,15 @@
+{
+  "primitives": [
+    {
+      "type": "Persona",
+      "id": "persona-new-coach",
+      "name": "New Riverside Coach",
+      "status": "Active",
+      "description": "Coach persona joining the platform for the first time",
+      "primaryActors": ["actor-morgan-coach"],
+      "goalsOrPainPoints": "Set up a profile and schedule the first session quickly",
+      "evidence": "Synthetic onboarding survey",
+      "confidence": "Validated"
+    }
+  ]
+}

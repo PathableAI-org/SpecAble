@@ -1,0 +1,24 @@
+{
+  "primitives": [
+    {
+      "type": "Story",
+      "id": "story-book-appointment",
+      "name": "Customer books appointment",
+      "status": "Active",
+      "actor": "actor-customer",
+      "capability": "cap-book-appointment",
+      "expectedResult": "result-appointment-booked",
+      "workflows": ["workflow-booking"]
+    },
+    {
+      "type": "Story",
+      "id": "story-book-appointment-alt",
+      "name": "Customer books appointment (duplicate triple)",
+      "status": "Active",
+      "actor": "actor-customer",
+      "capability": "cap-book-appointment",
+      "expectedResult": "result-appointment-booked",
+      "workflows": ["workflow-booking"]
+    }
+  ]
+}
