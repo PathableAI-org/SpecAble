@@ -28,10 +28,10 @@ pnpm build
 ```bash
 # Default: validation + integrity + summary preview on stdout
 pnpm build
-pnpm --filter @specable/cli exec specable check packages/cli/test/fixtures/summary/valid
+pnpm specable check packages/cli/test/fixtures/summary/valid
 
 # Write shareable artifacts
-pnpm --filter @specable/cli exec specable check packages/cli/test/fixtures/summary/valid --out /tmp/specable-out
+pnpm specable check packages/cli/test/fixtures/summary/valid --out /tmp/specable-out
 ```
 
 **Expected**: exit code `0`; zero Active validation failures; stdout includes validation status, integrity warnings (if any), and a truncated summary preview; `--out` writes `summary.md`, `validation.json`, `integrity-report.json`, `integrity-report.md`, and `check-result.json`.
@@ -40,19 +40,19 @@ pnpm --filter @specable/cli exec specable check packages/cli/test/fixtures/summa
 
 ```bash
 # Default: validation + integrity + summary preview on stdout
-pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid
+pnpm specable check packages/cli/examples/generic/valid
 
 # Write shareable artifacts (see SC-005 comprehension checklist in examples/generic/README.md)
-pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid --out /tmp/specable-generic-out
+pnpm specable check packages/cli/examples/generic/valid --out /tmp/specable-generic-out
 
 # Validation stdout report
-pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid --validate-only
+pnpm specable check packages/cli/examples/generic/valid --validate-only
 
 # Validation + integrity stdout report
-pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid --integrity-only
+pnpm specable check packages/cli/examples/generic/valid --integrity-only
 
 # Summary preview only
-pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid --summary-only
+pnpm specable check packages/cli/examples/generic/valid --summary-only
 ```
 
 **Expected**: exit code `0`; zero Active validation failures; stdout includes validation status, integrity warnings (if any), and a truncated summary preview; `--out` writes `summary.md`, `validation.json`, `integrity-report.json`, `integrity-report.md`, and `check-result.json`.
@@ -60,7 +60,7 @@ pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/va
 ## Validate invalid example
 
 ```bash
-pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/invalid --integrity-only
+pnpm specable check packages/cli/examples/generic/invalid --integrity-only
 ```
 
 **Expected**: exit code `1`; Active failures listed in validation output with primitive IDs; Draft issues as validation warnings; integrity warnings alone do not change exit code.
@@ -71,13 +71,13 @@ After US2 implementation, verify with engineered fixtures:
 
 ```bash
 # Duplicate normalized names → integrity warning only (exit 0 if no Active failures)
-pnpm --filter @specable/cli exec specable check packages/cli/test/fixtures/integrity/duplicate-name --integrity-only
+pnpm specable check packages/cli/test/fixtures/integrity/duplicate-name --integrity-only
 
 # Disconnected Actor → not an orphan; exit 0
-pnpm --filter @specable/cli exec specable check packages/cli/test/fixtures/integrity/disconnected-actor-not-orphan --integrity-only
+pnpm specable check packages/cli/test/fixtures/integrity/disconnected-actor-not-orphan --integrity-only
 
 # Zero-edge Story → orphan warning on stdout (integrity-report.json with --out is US3)
-pnpm --filter @specable/cli exec specable check packages/cli/test/fixtures/integrity/orphan-story --integrity-only
+pnpm specable check packages/cli/test/fixtures/integrity/orphan-story --integrity-only
 ```
 
 **Expected behaviors**:
@@ -91,10 +91,10 @@ pnpm --filter @specable/cli exec specable check packages/cli/test/fixtures/integ
 
 ```bash
 # Default full check
-pnpm --filter @specable/cli exec specable check packages/cli/examples/coachbridge-synthetic/valid
+pnpm specable check packages/cli/examples/coachbridge-synthetic/valid
 
 # Invalid variant (expect exit code 1)
-pnpm --filter @specable/cli exec specable check packages/cli/examples/coachbridge-synthetic/invalid
+pnpm specable check packages/cli/examples/coachbridge-synthetic/invalid
 ```
 
 **Expected**: validates offline with fictional entities only; no external credentials. See `packages/cli/examples/coachbridge-synthetic/README.md` for the synthetic-data disclaimer.
@@ -106,7 +106,7 @@ pnpm --filter @specable/cli exec specable check packages/cli/examples/coachbridg
 3. Run:
 
 ```bash
-pnpm --filter @specable/cli exec specable check ./my-graph --validate-only
+pnpm specable check ./my-graph --validate-only
 ```
 
 ## Development loop
@@ -127,7 +127,7 @@ pnpm check
 pnpm lint
 pnpm test
 pnpm build
-git add packages/cli/src && git diff-index --cached HEAD --exit-code packages/cli/src
+git add packages/domain/src packages/cli/src && git diff-index --cached HEAD --exit-code packages/domain/src packages/cli/src
 pnpm exec fallow audit --base main --format json --quiet
 ```
 

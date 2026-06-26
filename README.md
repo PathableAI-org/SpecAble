@@ -2,7 +2,7 @@
 
 **SpecAble v0 — Product Primitive Graph**
 
-Open-source, local-first CLI for validating YAML product primitive fixture graphs, reporting relationship integrity issues, and generating deterministic Markdown summaries and JSON reports.
+Open-source, local-first CLI for validating JSON product primitive fixture graphs, reporting relationship integrity issues, and generating deterministic Markdown summaries and JSON reports.
 
 SpecAble models durable product intent as typed primitives (Objectives, Actors, Personas, Domain Concepts, Capabilities, Expected Results, Workflows, Stories, and related links) instead of prose-only artifacts. The `specable check` command is the primary entry point for validation, integrity reporting, and summary generation — fully offline, with no Notion, MCP, or cloud runtime dependencies.
 
@@ -26,9 +26,10 @@ Run from the repository root:
 | `pnpm lint` | ESLint over `src/`, `test/`, `examples/`, `scripts/` |
 | `pnpm lint-fix` | Apply ESLint fixes |
 | `pnpm test` | Run Vitest suites |
-| `pnpm coverage` | Run tests with coverage |
+| `pnpm coverage` | Run tests with v8 coverage (smoke run; see Coverage below) |
 | `pnpm build` | Build publishable output |
 | `pnpm clean` | Remove generated build artifacts |
+| `pnpm specable` | Run the CLI after `pnpm build` (e.g. `pnpm specable check <dir>`) |
 
 ### Git hooks
 
@@ -36,17 +37,18 @@ Run from the repository root:
 
 1. **lint-staged** — ESLint with `--fix` on staged TypeScript and `.mjs` files
 2. **typecheck** — `pnpm check`
-3. **codegen** — ensures `packages/cli/src/index.ts` is current when other `src/` files change
+3. **codegen** — ensures generated `index.ts` files are current when package `src/` changes
 4. **fallow audit** — dead-code and duplication gate against the branch merge-base (default `main`)
 
 Bypass once: `git commit --no-verify`
 
-Focused package commands (run `pnpm build` before using the `specable` binary):
+Focused package commands (run `pnpm build` before `pnpm specable`):
 
 ```sh
+pnpm --filter @specable/domain test
 pnpm --filter @specable/cli test
 pnpm build
-pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid
+pnpm specable check packages/cli/examples/generic/valid
 ```
 
 Before requesting review:
@@ -57,50 +59,66 @@ pnpm check
 pnpm lint
 pnpm test
 pnpm build
+pnpm coverage
 pnpm exec fallow audit --base main --format json --quiet
 ```
 
 ## Package Layout
 
-v0 intentionally uses a **single workspace package** with internal library modules instead of separate `packages/domain` and `packages/cli` packages.
+v0 uses a **two-package** pnpm workspace: `@specable/domain` (schemas) and `@specable/cli` (graph, validation, CLI).
 
 ```text
+packages/domain/                 # @specable/domain
+├── src/
+│   ├── unions/                  # Schema literal unions (Status, roles, …)
+│   ├── primitives/              # Nine primitive schemas
+│   ├── Reference.ts
+│   ├── PrimitiveBase.ts
+│   └── errors.ts
+└── test/                        # Minimal schema encode/decode tests
+
 packages/cli/                    # @specable/cli
+├── bin/specable.js              # Workspace CLI shim (requires build)
 ├── src/
 │   ├── bin.ts                   # Node entry (Command.run)
 │   ├── index.ts                 # Generated exports
 │   ├── cli/                     # @effect/cli command adapters
-│   ├── domain/                  # Schemas, enums, tagged errors
-│   ├── graph/                   # YAML load, index, traverse
+│   ├── graph/                   # JSON load, index, traverse
 │   ├── validation/              # Status-aware rules engine
 │   ├── integrity/               # Duplicates, derivations, advisories
 │   ├── summary/                 # Markdown + preview
 │   ├── story/                   # Template text generation
-│   └── services/                # FileSystem, GraphLoader Layers
+│   └── services/                # FileSystem, GraphRepository Layers
 ├── test/                        # @effect/vitest suites
 └── examples/
     ├── generic/{valid,invalid}/
     └── coachbridge-synthetic/{valid,invalid}/
 ```
 
-Importing `@specable/cli` must not execute the CLI or acquire live resources. Runtime execution belongs in `packages/cli/src/bin.ts` only.
+Importing `@specable/cli` or `@specable/domain` must not execute the CLI or acquire live resources. Runtime execution belongs in `packages/cli/src/bin.ts` only.
 
 Feature documentation lives under `specs/001-product-primitives-v0/` (plan, data model, contracts, quickstart).
+
+## Coverage
+
+`pnpm coverage` runs Vitest with the v8 provider across both packages. This is a **smoke run** for local and pre-PR checks — there are no enforced CI thresholds in v0.
+
+Per architecture constraint AC-004, `@specable/domain` test coverage is intentionally minimal (complex schema compositions only). Comprehensive validation, graph, integrity, summary, and CLI behavior tests live in `@specable/cli`.
 
 ## Effect Guidance
 
 This project targets Effect v3 (`effect`, `@effect/schema`, `@effect/cli`, `@effect/platform`, `@effect/vitest`) as recorded in `pnpm-lock.yaml`. Do not introduce Effect v4 APIs until the project explicitly adopts Effect v4.
 
 - Validate boundaries with `Schema`; represent expected failures as tagged errors.
-- Put filesystem and YAML parsing behind Effect services with live and test Layers.
-- Keep CLI adapters thin; compose Layers at the application root in `src/services/`.
+- Put filesystem and JSON parsing behind Effect services with live and test Layers.
+- Keep CLI adapters thin; compose Layers at the application root in `packages/cli/src/services/`.
 - Use `@effect/vitest` for Effect program tests with deterministic fixtures.
 
 See [AGENTS.md](./AGENTS.md) for full architecture rules, testing requirements, and agent conventions.
 
 ## Publishing
 
-`@specable/cli` is configured for public npm publishing through [Changesets](https://github.com/changesets/changesets). **We are pre-MVP**: changesets accumulate on `main`, but nothing is published to npm until maintainers start the alpha line.
+`@specable/domain` and `@specable/cli` are configured for public npm publishing through [Changesets](https://github.com/changesets/changesets). **We are pre-MVP**: changesets accumulate on `main`, but nothing is published to npm until maintainers start the alpha line.
 
 | Phase | What happens |
 |-------|----------------|
@@ -123,15 +141,13 @@ See [`.changeset/README.md`](./.changeset/README.md) for the full workflow, prer
 
 ## Template Adaptation
 
-This repository is adapted from [PathableAI-org/effect-typescript-template](https://github.com/PathableAI-org/effect-typescript-template) for SpecAble v0's **single-package** layout:
+This repository is adapted from [PathableAI-org/effect-typescript-template](https://github.com/PathableAI-org/effect-typescript-template) for SpecAble v0's product-primitive graph CLI:
 
 | Template default | SpecAble v0 |
 |------------------|-------------|
-| `packages/domain`, `packages/server`, `packages/cli` | `packages/cli` only |
-| `@template/*` package scopes | `@specable/cli` |
+| `packages/domain`, `packages/server`, `packages/cli` | `packages/domain` + `packages/cli` (no server package) |
+| `@template/*` package scopes | `@specable/domain`, `@specable/cli` |
 | Todo HTTP vertical slice | Product primitive graph validation CLI |
-| Multi-package project references | Root `tsconfig.json` references `packages/cli` only |
+| Multi-package project references | Root `tsconfig.json` references `packages/domain` and `packages/cli` |
 
 Retained from the template: pnpm workspaces, strict TypeScript, `@effect/build-utils` codegen, ESLint flat config with `@effect/eslint-plugin`, Vitest + `@effect/vitest`, Changesets release flow, Fallow audit CI, and `AGENTS.md` agent conventions.
-
-Domain modules inside `packages/cli/src/` remain extraction-ready for a future `packages/domain` split without changing public CLI semantics.
