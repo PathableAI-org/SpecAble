@@ -1,6 +1,6 @@
 ---
 name: "speckit-taskstoissues"
-description: "Convert existing tasks into actionable, dependency-ordered GitHub issues for the feature based on available design artifacts."
+description: "Convert tasks.md into GitHub issues with native blocked-by dependencies, optional milestone attachment, and deduplication on re-run."
 compatibility: "Requires spec-kit project structure with .specify/ directory"
 metadata:
   author: "github-spec-kit"
@@ -65,13 +65,82 @@ git config --get remote.origin.url
 > [!CAUTION]
 > ONLY PROCEED TO NEXT STEPS IF THE REMOTE IS A GITHUB URL
 
-1. **Fetch existing issues for deduplication**: Before creating anything, build the set of task IDs you are about to process from `tasks.md` (each is a `T` followed by three digits, e.g. `T001`). Then use the GitHub MCP server's `list_issues` tool to look for issues that already cover those IDs. Do not pass a `state` value, since omitting it makes the tool return both open and closed issues. Request `perPage: 100` to keep the number of calls down, and since the tool uses cursor-based pagination, request pages with the `after` parameter (using the `endCursor` from the previous response). For each issue title, match it against the task ID pattern `\bT\d{3}\b` (word boundaries so tokens like `ST001` or `T0010` are not matched by mistake; this also recognises titles written as `T001 ...`, `T001: ...` or `[T001] ...`) and, when it matches one of your task IDs, mark that ID as already having an issue. Stop paginating as soon as every task ID has been matched, or when there are no more pages, so you do not keep fetching the whole repository's issue history once all task IDs are accounted for. This bounds the number of calls on repos with large issue histories and still prevents duplicates when the command is re-run after `tasks.md` is regenerated or the skill is re-invoked.
-1. For each task in the list, use the GitHub MCP server to create a new issue in the repository that is representative of the Git remote. Task lines in `tasks.md` start with a markdown checkbox, so first strip the leading `- [ ]` (and any `[P]` / `[US#]` markers) to recover the task ID and its description. Create the issue with a single canonical title of the form `T001: <description>`, with the ID written once followed by the task description (for example, the line `- [ ] T001 Create project structure` becomes the title `T001: Create project structure`).
+1. **Fetch existing issues for deduplication**: Before creating anything, build the set of task IDs you are about to process from `tasks.md` (each is a `T` followed by three digits, e.g. `T001`). Prefer the GitHub MCP server's `list_issues` tool when available; otherwise use `gh issue list --repo {owner}/{repo} --limit 100 --json number,title,state` (paginate with `--search` or higher `--limit` as needed). Do not pass a `state` value to MCP `list_issues`, since omitting it returns both open and closed issues. Request `perPage: 100` for MCP and paginate with `after` / `endCursor`. For each issue title, match `\bT\d{3}\b` (word boundaries so `ST001` or `T0010` are not matched; recognises `T001 ...`, `T001: ...`, `[T001] ...`). Stop paginating once every task ID is matched or there are no more pages.
+1. For each task in the list, create a new issue in the repository matching the Git remote. Prefer the GitHub MCP server when available; otherwise use `gh issue create --repo {owner}/{repo} --title "T001: <description>" --body "..."`. Task lines in `tasks.md` start with a markdown checkbox; strip `- [ ]` and any `[P]` / `[US#]` markers to recover the task ID and description. Title format: `T001: <description>` (e.g. `- [ ] T001 Create project structure` → `T001: Create project structure`).
    - **Skip** any task whose ID is already present in the set of existing issues from the previous step, and report it (for example, `T001 already has an issue, skipping`).
    - Only create issues for tasks that do not yet have a matching issue.
 
 > [!CAUTION]
 > UNDER NO CIRCUMSTANCES EVER CREATE ISSUES IN REPOSITORIES THAT DO NOT MATCH THE REMOTE URL
+
+1. **Attach milestone (when requested or configured)**: If the user provides a milestone URL/number, or the feature plan/milestone doc names a GitHub milestone, attach all created (and optionally setup) issues using:
+
+```bash
+gh api repos/{owner}/{repo}/issues/{issue_number} -X PATCH -f milestone={milestone_number}
+```
+
+1. **Create blocked-by relationships (native GitHub issue dependencies)**: After issues exist, wire **direct** `blocked by` edges so each task issue reflects `tasks.md` execution order. Use GitHub's native **Relationships** field ([issue dependencies](https://github.blog/changelog/2025-08-21-dependencies-on-issues/)), not issue body text or task-list checkboxes.
+
+   **When to run**: After all task issues are created (or after deduplication confirms they exist). Re-run safely: skip edges that already exist.
+
+   **Derive the dependency graph from `tasks.md`**:
+   - Read **Phase Dependencies**, **Within Each User Story**, and **Parallel Opportunities** under `## Dependencies & Execution Order`.
+   - Encode **direct** blockers only (transitive closure is implicit). Example: if T042 depends on T041, and T041 depends on T026, add `T042 blocked by T041` only—not every ancestor of T041.
+   - Phase gates: tasks in Phase 2+ are typically blocked by the last task(s) of the prior phase (e.g. T008–T018 blocked by T007).
+   - Intra-phase chains: e.g. T013/T014 blocked by T012; T015 blocked by T013 and T014.
+   - Story chains: e.g. T023 blocked by T022; CLI registration after command implementation.
+   - Do **not** add blockers for `[P]` parallel tasks unless `tasks.md` states an explicit ordering dependency.
+
+   **Map task IDs to issue numbers**: Build a lookup from issue titles matching `\bT\d{3}\b` (canonical form `T001: <description>`). If issues were created in order without gaps, verify mapping via `gh issue list --search "T001 in:title"` rather than assuming numeric offsets.
+
+   **Preferred API — GraphQL `addBlockedBy`** (requires global node IDs, not issue numbers):
+
+```bash
+# 1. Fetch node_id for each issue
+gh api repos/{owner}/{repo}/issues/{issue_number} --jq .node_id
+
+# 2. Add edge: {blocked_issue} is blocked by {blocking_issue}
+gh api graphql -f query='
+mutation($issueId: ID!, $blockingIssueId: ID!) {
+  addBlockedBy(input: {issueId: $issueId, blockingIssueId: $blockingIssueId}) {
+    issue { number issueDependenciesSummary { blockedBy totalBlockedBy } }
+    blockingIssue { number }
+  }
+}' -f issueId="{BLOCKED_NODE_ID}" -f blockingIssueId="{BLOCKING_NODE_ID}"
+```
+
+   - `issueId`: the **blocked** issue (the dependent task that cannot start yet).
+   - `blockingIssueId`: the **blocking** issue (the prerequisite that must complete first).
+   - Semantics match the UI: open the blocked issue → **Relationships** → **Blocked by** → select the blocking issue.
+
+   **Alternative — REST API**:
+
+```bash
+POST /repos/{owner}/{repo}/issues/{blocked_issue_number}/dependencies/blocked_by
+Body: { "issue_id": <numeric_database_id> }
+```
+
+   Use the issue's numeric **id** field from `gh api repos/{owner}/{repo}/issues/{number}`, not the issue **number**.
+
+   **Tooling fallback**: If the GitHub MCP server is unavailable or lacks `addBlockedBy`, use `gh api graphql` as above. Do not substitute markdown cross-references in issue bodies for native dependencies.
+
+   **Verify**:
+
+```bash
+gh api graphql -f query='
+query {
+  repository(owner: "{owner}", name: "{repo}") {
+    issue(number: {n}) {
+      issueDependenciesSummary { blockedBy totalBlockedBy }
+      blockedBy(first: 20) { nodes { number title } }
+    }
+  }
+}'
+```
+
+   **Search filters** (for humans/agents after wiring): `is:blocked`, `is:blocking`, `blocked-by:{issue_number}`, `blocking:{issue_number}`.
+
+   **Report**: Count of edges created, skipped (already exist), and failed. Note entry-point tasks with `blockedBy: 0` (typically T001).
 
 ## Post-Execution Checks
 
@@ -105,3 +174,12 @@ Check if `.specify/extensions.yml` exists in the project root.
     EXECUTE_COMMAND: {command}
     ```
 - If no hooks are registered or `.specify/extensions.yml` does not exist, skip silently
+
+## Completion Report
+
+Report to the user:
+- Issues created vs skipped (deduplication)
+- Milestone attached (if any)
+- Blocked-by edges created vs skipped vs failed
+- Entry-point tasks with no blockers (e.g. T001)
+- Link to milestone or issues list when applicable
