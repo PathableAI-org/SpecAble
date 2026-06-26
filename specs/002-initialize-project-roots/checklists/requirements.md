@@ -31,7 +31,7 @@
 
 ## Notes
 
-- Validation passed on first iteration (2026-06-26).
+- Validation passed on first iteration (2026-06-26); re-validated after clarification sessions 2026-06-26 (10 questions integrated across two sessions).
 - Spec derived from milestone canonical input: `docs/milestones/initialize-project-roots.md`.
-- FR-016 and FR-017 describe abstraction and agent-facing identity at the product-contract level without prescribing Effect, TypeScript, or MCP implementation.
-- Ready for `/speckit-plan`.
+- Second session clarified `--storage` default, `@specable/core` package split, Layer composition, and test ownership.
+- Ready for `/speckit-plan` refresh to align plan.md with clarified spec.

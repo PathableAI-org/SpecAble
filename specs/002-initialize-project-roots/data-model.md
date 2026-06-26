@@ -8,19 +8,34 @@
 | Concern | Package | Location |
 |---------|---------|----------|
 | Primitive type schemas | `@specable/domain` | `packages/domain/src/` (unchanged) |
-| Project config, storage bootstrap, inspect | `@specable/cli` | `packages/cli/src/project/`, `packages/cli/src/storage/` |
-| CLI commands | `@specable/cli` | `packages/cli/src/cli/` |
+| Project config, storage bootstrap, inspect | `@specable/core` | `packages/core/src/project/`, `packages/core/src/storage/` |
+| CLI commands (thin adapters) | `@specable/cli` | `packages/cli/src/cli/` |
+| v0 graph load, validation, integrity | `@specable/cli` | `packages/cli/src/graph/`, `validation/`, `integrity/` (unchanged this slice) |
 
-## Service boundaries (`@specable/cli`)
+## Service boundaries (`@specable/core`)
 
 | Service | Role | Consumers |
 |---------|------|-----------|
-| `ProjectRootService` | `initialize`, `describe` (inspect) | `InitCommand`, `ProjectShowCommand` |
+| `ProjectRootService` | `initialize`, `describe` (inspect) | `@specable/cli` `InitCommand`, `ProjectShowCommand`; future MCP tools |
 | `StorageBackend` (tagged by type) | Bootstrap empty store, summarize graph counts | `ProjectRootService` only |
-| `FileSystem` | Platform I/O | Composed in `services/Layers.ts` |
-| `GraphRepository` | v0 load contract (unchanged this slice) | `CheckCommand` |
+| `FileSystem` | Platform I/O | Composed at CLI/MCP entrypoints via `@effect/platform-node` |
 
-Storage mechanics (JSON file creation, SQLite DDL, connection strings) MUST NOT leak past `storage/` into CLI command modules.
+**Layer exports** (`packages/core/src/storage/layers.ts`):
+
+| Layer module | Provides |
+|--------------|----------|
+| `JsonStorageBackendLive` | `StorageBackend` for JSON file layout |
+| `SqliteStorageBackendLive` | `StorageBackend` for SQLite |
+
+Application entrypoints (`packages/cli/src/bin.ts`) compose `ProjectRootService.Default` with the selected storage Layer and platform Layers.
+
+## Service boundaries (`@specable/cli`, unchanged v0)
+
+| Service | Role | Consumers |
+|---------|------|-----------|
+| `GraphRepository` | v0 load contract | `CheckCommand` |
+
+Storage mechanics (JSON file creation, SQLite DDL, connection strings) MUST NOT leak past `@specable/core` `storage/` into CLI command modules.
 
 ## Entities
 

@@ -22,19 +22,28 @@ pnpm build
 
 Uses synthetic local paths only.
 
-### Initialize JSON-backed root
+### Initialize JSON-backed root (default storage)
 
 ```bash
 rm -rf /tmp/demo-json
-pnpm --filter @specable/cli exec specable init /tmp/demo-json --storage json
+pnpm --filter @specable/cli exec specable init /tmp/demo-json
 ```
 
 **Expected**:
 
 - Exit code `0`
 - Success message with `projectId` and `storage: json`
-- `/tmp/demo-json/specable.json` exists
+- `/tmp/demo-json/specable.json` exists with `storage.type: "json"`
 - Nine `*.json` primitive files with empty `primitives` arrays (see [storage-layouts.md](./contracts/storage-layouts.md))
+
+### Initialize JSON-backed root (explicit flag)
+
+```bash
+rm -rf /tmp/demo-json-explicit
+pnpm --filter @specable/cli exec specable init /tmp/demo-json-explicit --storage json
+```
+
+**Expected**: Same as default init above.
 
 ### Initialize SQLite-backed root
 
@@ -68,7 +77,7 @@ pnpm --filter @specable/cli exec specable project show /tmp/demo-sqlite
 ### Re-init existing root
 
 ```bash
-pnpm --filter @specable/cli exec specable init /tmp/demo-json --storage json
+pnpm --filter @specable/cli exec specable init /tmp/demo-json
 ```
 
 **Expected**: exit `2`; actionable already-initialized error; `specable.json` unchanged.
@@ -93,7 +102,7 @@ pnpm --filter @specable/cli exec specable project show /tmp
 
 ```bash
 mkdir -p /tmp/nonempty && touch /tmp/nonempty/existing.txt
-pnpm --filter @specable/cli exec specable init /tmp/nonempty --storage json
+pnpm --filter @specable/cli exec specable init /tmp/nonempty
 ```
 
 **Expected**: exit `2`; path not empty error; no `specable.json` created.
@@ -129,16 +138,25 @@ pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/va
 ## Automated tests (after implementation)
 
 ```bash
+pnpm --filter @specable/core test
 pnpm --filter @specable/cli test
 ```
 
-**Expected suites** (to be added in implementation):
+**Expected suites**:
+
+`@specable/core`:
 
 - JSON init creates config + empty type files
 - SQLite init creates config + empty database
-- Inspect reports descriptor for both backends
+- Inspect returns `ProjectDescriptor` for both backends
 - Parity: identical `primitiveTypes` and empty graph summary
 - Failure paths: re-init, invalid storage, non-empty dir, missing root
+
+`@specable/cli`:
+
+- `init` without `--storage` defaults to JSON
+- Command wiring and stdout field order
+- Layer composition at `bin.ts`
 
 ## Success criteria mapping
 
@@ -149,4 +167,7 @@ pnpm --filter @specable/cli test
 | SC-003 | Compare `primitiveTypes` and `graph.empty` across backends |
 | SC-004 | Failure scenario section |
 | SC-005 | `storage-layouts.md` + `ls` / `sqlite3` verification |
-| SC-006 | Documented roots ready for milestone 2 CRUD (manual note) |
+| SC-006 | Default JSON init + optional SQLite |
+| SC-007 | Same core `StorageBackend` contract for both backends |
+| SC-008 | Core tests invoke init/inspect without CLI |
+| SC-009 | Core vs CLI test split above |

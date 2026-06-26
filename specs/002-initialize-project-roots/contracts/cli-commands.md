@@ -18,10 +18,10 @@
 
 **Options**:
 
-| Flag | Required | Description |
-|------|----------|-------------|
-| `--storage <type>` | yes | `json` or `sqlite` |
-| `--name <name>` | no | Project display name; default: basename of `path` |
+| Flag | Required | Default | Description |
+|------|----------|---------|-------------|
+| `--storage <type>` | no | `json` | `json` or `sqlite` |
+| `--name <name>` | no | basename of `path` | Project display name |
 
 **Behavior**:
 
@@ -97,7 +97,9 @@ Standard `@effect/cli` help including new `init` and `project` subcommands.
 
 - Command definitions: `packages/cli/src/cli/InitCommand.ts`, `ProjectShowCommand.ts`.
 - Register in `RootCommand.ts`: `init` at top level; `project` group with `show` subcommand.
-- Domain logic via `ProjectRootService` Effect Layer; `bin.ts` composes Layers.
+- Domain logic: `@specable/core` `ProjectRootService` and `StorageBackend` Layers.
+- `packages/cli/src/bin.ts` composes core storage Layer + platform Layers + v0 `GraphRepositoryLive`.
+- Importing `@specable/core` MUST NOT execute CLI or acquire live resources.
 - No network services.
 
 ## Future flags (out of scope)

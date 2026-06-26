@@ -57,21 +57,23 @@
 
 ## R6 — Storage abstraction shape
 
-**Decision**: Define `StorageBackend` Effect service with `bootstrap(projectRoot, config): Effect<void, StorageBootstrapError>` and `describe(projectRoot, config): Effect<GraphStoreSummary, StorageError>`. `ProjectRootService` orchestrates config read/write, delegates bootstrap to the backend selected by `storage.type`, and builds `ProjectDescriptor` for inspect.
+**Decision**: Define `StorageBackend` Effect service with `bootstrap(projectRoot, config): Effect<void, StorageBootstrapError>` and `describe(projectRoot, config): Effect<GraphStoreSummary, StorageError>`. `ProjectRootService` orchestrates config read/write, delegates bootstrap to the backend selected by `storage.type`, and builds `ProjectDescriptor` for inspect. `@specable/core` exports the service contract and per-backend Live Layer modules (`JsonStorageBackendLive`, `SqliteStorageBackendLive`). Application entrypoints (`@specable/cli` `bin.ts`, future MCP) compose the full Layer stack.
 
-**Rationale**: Satisfies FR-016 pluggable abstraction. Keeps CLI commands on `ProjectRootService` only. `GraphStoreSummary` reports primitive counts per type and `totalPrimitives` for empty-state verification.
+**Rationale**: Satisfies FR-016 pluggable abstraction and platform/node Layer pattern from clarifications. Keeps CLI commands on `ProjectRootService` only. `GraphStoreSummary` reports primitive counts per type and `totalPrimitives` for empty-state verification.
 
 **Alternatives considered**:
 - Extend `GraphRepository` with init — rejected; load contract differs from bootstrap; mixing concerns violates single responsibility.
 - Single god-service for all persistence — rejected; harder to test backends independently.
+- Pre-composed `CoreLive` Layer in core — rejected; entrypoints must choose storage backend Layer at compose time.
 
 ## R7 — Initialization command behavior
 
-**Decision**: `specable init <path> --storage json|sqlite` with optional `--name`. Target path MUST NOT exist as an initialized root (`specable.json` present). If path does not exist, create directory tree. If path exists and is non-empty without `specable.json`, fail with `ProjectPathNotEmptyError`. Write `specable.json` last after storage bootstrap succeeds.
+**Decision**: `specable init <path> [--storage json|sqlite] [--name <name>]`. `--storage` is optional and defaults to `json`. Target path MUST NOT exist as an initialized root (`specable.json` present). If path does not exist, create directory tree. If path exists and is non-empty without `specable.json`, fail with `ProjectPathNotEmptyError`. Write `specable.json` last after storage bootstrap succeeds.
 
-**Rationale**: Spec edge cases require no partial ambiguous state; config-last ordering lets inspect detect incomplete init if interrupted before manifest write.
+**Rationale**: Spec edge cases require no partial ambiguous state; config-last ordering lets inspect detect incomplete init if interrupted before manifest write. JSON default matches v0 fixture familiarity and simplest local-first path (FR-002).
 
 **Alternatives considered**:
+- Require `--storage` on every init — rejected; clarified spec defaults to `json`.
 - Allow init into non-empty directory — rejected by spec edge case.
 - Atomic directory rename from temp — deferred; config-last sufficient for alpha.
 
@@ -121,3 +123,43 @@
 
 **Alternatives considered**:
 - Filesystem path as MCP root ID — rejected by spec constraint.
+
+## R13 — `--storage` flag default
+
+**Decision**: `--storage` is optional on `specable init`; omitted value defaults to `json`. Invalid values fail with `UnsupportedStorageTypeError` listing `json` and `sqlite`.
+
+**Rationale**: FR-002; JSON is the simplest default aligned with v0 fixtures; SQLite remains one flag away for parity demos.
+
+**Alternatives considered**:
+- Required `--storage` — rejected in clarification session 2026-06-26.
+- Default `sqlite` — rejected; JSON is primary local-first path.
+
+## R14 — `@specable/core` package split
+
+**Decision**: New workspace package `@specable/core` owns `project/`, `storage/`, `ProjectRootService`, schemas, and tagged errors. `@specable/cli` depends on core and provides CLI commands only. v0 graph loading, validation, and integrity remain in `@specable/cli` this milestone (FR-018a).
+
+**Rationale**: FR-018 and SC-008; future MCP server reuses core without importing CLI. Avoids risky v0 migration in the same slice.
+
+**Alternatives considered**:
+- Extend `@specable/cli` only — rejected; blocks MCP reuse and violates library-first for shared surfaces.
+- Migrate all v0 modules to core now — rejected; out of scope per FR-018a.
+
+## R15 — Layer composition location
+
+**Decision**: `@specable/core` exports service APIs and `JsonStorageBackendLive` / `SqliteStorageBackendLive` Layer modules. `@specable/cli` `bin.ts` merges core Layers with `@effect/platform-node` (`NodeFileSystem`, `NodeContext`) and v0 `GraphRepositoryLive` for `check`.
+
+**Rationale**: FR-016; mirrors `@effect/platform` abstractions with `@effect/platform-node` composition at the application boundary.
+
+**Alternatives considered**:
+- Core exports single `CoreLive` — rejected; storage backend selection happens at entrypoint.
+- CLI owns Live implementations — rejected; duplicates logic for MCP.
+
+## R16 — Test ownership
+
+**Decision**: Init, inspect, storage parity, and config decode tests live in `packages/core/test/`. CLI tests cover command registration, `--storage` defaulting to `json`, Layer wiring, and stdout formatting only (FR-019).
+
+**Rationale**: Constitution library-first testing; SC-009 verifies core behavior independent of CLI execution.
+
+**Alternatives considered**:
+- All integration tests in CLI — rejected; couples library verification to command surface.
+- CLI-only e2e — rejected; insufficient contract coverage for MCP reuse path.
