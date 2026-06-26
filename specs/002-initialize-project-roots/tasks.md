@@ -41,7 +41,7 @@ Per constitution v1.1.0 and [plan.md](./plan.md):
 
 **Purpose**: Scaffold `@specable/core` workspace package and wire monorepo tooling.
 
-- [ ] T001 Create `packages/core/package.json` for `@specable/core` with Effect, `@effect/schema`, `@effect/platform`, `@effect/sql`, `@effect/sql-sqlite-node`, `@specable/domain` workspace dependency, and build-utils scripts mirroring `packages/domain/package.json`
+- [x] T001 Create `packages/core/package.json` for `@specable/core` with Effect, `@effect/schema`, `@effect/platform`, `@effect/sql`, `@effect/sql-sqlite-node`, `@specable/domain` workspace dependency, and build-utils scripts mirroring `packages/domain/package.json`
 - [ ] T002 [P] Create `packages/core/tsconfig.json`, `packages/core/tsconfig.src.json`, `packages/core/tsconfig.test.json`, and `packages/core/tsconfig.build.json` mirroring `packages/domain/` layout
 - [ ] T003 Update root `package.json` `codegen`, `build`, and related scripts to include `@specable/core` filter alongside domain and cli
 - [ ] T004 Update root `tsconfig.json` and `tsconfig.build.json` to add `packages/core` project references

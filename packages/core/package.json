@@ -1,0 +1,44 @@
+{
+  "name": "@specable/core",
+  "version": "0.0.0",
+  "type": "module",
+  "license": "Unlicense",
+  "description": "SpecAble core — project root initialization, storage backends, and inspect services",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PathableAI-org/SpecAble.git",
+    "directory": "packages/core"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  },
+  "scripts": {
+    "build": "pnpm build-esm && pnpm build-annotate && pnpm build-cjs && build-utils pack-v2",
+    "build-annotate": "babel build/esm --plugins annotate-pure-calls --out-dir build/esm --source-maps",
+    "build-cjs": "babel build/esm --plugins @babel/transform-export-namespace-from --plugins @babel/transform-modules-commonjs --out-dir build/cjs --source-maps",
+    "build-esm": "tsc -b tsconfig.build.json",
+    "codegen": "build-utils prepare-v2",
+    "check": "tsc -b tsconfig.json"
+  },
+  "dependencies": {
+    "@specable/domain": "workspace:*",
+    "@effect/platform": "^0.96.2",
+    "@effect/schema": "^0.75.5",
+    "@effect/sql": "^0.51.1",
+    "@effect/sql-sqlite-node": "^0.52.0",
+    "effect": "^3.21.4"
+  },
+  "effect": {
+    "generateExports": {
+      "include": [
+        "**/*.ts"
+      ]
+    },
+    "generateIndex": {
+      "include": [
+        "*.ts"
+      ]
+    }
+  }
+}
