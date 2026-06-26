@@ -192,6 +192,35 @@ Fallow is scoped to `packages/cli` via `.fallowrc.json`.
 | understand a finding | `fallow explain <id>` |
 | scope a monorepo | `--workspace <path>` / `--changed-workspaces` |
 
+## Planning Workflow
+
+Public planning artifacts follow the [PathAble Open Source Operating Model](https://github.com/PathableAI-org/.github/blob/main/CONTRIBUTING.md#open-source-operating-model):
+
+```text
+Release definition (docs/releases/)
+  -> Milestone definition (docs/milestones/)
+    -> GitHub Milestone
+      -> Spec Kit setup issue
+        -> /speckit-specify / /speckit-plan / /speckit-tasks
+          -> GitHub Issues -> PRs -> Changesets -> GitHub Release
+```
+
+| Artifact | Location |
+| --- | --- |
+| Release definitions | `docs/releases/<release-slug>.md` |
+| Milestone definitions | `docs/milestones/<milestone-slug>.md` |
+| Planning templates (do not edit in place) | `docs/_templates/releases/`, `docs/_templates/milestones/` |
+| Feature specs, plans, tasks | `specs/` (Spec Kit) |
+
+**Cursor skills** (pilot):
+
+- `/pathable-plan-release` — scaffold a release document from `docs/_templates/releases/release-template.md`
+- `/pathable-plan-milestone --release <slug>` — scaffold a milestone document linked to a parent release
+
+The milestone **Inputs to Spec Kit** section is the canonical source material for `/speckit-specify`. Other milestone sections provide supporting context for humans and reviewers only.
+
+After creating a milestone document, manually create the matching GitHub Milestone and a setup issue (`Create Spec Kit spec, plan, and tasks for <milestone>`). The milestone skill prints copy-ready text for both.
+
 ## Change Discipline
 
 - Keep changes focused on the requested behavior.
