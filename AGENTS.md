@@ -6,7 +6,7 @@ Keep this file concise and update it when repository structure, commands, or con
 
 ## Project Purpose
 
-SpecAble v0 validates local YAML primitive fixture graphs against the canonical Product Primitives ontology, reports relationship integrity issues, and generates deterministic Markdown summaries and JSON reports via the `specable check` command.
+SpecAble v0 validates local JSON primitive fixture graphs against the canonical Product Primitives ontology, reports relationship integrity issues, and generates deterministic Markdown summaries and JSON reports via the `specable check` command.
 
 Prefer explicit schemas, typed errors, visible service requirements, deterministic tests, and examples that coding agents can safely imitate.
 
@@ -14,20 +14,25 @@ This repository targets the latest stable Effect v3 release. Do not introduce Ef
 
 ## Repository Structure
 
-v0 uses a **single workspace package** (`@specable/cli`) with internal library modules. There is no separate `packages/domain` or `packages/server` package.
+v0 uses a **two-package** pnpm workspace: `@specable/domain` (Schema-only primitive models) and `@specable/cli` (graph loading, validation, integrity, summary, and CLI).
 
-- `packages/cli`: Publishable package containing all library modules, CLI commands, and the executable.
-  - `src/domain/`: Schemas, enums, tagged errors, and primitive type definitions.
-  - `src/graph/`: YAML loading, graph indexing, and traversal.
-  - `src/validation/`: Status-aware validation rules engine (`Draft` / `Active` / `Deprecated`).
-  - `src/integrity/`: Duplicate detection, story triples, derivations, and advisories.
-  - `src/summary/`: Markdown summary and preview generation.
-  - `src/story/`: Deterministic story text generation.
-  - `src/cli/`: `@effect/cli` command definitions (thin adapters).
-  - `src/services/`: FileSystem, GraphLoader, and Layer composition.
-  - `src/bin.ts`: Node executable entry (`Command.run`).
-  - `test/`: `@effect/vitest` suites and synthetic fixtures.
-  - `examples/`: Bundled graph projects (`generic/`, `coachbridge-synthetic/`).
+- `packages/domain`: Publishable schema package — primitive schemas, Schema literal unions, references, and domain decode errors. No graph loaders, validation engines, or Node platform imports.
+  - `src/unions/`: Closed-set Schema literal unions (`Status`, roles, …)
+  - `src/primitives/`: Nine primitive type schemas
+  - `src/Reference.ts`, `src/PrimitiveBase.ts`, `src/errors.ts`
+  - `test/`: Minimal encode/decode tests for complex compositions (AC-004)
+- `packages/cli`: Publishable CLI and graph package — depends on `@specable/domain`.
+  - `bin/specable.js`: Workspace CLI shim (requires `pnpm build`)
+  - `src/graph/`: JSON loading, graph indexing, and traversal
+  - `src/validation/`: Status-aware validation rules engine (`Draft` / `Active` / `Deprecated`)
+  - `src/integrity/`: Duplicate detection, story triples, derivations, and advisories
+  - `src/summary/`: Markdown summary and preview generation
+  - `src/story/`: Deterministic story text generation
+  - `src/cli/`: `@effect/cli` command definitions (thin adapters)
+  - `src/services/`: FileSystem, GraphRepository, and Layer composition
+  - `src/bin.ts`: Node executable entry (`Command.run`)
+  - `test/`: `@effect/vitest` suites and synthetic fixtures
+  - `examples/`: Bundled graph projects (`generic/`, `coachbridge-synthetic/`)
 - `scripts/`: Repository maintenance scripts (e.g. `clean.mjs`).
 - `.github/workflows`: Pull request checks, Fallow analysis, and release automation.
 - `specs/`: Feature specifications, plans, contracts, and quickstart guides.
@@ -43,7 +48,7 @@ Importing `@specable/cli` must not execute the CLI or acquire live resources. Ru
 
 - Validate untrusted and serialized data with `Schema` (`@effect/schema`).
 - Represent expected failures as tagged, serializable errors.
-- Put external systems (filesystem, YAML parsing) behind Effect services.
+- Put external systems (filesystem, JSON parsing) behind Effect services.
 - Keep domain types and service contracts independent of live infrastructure.
 - Provide separate live and test Layers for services.
 - Keep internal Layer composition within the module or feature that owns it.
@@ -55,7 +60,7 @@ Importing `@specable/cli` must not execute the CLI or acquire live resources. Ru
 - Use Effects instead of Promise-based service contracts.
 - Use defects only for unexpected, unrecoverable failures.
 - Avoid `any`, unchecked casts, floating Effects, and hidden requirements.
-- Keep library modules (`domain/`, `graph/`, `validation/`, etc.) free of CLI-specific output formatting where possible.
+- Keep library modules (`graph/`, `validation/`, etc.) free of CLI-specific output formatting where possible.
 
 Before introducing an abstraction, look for an existing local example that can be extended.
 
@@ -65,7 +70,7 @@ Do not rely on model memory for Effect APIs.
 
 Before implementing an unfamiliar Effect pattern:
 
-1. Inspect the closest local example under `packages/cli/src/`.
+1. Inspect the closest local example under `packages/domain/src/` or `packages/cli/src/`.
 2. Consult version-matched guidance at [effect.website](https://effect.website/docs/).
 3. Consult the official documentation at [effect.website/docs](https://effect.website/docs/).
 4. Confirm the API against the installed package types in `node_modules/effect`.
@@ -88,9 +93,9 @@ Run commands from the repository root.
 
 Git hooks (installed via `pnpm install` → `prepare` → Husky):
 
-- **lint-staged**: `eslint --fix` on staged `*.{ts,mjs}` under `packages/cli/{src,test,examples,scripts}/` and `scripts/`
+- **lint-staged**: `eslint --fix` on staged `*.{ts,mjs}` under `packages/*/{src,test,examples,scripts}/` and `scripts/`
 - **typecheck**: `pnpm check`
-- **codegen drift**: when `packages/cli/src/` changes (except `index.ts`), verifies `pnpm codegen` output is staged
+- **codegen drift**: when `packages/domain/src/` or `packages/cli/src/` changes (except `index.ts`), verifies `pnpm codegen` output is staged
 - **fallow audit**: `fallow audit --base <merge-base>` (falls back to `main`; skip with `git commit --no-verify`)
 
 Reinstall the fallow block after editing `.husky/pre-commit`:
@@ -99,14 +104,16 @@ Reinstall the fallow block after editing `.husky/pre-commit`:
 pnpm exec fallow hooks install --target git --branch main --force
 ```
 
-Use the `@specable/cli` filter for focused package work (`pnpm build` required before `specable`):
+Use the `@specable/cli` filter for focused package work (`pnpm build` required before `pnpm specable`):
 
 ```sh
+pnpm --filter @specable/domain test
 pnpm --filter @specable/cli test
 pnpm --filter @specable/cli coverage
+pnpm --filter @specable/domain run codegen
 pnpm --filter @specable/cli run codegen
 pnpm build
-pnpm --filter @specable/cli exec specable check packages/cli/examples/generic/valid
+pnpm specable check packages/cli/examples/generic/valid
 ```
 
 Run the complete validation suite before requesting review:
@@ -128,7 +135,7 @@ After code generation, confirm that generated source changes are committed.
 - Test service logic with test Layers instead of live infrastructure.
 - Cover every tagged-error path introduced by a change.
 - Use deterministic clocks and controlled services for time-dependent behavior.
-- Test Schema decoding at system boundaries (YAML fixtures, CLI output DTOs).
+- Test Schema decoding at system boundaries (JSON fixtures, CLI output DTOs).
 - Keep fixtures and examples synthetic under `packages/cli/test/fixtures/` and `packages/cli/examples/`.
 - Documentation examples must compile or execute as tests.
 - Add type-level tests when runtime tests cannot verify the contract.
@@ -158,7 +165,7 @@ Placeholder tests do not count as coverage for new behavior.
 - Use explicit package exports generated through `@effect/build-utils` (`pnpm codegen`).
 - Do not manually edit generated export files (`packages/cli/src/index.ts`).
 - Keep package metadata, repository URLs, licenses, and publish settings valid.
-- Add a Changeset for changes to `@specable/cli` unless explicitly exempt.
+- Add a Changeset for changes to `@specable/domain` or `@specable/cli` unless explicitly exempt.
 - **Pre-MVP**: changesets accumulate on `main`; do not merge the bot's **Version Packages** PR until maintainers enter alpha prerelease mode (`pnpm changeset-pre-enter-alpha`). See `.changeset/README.md`.
 - **Alpha releases**: while `.changeset/pre.json` exists, versions are `x.y.z-alpha.N` and npm publishes use the `alpha` dist-tag.
 - **Stable releases**: run `pnpm changeset-pre-exit` before the first non-prerelease publish.
@@ -170,7 +177,7 @@ Placeholder tests do not count as coverage for new behavior.
 
 Use Fallow as a repository-analysis aid, not as a substitute for understanding the code.
 
-Fallow is scoped to `packages/cli` via `.fallowrc.json`.
+Fallow is scoped to `packages/domain` and `packages/cli` via `.fallowrc.json`.
 
 - Run `fallow audit --base main --format json --quiet` before committing AI-generated changes.
 - Use `fallow dead-code --format json --quiet` before removing unused code.
@@ -195,7 +202,7 @@ Fallow is scoped to `packages/cli` via `.fallowrc.json`.
 ## Change Discipline
 
 - Keep changes focused on the requested behavior.
-- Preserve internal module boundaries (`domain/`, `graph/`, `validation/`, etc.) unless the task changes the architecture.
+- Preserve internal module boundaries (`domain/` package vs `graph/`, `validation/`, etc. in CLI) unless the task changes the architecture.
 - Do not edit generated, vendored, or lockfile content manually.
 - Do not add dependencies when an installed dependency already solves the problem.
 - Do not hide type errors with casts or weaker compiler settings.
@@ -222,9 +229,9 @@ Before declaring work complete:
 ### What this repo is
 
 This is a **Spec Kit (spec-driven development) repository** implementing **SpecAble v0**
-(`@specable/cli`, an offline CLI). Product specs live under `specs/001-product-primitives-v0/`
+(`@specable/domain` + `@specable/cli`, an offline CLI). Product specs live under `specs/001-product-primitives-v0/`
 — start with `spec.md`, `plan.md`, `quickstart.md`, and `tasks.md`. The monorepo is
-scaffolded at the repository root (`package.json`, `pnpm-workspace.yaml`, `packages/cli/`).
+scaffolded at the repository root (`package.json`, `pnpm-workspace.yaml`, `packages/domain/`, `packages/cli/`).
 
 For end-to-end CLI behavior (`specable check <dir>`), see `specs/001-product-primitives-v0/quickstart.md`
 as features land in later phases.

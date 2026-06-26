@@ -229,14 +229,14 @@ Per constitution v1.1.0 and [plan.md](./plan.md) (Session 2026-06-25):
 
 **Purpose**: Build pipeline, docs, and quality gates across all stories.
 
-- [ ] T096 [P] Configure package build pipeline in `packages/domain/package.json` (`build-esm`, `build-cjs`, `build-annotate`, `pack-v2`) and verify domain build
-- [ ] T097 [P] Configure package build pipeline in `packages/cli/package.json` (`build-esm`, `build-cjs`, `build-annotate`, `pack-v2`) and verify `pnpm build`
-- [ ] T098 Run full root validation suite and fix issues (`pnpm codegen && pnpm check && pnpm lint && pnpm test && pnpm build`)
-- [ ] T099 [P] Add coverage thresholds or smoke run documenting `pnpm coverage` in `README.md`
-- [ ] T100 Validate quickstart scenarios documented in `specs/001-product-primitives-v0/quickstart.md`
-- [ ] T101 [P] Update `README.md` and `AGENTS.md` for two-package layout (`@specable/domain` + `@specable/cli`)
-- [ ] T102 Run `pnpm exec fallow audit --base main --format json --quiet` and resolve actionable findings
-- [ ] T103 Add initial Changeset for `@specable/domain` and `@specable/cli` v0 in `.changeset/` if publishing is enabled
+- [X] T096 [P] Configure package build pipeline in `packages/domain/package.json` (`build-esm`, `build-cjs`, `build-annotate`, `pack-v2`) and verify domain build
+- [X] T097 [P] Configure package build pipeline in `packages/cli/package.json` (`build-esm`, `build-cjs`, `build-annotate`, `pack-v2`) and verify `pnpm build`
+- [X] T098 Run full root validation suite and fix issues (`pnpm codegen && pnpm check && pnpm lint && pnpm test && pnpm build`)
+- [X] T099 [P] Add coverage thresholds or smoke run documenting `pnpm coverage` in `README.md`
+- [X] T100 Validate quickstart scenarios documented in `specs/001-product-primitives-v0/quickstart.md`
+- [X] T101 [P] Update `README.md` and `AGENTS.md` for two-package layout (`@specable/domain` + `@specable/cli`)
+- [X] T102 Run `pnpm exec fallow audit --base main --format json --quiet` and resolve actionable findings
+- [X] T103 Add initial Changeset for `@specable/domain` and `@specable/cli` v0 in `.changeset/` if publishing is enabled
 
 ---
 
