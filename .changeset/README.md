@@ -75,4 +75,4 @@ When dispatching Release, you may need **Settings → Actions → General → Wo
 
 ## Snapshot releases (optional)
 
-For one-off CI installs without semver bumps, Changesets [snapshot releases](https://github.com/changesets/changesets/blob/main/docs/snapshot-releases.md) (`changeset version --snapshot`) are available. Prefer **pkg.pr.new** (`.github/workflows/snapshot.yml`) for PR previews; do not merge snapshot version bumps to `main`.
+For one-off CI installs without semver bumps, Changesets [snapshot releases](https://github.com/changesets/changesets/blob/main/docs/snapshot-releases.md) (`changeset version --snapshot`) are available. A pkg.pr.new PR preview workflow is deferred until maintainers need it; do not merge snapshot version bumps to `main`.

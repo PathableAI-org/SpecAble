@@ -126,7 +126,7 @@ See [AGENTS.md](./AGENTS.md) for full architecture rules, testing requirements, 
 | **First alpha (MVP)** | Run `pnpm changeset-pre-enter-alpha`, merge Version Packages PR, then trigger **Publish to npm** in Actions. |
 | **Stable** | Run `pnpm changeset-pre-exit`, version, publish to `latest`. |
 
-See [`.changeset/README.md`](./.changeset/README.md) for the full workflow, prerelease mode, and snapshot alternatives.
+See [`.changeset/README.md`](./.changeset/README.md) for the full workflow and prerelease mode.
 
 | Command | Description |
 |---------|-------------|
