@@ -130,9 +130,9 @@ Per constitution v1.1.0 and [plan.md](./plan.md):
 
 ### Tests for User Story 3
 
-- [ ] T034 [P] [US3] Cross-backend parity test in `packages/core/test/project/storage-parity.test.ts` comparing `ProjectDescriptor` fields across JSON and SQLite roots
-- [ ] T035 [P] [US3] Empty-graph contract test in `packages/core/test/project/empty-graph-contract.test.ts` (all nine types report count `0`, `graph.empty === true`)
-- [ ] T036 [US3] On-disk layout contract test in `packages/core/test/storage/layout-contract.test.ts` verifying paths match `contracts/storage-layouts.md`
+- [x] T034 [P] [US3] Cross-backend parity test in `packages/core/test/project/storage-parity.test.ts` comparing `ProjectDescriptor` fields across JSON and SQLite roots
+- [x] T035 [P] [US3] Empty-graph contract test in `packages/core/test/project/empty-graph-contract.test.ts` (all nine types report count `0`, `graph.empty === true`)
+- [x] T036 [US3] On-disk layout contract test in `packages/core/test/storage/layout-contract.test.ts` verifying paths match `contracts/storage-layouts.md`
 
 **Checkpoint**: All user stories independently functional with verified backend parity.
 
