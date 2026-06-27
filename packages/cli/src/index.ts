@@ -8,6 +8,9 @@ export * as CheckCommand from "./cli/CheckCommand.js"
 export * as InitCommand from "./cli/InitCommand.js"
 
 
+export * as ProjectShowCommand from "./cli/ProjectShowCommand.js"
+
+
 export * as RootCommand from "./cli/RootCommand.js"
 
 
@@ -18,6 +21,9 @@ export * as CheckOutput from "./cli/render/CheckOutput.js"
 
 
 export * as IntegrityOutput from "./cli/render/IntegrityOutput.js"
+
+
+export * as ProjectShowOutput from "./cli/render/ProjectShowOutput.js"
 
 
 export * as ValidationOutput from "./cli/render/ValidationOutput.js"

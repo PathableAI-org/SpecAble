@@ -6,12 +6,17 @@ import { Effect, Layer } from "effect"
 
 import { handleCheckCommandError } from "./cli/CheckCommand.js"
 import { handleInitCommandError, resolveInitCommandExit } from "./cli/InitCommand.js"
+import { handleProjectShowCommandError, resolveProjectShowCommandExit } from "./cli/ProjectShowCommand.js"
 import { rootCommand } from "./cli/RootCommand.js"
 import { GraphRepositoryLive } from "./services/Layers.js"
 
 const MainLayer = Layer.merge(GraphRepositoryLive, NodeContext.layer)
 
 const handleCommandError = (error: unknown): Effect.Effect<void> => {
+  if (resolveProjectShowCommandExit(error) !== undefined) {
+    return handleProjectShowCommandError(error)
+  }
+
   if (resolveInitCommandExit(error) !== undefined) {
     return handleInitCommandError(error)
   }
