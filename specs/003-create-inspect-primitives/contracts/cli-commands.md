@@ -2,7 +2,7 @@
 
 **Package**: `@specable/cli`  
 **Binary**: `specable`  
-**Runtime**: Node.js ≥ 20  
+**Runtime**: Node.js ≥ 22  
 **Depends on**: Initialized project root from milestone 002 (`specable.json` present)
 
 ## Commands

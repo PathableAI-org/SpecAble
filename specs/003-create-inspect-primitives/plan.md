@@ -12,7 +12,7 @@ Technical approach: extend **`@specable/core`** with `PrimitiveService` (orchest
 
 ## Technical Context
 
-**Language/Version**: TypeScript 6.x / ES2022; Node.js 20+ (CI pins 24.x)
+**Language/Version**: TypeScript 6.x / ES2022; Node.js 22+ (CI pins 24.x)
 
 **Primary Dependencies**: `effect@^3.21`, `@effect/schema`, `@effect/cli`, `@effect/platform`, `@effect/platform-node`, `@effect/vitest`, `@effect/sql`, `@effect/sql-sqlite-node`, `@specable/domain`, `@specable/core`, `@specable/cli`
 
@@ -110,7 +110,7 @@ SpecAble/
 │           └── cli/                        # primitive command wiring + output
 ```
 
-**Structure Decision**: Extend `@specable/core` with `primitive/` module and storage CRUD methods rather than adding a new package. Consolidate type→schema mapping into core (`PrimitiveSchemas.ts`) to avoid drift with CLI `FixtureFiles.ts` (CLI may re-export or delegate to core in a later refactor; v0 check keeps local `FixtureFiles.ts` unchanged per FR-018a pattern). CLI adds `primitive` command group mirroring existing alpha command adapters.
+**Structure Decision**: Extend `@specable/core` with `primitive/` module and storage CRUD methods rather than adding a new package. Consolidate type→schema mapping into core (`PrimitiveSchemas.ts`) to avoid drift with CLI `FixtureFiles.ts` (CLI may re-export or delegate to core in a later refactor; v0 check keeps local `FixtureFiles.ts` unchanged per 002 FR-018a pattern). CLI adds `primitive` command group mirroring existing alpha command adapters.
 
 ### TypeScript and service conventions
 

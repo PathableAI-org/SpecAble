@@ -285,7 +285,7 @@ T011+T012: packages/core/src/storage/SqliteStorageBackend.ts
 
 ## Notes
 
-- Do **not** migrate v0 `GraphRepository` / `GraphLoader` into core (same boundary as 002 FR-018a)
+- Do **not** migrate v0 `GraphRepository` / `GraphLoader` into core (same boundary as milestone 002 FR-018a)
 - Do **not** wire `specable check` to alpha project roots this milestone
 - Do **not** implement update, delete, relationships, or CapabilityConceptLink create
 - Eight alpha types at create boundary; CapabilityConceptLink remains init-only empty layout

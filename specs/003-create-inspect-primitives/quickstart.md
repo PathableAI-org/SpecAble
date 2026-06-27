@@ -7,7 +7,7 @@
 ## Prerequisites
 
 - Milestone 002 complete (or equivalent `@specable/core` init/inspect available)
-- Node.js 20+; pnpm 11.x
+- Node.js 22+ (per root `package.json` engines); pnpm 11.x
 - Repository built
 
 ```bash

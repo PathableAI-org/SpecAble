@@ -7,7 +7,7 @@
 
 **Decision**: System assigns IDs at create time using the pattern `{typePrefix}-{slug(name)}-{suffix}` where `typePrefix` follows v0 fixture conventions (`cap-`, `actor-`, `obj-`, etc.), `slug(name)` is a lowercase kebab-case slug of the display name, and `suffix` is a 4-character base36 random segment for collision avoidance within the project root.
 
-**Rationale**: Satisfies spec requirement for system-assigned stable opaque strings while preserving human-scanable IDs aligned with domain schema examples (`cap-schedule-session`). Suffix prevents collisions when the same name is created twice. Matches v0 graph conventions without requiring callers to supply IDs.
+**Rationale**: Satisfies spec requirement for system-assigned stable opaque strings while preserving human-scannable IDs aligned with domain schema examples (`cap-schedule-session`). Suffix prevents collisions when the same name is created twice. Matches v0 graph conventions without requiring callers to supply IDs.
 
 **Alternatives considered**:
 - Raw UUID — rejected; harder to orient in demos and diverges from domain documentation examples.

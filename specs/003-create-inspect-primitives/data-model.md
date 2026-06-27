@@ -166,7 +166,7 @@ Relationship edges between primitives are **not** created or queried this milest
 
 | Type | Prefix | Example |
 |------|--------|---------|
-| Actor | `actor-` | `actor-schedule-session-a1b2` |
+| Actor | `actor-` | `actor-coach-a1b2` |
 | Capability | `cap-` | `cap-schedule-session-x7k9` |
 | Objective | `obj-` | `obj-improve-utilization-m3p4` |
 | Persona | `persona-` | `persona-busy-professional-q2w8` |
