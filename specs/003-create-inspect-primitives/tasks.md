@@ -63,20 +63,20 @@ Per constitution v1.3.0, [plan.md](./plan.md), and
 
 **Checkpoint**: Foundation ready — storage CRUD callable from tests via `RoutedStorageBackendLive`; `PrimitiveService` tag exported.
 
-- [ ] T003 [P] Implement `AlphaPrimitiveType` literal union and `PrimitiveSummary` Schema in `packages/core/src/primitive/PrimitiveSummary.ts` per `data-model.md`
-- [ ] T004 [P] Implement `CreateInput` Schema in `packages/core/src/primitive/CreateInput.ts` per `contracts/primitive-operations.md`
-- [ ] T005 [P] Implement tagged primitive errors in `packages/core/src/primitive/errors.ts` per `research.md` R10
-- [ ] T006 [P] Implement type→Schema registry in `packages/core/src/storage/PrimitiveSchemas.ts` per `research.md` R5 (eight alpha create types + decode-only CapabilityConceptLink)
-- [ ] T007 [P] Implement ID assignment helper in `packages/core/src/primitive/assignPrimitiveId.ts` per `research.md` R1
-- [ ] T008 Extend `StorageBackend` contract with `create`, `list`, `get` in `packages/core/src/storage/StorageBackend.ts` per `contracts/storage-crud.md`
-- [ ] T009 [P] Update `describe` for non-empty graph counts in `packages/core/src/storage/JsonStorageBackend.ts`
-- [ ] T010 [P] Implement `create`, `list`, `get` in `packages/core/src/storage/JsonStorageBackend.ts` per `contracts/storage-crud.md` and `research.md` R6
-- [ ] T011 [P] Update `describe` for non-empty graph counts in `packages/core/src/storage/SqliteStorageBackend.ts`
-- [ ] T012 [P] Implement `create`, `list`, `get` in `packages/core/src/storage/SqliteStorageBackend.ts` per `contracts/storage-crud.md` and `research.md` R7
-- [ ] T013 Route `create`, `list`, `get` in `packages/core/src/storage/RoutedStorageBackend.ts`
-- [ ] T014 Implement `PrimitiveService` Effect service skeleton in `packages/core/src/primitive/PrimitiveService.ts` with `create`, `list`, `get` method signatures
-- [ ] T015 Run `pnpm --filter @specable/core run codegen` and commit generated `packages/core/src/index.ts`
-- [ ] T016 [P] Create primitive test helpers in `packages/core/test/fixtures/primitive/helpers.ts` (init temp JSON/SQLite roots, synthetic create inputs)
+- [x] T003 [P] Implement `AlphaPrimitiveType` literal union and `PrimitiveSummary` Schema in `packages/core/src/primitive/PrimitiveSummary.ts` per `data-model.md`
+- [x] T004 [P] Implement `CreateInput` Schema in `packages/core/src/primitive/CreateInput.ts` per `contracts/primitive-operations.md`
+- [x] T005 [P] Implement tagged primitive errors in `packages/core/src/primitive/errors.ts` per `research.md` R10
+- [x] T006 [P] Implement type→Schema registry in `packages/core/src/storage/PrimitiveSchemas.ts` per `research.md` R5 (eight alpha create types + decode-only CapabilityConceptLink)
+- [x] T007 [P] Implement ID assignment helper in `packages/core/src/primitive/assignPrimitiveId.ts` per `research.md` R1
+- [x] T008 Extend `StorageBackend` contract with `create`, `list`, `get` in `packages/core/src/storage/StorageBackend.ts` per `contracts/storage-crud.md`
+- [x] T009 [P] Update `describe` for non-empty graph counts in `packages/core/src/storage/JsonStorageBackend.ts`
+- [x] T010 [P] Implement `create`, `list`, `get` in `packages/core/src/storage/JsonStorageBackend.ts` per `contracts/storage-crud.md` and `research.md` R6
+- [x] T011 [P] Update `describe` for non-empty graph counts in `packages/core/src/storage/SqliteStorageBackend.ts`
+- [x] T012 [P] Implement `create`, `list`, `get` in `packages/core/src/storage/SqliteStorageBackend.ts` per `contracts/storage-crud.md` and `research.md` R7
+- [x] T013 Route `create`, `list`, `get` in `packages/core/src/storage/RoutedStorageBackend.ts`
+- [x] T014 Implement `PrimitiveService` Effect service skeleton in `packages/core/src/primitive/PrimitiveService.ts` with `create`, `list`, `get` method signatures
+- [x] T015 Run `pnpm --filter @specable/core run codegen` and commit generated `packages/core/src/index.ts`
+- [x] T016 [P] Create primitive test helpers in `packages/core/test/fixtures/primitive/helpers.ts` (init temp JSON/SQLite roots, synthetic create inputs)
 
 **Checkpoint**: Foundation ready — user story implementation can now begin.
 
