@@ -30,7 +30,7 @@ const config: UserConfig = {
     exclude: ["bun:sqlite"]
   },
   resolve: {
-    alias: [...alias("domain"), ...alias("cli")]
+    alias: [...alias("domain"), ...alias("core"), ...alias("cli")]
   },
   test: {
     setupFiles: [path.join(dirname, "setupTests.ts")],
