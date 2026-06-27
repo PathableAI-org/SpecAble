@@ -11,6 +11,7 @@ import {
 import { PrimitiveService } from "../../src/primitive/PrimitiveService.js"
 import { ProjectNotFoundError } from "../../src/project/errors.js"
 import { cleanupProjectRoot, initJsonProjectRoot, sampleCreateInput } from "../fixtures/primitive/helpers.js"
+import { makeTempProjectDir, removeTempDir } from "../fixtures/project/helpers.js"
 import { primitiveServiceJsonTestLayer } from "../fixtures/project/layers.js"
 
 const expectFailure = <E>(exit: Exit.Exit<unknown, E>, errorType: new(...args: never[]) => E) => {
@@ -70,15 +71,16 @@ describe("PrimitiveService.create failures", () => {
 
   it.effect("rejects missing project roots", () =>
     Effect.gen(function*() {
+      const parentDir = yield* Effect.promise(() => makeTempProjectDir("specable-create-missing-"))
       const service = yield* PrimitiveService
-      const missingRoot = path.join("/tmp", `specable-missing-root-${Date.now()}`)
+      const missingRoot = path.join(parentDir, "does-not-exist")
       const exit = yield* Effect.exit(
         service.create(sampleCreateInput(missingRoot, "Capability", "Schedule session"))
       )
 
       expectFailure(exit, ProjectNotFoundError)
 
-      yield* Effect.promise(() => cleanupProjectRoot(path.dirname(missingRoot)).catch(() => undefined))
+      yield* Effect.promise(() => removeTempDir(parentDir))
     }).pipe(Effect.provide(primitiveServiceJsonTestLayer)))
 
   it.effect("rejects duplicate primitive IDs", () =>
