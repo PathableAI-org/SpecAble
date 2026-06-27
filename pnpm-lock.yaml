@@ -98,6 +98,9 @@ importers:
       '@effect/schema':
         specifier: ^0.75.5
         version: 0.75.5(effect@3.21.4)
+      '@specable/core':
+        specifier: workspace:*
+        version: link:../core/dist
       '@specable/domain':
         specifier: workspace:*
         version: link:../domain/dist
