@@ -5,7 +5,8 @@ platform I/O in SpecAble. Read this during `/speckit-plan`, `/speckit-tasks`, an
 `/speckit-implement` when a feature touches services or I/O.
 
 **Effect docs**: [FileSystem](https://effect.website/docs/platform/file-system/#basic-usage),
-[Managing Services](https://effect.website/docs/requirements-management/services/)
+[Managing Services](https://effect.website/docs/requirements-management/services/),
+[Either guards](https://effect.website/docs/data-types/either/#guards)
 
 ## Effect type: `Effect<A, E, R>`
 
@@ -106,6 +107,51 @@ export const JsonStorageBackendLive = Layer.effect(StorageBackend, makeJsonStora
 
 Entrypoints choose which Live Layer to provide at compose time.
 
+## ADT guards and Schema decode
+
+Do not inspect `._tag` on ADTs owned by external libraries (`Either`, `Option`, etc.).
+Use the library's type guards or `match` APIs so narrowing stays correct when ADT
+internals change.
+
+| Rule | Detail |
+|------|--------|
+| No `_tag` on foreign ADTs | Never compare `._tag` on `Either`, `Option`, or other library ADTs |
+| Use guards | `Either.isLeft` / `Either.isRight`; `Option.isSome` / `Option.isNone`; or `Either.match` / `Option.match` |
+| Prefer Effect decode in `Effect.gen` | `Schema.decodeUnknown(schema)(input).pipe(Effect.mapError(...))` — avoids Either entirely |
+| Reserve `decodeUnknownEither` | Sync paths or helpers that immediately fold via guards or `match` |
+| Domain tagged errors | `_tag` or `Predicate.isTagged("MyError")` for **SpecAble-owned** errors only |
+
+Preferred boundary decode inside `Effect.gen`:
+
+```typescript
+import { ArrayFormatter, Schema } from "@effect/schema"
+import { Effect } from "effect"
+
+const decoded = yield* Schema.decodeUnknown(MySchema)(input).pipe(
+  Effect.mapError((error) =>
+    new MyDomainError({
+      message: ArrayFormatter.formatErrorSync(error)[0]?.message ?? "Schema decode failed",
+      path: filePath
+    })
+  )
+)
+```
+
+When `Schema.decodeUnknownEither` is required (sync helper), fold with guards:
+
+```typescript
+import { Either } from "effect"
+
+const result = Schema.decodeUnknownEither(schema)(input)
+return Either.match(result, {
+  onLeft: (error) => Effect.fail(toDomainError(error)),
+  onRight: Effect.succeed
+})
+```
+
+Reference: `packages/core/src/project/ProjectConfig.ts` (`decodeProjectConfig`),
+`packages/core/src/storage/SchemaDecode.ts`, `packages/cli/src/graph/JsonDecode.ts`.
+
 ## Test pattern
 
 ```typescript
@@ -133,6 +179,8 @@ describe("MyService", () => {
 | Layer composition root | `packages/cli/src/services/Layers.ts` |
 | Entrypoint provide + run | `packages/cli/src/bin.ts` |
 | Context.Tag + per-backend Live | `packages/core/src/storage/StorageBackend.ts`, `layers.ts` |
+| Effect Schema decode at boundary | `packages/core/src/storage/SchemaDecode.ts`, `packages/cli/src/graph/JsonDecode.ts` |
+| Schema.decodeUnknown export | `packages/core/src/project/ProjectConfig.ts` |
 
 ## Anti-patterns
 
@@ -144,6 +192,7 @@ describe("MyService", () => {
 | Contract says `R = never` but method `yield*` platform tags | Hidden Requirements leak at runtime | Propagate honest `R` or absorb at Layer build |
 | Compose platform Layers inside CLI command modules | Scatters wiring; untestable commands | Compose in `services/Layers.ts` + `bin.ts` only |
 | Run effects without `Effect.provide` in tests | Floating Requirements | Always provide test/live Layers in `it.effect` |
+| `either._tag === "Left"` on `Schema.decodeUnknownEither` result | Couples to foreign ADT internals; bypasses type guards | `Either.isLeft` / `Either.match`, or switch to `Schema.decodeUnknown` |
 
 ## Plan checklist (Service & Layer map)
 

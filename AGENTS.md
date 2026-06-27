@@ -74,6 +74,7 @@ Do not rely on model memory for Effect APIs.
 - Resolve platform tags (`FileSystem`, `SqlClient`) during Layer construction; public consumer methods SHOULD have `R = never` when deps are absorbed at build time.
 - Compose Live Layers at entrypoints (`packages/cli/src/bin.ts`, `packages/cli/src/services/Layers.ts`) and in tests — not in CLI command modules.
 - Never import `@effect/platform-node` from library `src/`; tests use `Effect.provide` with test or live Layers.
+- Do not access `._tag` on foreign ADTs (`Either`, `Option`); use guards or `Schema.decodeUnknown` — see **ADT guards and Schema decode** in `effect-service-patterns.md`.
 
 Before implementing an unfamiliar Effect pattern:
 

@@ -1,19 +1,15 @@
 <!--
 Sync Impact Report
 ==================
-Version change: 1.1.0 → 1.2.0
+Version change: 1.2.0 → 1.3.0
 Modified principles: none
 Added sections:
-  - Technical Standards → Effect services and Requirements (R)
-  - .specify/memory/effect-service-patterns.md (new canonical reference)
+  - Technical Standards → TypeScript type safety (ADT guard rule)
+  - effect-service-patterns.md → ADT guards and Schema decode
 Removed sections: none
 Templates requiring updates:
-  - .specify/templates/plan-template.md ✅ updated (Service & Layer map, constitution row)
-  - .specify/templates/tasks-template.md ✅ updated (Layer/R implementation conventions)
-  - .cursor/skills/speckit-plan/SKILL.md ✅ updated
-  - .cursor/skills/speckit-tasks/SKILL.md ✅ updated
-  - .cursor/skills/speckit-implement/SKILL.md ✅ updated
-  - AGENTS.md ✅ updated (Effect Guidance pointer)
+  - AGENTS.md ✅ updated (ADT/decode pointer)
+  - .cursor/skills/speckit-implement/SKILL.md ✅ updated (Either _tag validation)
 Deferred TODOs: none
 -->
 
@@ -235,6 +231,10 @@ operational or UX expansion.
 - When a cast is unavoidable (for example bridging an external library with incomplete
   types), it MUST be localized, documented with a one-line rationale, and covered by
   tests at that boundary.
+- Do NOT access `._tag` on ADTs from external libraries (`Either`, `Option`, etc.).
+  Use library-provided type guards (`Either.isLeft`, `Option.isSome`, …) or `match`
+  APIs. Prefer `Schema.decodeUnknown` (Effect) at boundaries inside `Effect.gen`.
+  See [effect-service-patterns.md](./effect-service-patterns.md) → ADT guards and Schema decode.
 - `null` MUST NOT be used for optional or missing values. Use `Option` for optional
   data, tagged errors or `Effect.fail` for expected failures, and defects only for
   unrecoverable bugs.
@@ -324,4 +324,4 @@ Core Principles, Technical Standards, and Development Workflow. Use
 `.specify/memory/constitution.md` as the authoritative reference during `/speckit-plan`,
 `/speckit-specify`, `/speckit-tasks`, and `/speckit-implement`.
 
-**Version**: 1.2.0 | **Ratified**: 2026-06-23 | **Last Amended**: 2026-06-27
+**Version**: 1.3.0 | **Ratified**: 2026-06-23 | **Last Amended**: 2026-06-27

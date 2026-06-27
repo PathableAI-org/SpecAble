@@ -8,6 +8,7 @@ import * as path from "node:path"
 import { IncompleteProjectError, StorageBootstrapError } from "../project/errors.js"
 import { emptyGraphStoreSummary } from "../project/ProjectDescriptor.js"
 import { PRIMITIVE_TYPE_FILE_ENTRIES } from "./PrimitiveTypes.js"
+import { decodeJsonContent } from "./SchemaDecode.js"
 import { StorageBackend, type StorageBackendService } from "./StorageBackend.js"
 
 export const GRAPH_METADATA_FILE = "graph.json"
@@ -57,18 +58,14 @@ export const makeJsonStorageBackend = Effect.gen(function*() {
       }
 
       const content = yield* fs.readFileString(filePath)
-      const decoded = Schema.decodeUnknownEither(EmptyPrimitiveFileSchema)(JSON.parse(content))
+      const decoded = yield* decodeJsonContent(
+        filePath,
+        EmptyPrimitiveFileSchema,
+        content,
+        `Invalid empty primitive file: ${path.basename(filePath)}`
+      )
 
-      if (decoded._tag === "Left") {
-        return yield* Effect.fail(
-          new IncompleteProjectError({
-            message: `Invalid empty primitive file: ${path.basename(filePath)}`,
-            path: filePath
-          })
-        )
-      }
-
-      if (decoded.right.primitives.length !== 0) {
+      if (decoded.primitives.length !== 0) {
         return yield* Effect.fail(
           new IncompleteProjectError({
             message: `Expected empty primitives array in ${path.basename(filePath)}`,
@@ -132,16 +129,8 @@ export const makeJsonStorageBackend = Effect.gen(function*() {
 
       if (metadataExists) {
         const metadataContent = yield* fs.readFileString(metadataPath)
-        const metadata = Schema.decodeUnknownEither(GraphMetadataSchema)(JSON.parse(metadataContent))
 
-        if (metadata._tag === "Left") {
-          return yield* Effect.fail(
-            new IncompleteProjectError({
-              message: "Invalid graph.json metadata",
-              path: metadataPath
-            })
-          )
-        }
+        yield* decodeJsonContent(metadataPath, GraphMetadataSchema, metadataContent, "Invalid graph.json metadata")
       }
 
       return emptyGraphStoreSummary()

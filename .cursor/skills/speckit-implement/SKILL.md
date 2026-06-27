@@ -160,6 +160,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - **Integration work**: Database connections, middleware, logging, external services
    - **Polish and validation**: Unit tests, performance optimization, documentation
    - **Effect Requirements**: For new/changed services, verify public method `R` matches Layer absorption (see `effect-service-patterns.md`); resolve platform tags in Layer construction; compose Live Layers only at entrypoints (`bin.ts`, `services/Layers.ts`) and test harnesses; never import `@effect/platform-node` from library `src/`
+   - **ADT guards**: In changed files, do not use `._tag === "Left"` or `._tag === "Right"` on `Either`/`Option` results; use `Either.match` / guards or `Schema.decodeUnknown` (see `effect-service-patterns.md` → ADT guards and Schema decode)
 
 8. Progress tracking and error handling:
    - Report progress after each completed task

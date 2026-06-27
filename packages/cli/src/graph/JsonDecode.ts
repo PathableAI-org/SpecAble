@@ -2,7 +2,7 @@ import type { ParseError } from "@effect/schema/ParseResult"
 
 import { ArrayFormatter, Schema } from "@effect/schema"
 import { errors as domainErrors } from "@specable/domain"
-import { Effect } from "effect"
+import { Effect, Either } from "effect"
 
 type FixtureDecodeError = domainErrors.FixtureDecodeError
 
@@ -15,9 +15,12 @@ const decodeSchema = <A, I>(
   parsed: unknown
 ): Effect.Effect<A, FixtureDecodeError> => {
   const result = Schema.decodeUnknownEither(schema)(parsed)
-  return result._tag === "Right"
-    ? Effect.succeed(result.right)
-    : Effect.fail(new domainErrors.FixtureDecodeError({ filePath, message: decodeFailureMessage(result.left) }))
+
+  return Either.match(result, {
+    onLeft: (error) =>
+      Effect.fail(new domainErrors.FixtureDecodeError({ filePath, message: decodeFailureMessage(error) })),
+    onRight: Effect.succeed
+  })
 }
 
 export const parseJsonString = (
