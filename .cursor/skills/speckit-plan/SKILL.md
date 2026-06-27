@@ -55,16 +55,17 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 1. **Setup**: Run `.specify/scripts/bash/setup-plan.sh --json` from repo root and parse JSON for FEATURE_SPEC, IMPL_PLAN, SPECS_DIR, BRANCH. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 
-2. **Load context**: Read FEATURE_SPEC and `.specify/memory/constitution.md`. Load IMPL_PLAN template (already copied).
+2. **Load context**: Read FEATURE_SPEC, `.specify/memory/constitution.md`, and `.specify/memory/effect-service-patterns.md`. Load IMPL_PLAN template (already copied).
 
 3. **Execute plan workflow**: Follow the structure in IMPL_PLAN template to:
    - Fill Technical Context (mark unknowns as "NEEDS CLARIFICATION")
-   - Fill Constitution Check section from constitution
+   - Fill Constitution Check section from constitution (including Effect Requirements row)
+   - Fill **Service & Layer map** when the feature introduces or changes Effect services or I/O (tags, Live Layer paths, composition root, public method `R` vs Layer-absorbed deps)
    - Evaluate gates (ERROR if violations unjustified)
    - Phase 0: Generate research.md (resolve all NEEDS CLARIFICATION)
    - Phase 1: Generate data-model.md, contracts/, quickstart.md
    - Phase 1: Update agent context by running the agent script
-   - Re-evaluate Constitution Check post-design
+   - Re-evaluate Constitution Check post-design (including Effect Requirements and Service & Layer map completeness)
 
 ## Mandatory Post-Execution Hooks
 
@@ -160,6 +161,8 @@ Command ends after Phase 2 planning. Report branch, IMPL_PLAN path, and generate
 
 - Use absolute paths for filesystem operations; use project-relative paths for references in documentation and agent context files
 - ERROR on gate failures or unresolved clarifications
+- When the feature touches I/O or Effect services, the plan MUST include a complete Service & Layer map per `effect-service-patterns.md`
+- Reference local implementations (`GraphLoader`, `GraphRepository`, `services/Layers.ts`, `bin.ts`) before inventing new Layer patterns
 
 ## Done When
 

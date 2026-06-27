@@ -55,6 +55,7 @@ Verify each item; record violations in Complexity Tracking with justification.
 | IX. Human artifacts | Will the slice include Markdown or similar human-readable output where relevant? | [ ] |
 | X. Narrow v1 | Does scope avoid PM SaaS, full UI, cloud platform, or vendor replacement ambitions? | [ ] |
 | Technical standards | Are TypeScript, pnpm, schema validation, and required test categories addressed? | [ ] |
+| Effect Requirements | Are service tags, Live Layer paths, composition root, and public method `R` documented? See [effect-service-patterns.md](../../.specify/memory/effect-service-patterns.md). | [ ] |
 
 ## Project Structure
 
@@ -119,11 +120,28 @@ directories captured above]
 
 ### TypeScript and service conventions
 
-Per `.specify/memory/constitution.md` v1.1.0+:
+Per `.specify/memory/constitution.md` v1.2.0+ and
+[effect-service-patterns.md](../../.specify/memory/effect-service-patterns.md):
 
 - **No `any`**: Use generics, Schema-inferred types, or `unknown` with narrowing.
 - **Avoid type casts**: Prefer typed factories and Schema decode; document unavoidable casts at boundaries.
 - **Hide storage I/O**: Expose repository/store-shaped services to consumers; compose file/adapter implementations in `services/` Layers only.
+- **Requirements (`R`)**: Declare service dependencies in `Effect<A, E, R>`; access via `yield* Tag`; never pass service instances as parameters.
+- **Layer absorption**: Resolve platform tags (`FileSystem`, `SqlClient`, etc.) during Layer construction; public consumer methods SHOULD have `R = never` when deps are captured at build time.
+- **Composition root**: Provide Live Layers at entrypoints (`bin.ts`, test harness) — not inside CLI command modules.
+- **No platform-node in library src**: `@effect/platform-node` only at entrypoints and tests.
+
+### Service & Layer map
+
+*Required when this feature introduces or changes Effect services or I/O boundaries.*
+
+| Item | Detail |
+|------|--------|
+| Tags introduced | [e.g. `@specable/core/ProjectRootService`, `@specable/core/StorageBackend`] |
+| Live Layer modules | [e.g. `packages/core/src/storage/layers.ts` → `JsonStorageBackendLive`, `SqliteStorageBackendLive`] |
+| Composition root | [e.g. `packages/cli/src/services/Layers.ts`, `packages/cli/src/bin.ts`] |
+| Public method `R` | [Which methods absorb platform deps at Layer build (`R = never`) vs propagate tags] |
+| Local references | [e.g. `GraphLoader.ts`, `GraphRepository.ts`, `services/Layers.ts`] |
 
 ## Complexity Tracking
 
