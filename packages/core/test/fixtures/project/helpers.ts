@@ -58,34 +58,37 @@ export const assertAllPrimitiveFilesEmpty = async (dirPath: string): Promise<voi
   }
 }
 
-export const assertSqliteGraphLayout = async (dbPath: string): Promise<void> => {
-  await Effect.runPromise(
-    Effect.scoped(
-      Effect.gen(function*() {
-        const sql = yield* makeSqliteClient({ filename: dbPath })
+const isEnoent = (error: unknown): boolean =>
+  typeof error === "object" &&
+  error !== null &&
+  "code" in error &&
+  (error as NodeJS.ErrnoException).code === "ENOENT"
 
-        const schemaRows = yield* sql<{ readonly value: string }>`
-          SELECT value FROM schema_meta WHERE key = ${GRAPH_SCHEMA_KEY}
-        `
+export const assertSqliteGraphLayout = (dbPath: string): Effect.Effect<void, Error> =>
+  Effect.scoped(
+    Effect.gen(function*() {
+      const sql = yield* makeSqliteClient({ filename: dbPath })
 
-        if (schemaRows.length !== 1 || schemaRows[0]?.value !== GRAPH_SCHEMA_VERSION) {
-          return yield* Effect.fail(
-            new Error("SQLite schema_meta missing graph-schema version row")
-          )
-        }
+      const schemaRows = yield* sql<{ readonly value: string }>`
+        SELECT value FROM schema_meta WHERE key = ${GRAPH_SCHEMA_KEY}
+      `
 
-        const countRows = yield* sql<{ readonly count: number }>`
-          SELECT COUNT(*) AS count FROM primitives
-        `
-        const total = Number(countRows[0]?.count ?? 0)
+      if (schemaRows.length !== 1 || schemaRows[0]?.value !== GRAPH_SCHEMA_VERSION) {
+        return yield* Effect.fail(
+          new Error("SQLite schema_meta missing graph-schema version row")
+        )
+      }
 
-        if (total !== 0) {
-          return yield* Effect.fail(new Error(`Expected empty primitives table, found ${total} rows`))
-        }
-      })
-    ).pipe(Effect.provide(Reactivity.layer))
-  )
-}
+      const countRows = yield* sql<{ readonly count: number }>`
+        SELECT COUNT(*) AS count FROM primitives
+      `
+      const total = Number(countRows[0]?.count ?? 0)
+
+      if (total !== 0) {
+        return yield* Effect.fail(new Error(`Expected empty primitives table, found ${total} rows`))
+      }
+    })
+  ).pipe(Effect.provide(Reactivity.layer))
 
 export const assertNoJsonPrimitiveFiles = async (dirPath: string): Promise<void> => {
   for (const { fileName } of PRIMITIVE_TYPE_FILE_ENTRIES) {
@@ -96,6 +99,10 @@ export const assertNoJsonPrimitiveFiles = async (dirPath: string): Promise<void>
       throw new Error(`Expected no JSON primitive file at ${fileName}`)
     } catch (error) {
       if (error instanceof Error && error.message.startsWith("Expected no JSON primitive file")) {
+        throw error
+      }
+
+      if (!isEnoent(error)) {
         throw error
       }
     }

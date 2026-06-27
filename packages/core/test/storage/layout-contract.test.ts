@@ -64,7 +64,7 @@ describe("On-disk layout contract", () => {
       const dbExists = yield* Effect.promise(() => fs.access(dbPath).then(() => true).catch(() => false))
       expect(dbExists).toBe(true)
 
-      yield* Effect.promise(() => assertSqliteGraphLayout(dbPath))
+      yield* assertSqliteGraphLayout(dbPath)
       yield* Effect.promise(() => assertNoJsonPrimitiveFiles(projectRoot))
 
       yield* Effect.promise(() => removeTempDir(parentDir))
