@@ -131,9 +131,9 @@ refinement demo on synthetic graph, and confirms release success criteria checkl
 ## Links
 
 - Release: [docs/releases/alpha.md](../releases/alpha.md)
-- GitHub Milestone: TBD
+- GitHub Milestone: https://github.com/PathableAI-org/SpecAble/milestone/7
 - Spec Kit spec: TBD
-- Issues: TBD
+- Issues: https://github.com/PathableAI-org/SpecAble/issues/73 (setup)
 
 ## Risks or blockers
 

@@ -125,6 +125,13 @@ Ordered by demoable product capability, not internal architecture:
 
 - Parent vision (internal): Notion — AI-assisted product-to-design-to-engineering platform
 - Prior release: [docs/releases/v0.md](v0.md)
-- GitHub Milestones: TBD
-- Related issues: TBD
+- GitHub Milestones:
+  - [Alpha 1: Initialize JSON and SQLite project roots](https://github.com/PathableAI-org/SpecAble/milestone/1)
+  - [Alpha 2: Create and inspect primitives](https://github.com/PathableAI-org/SpecAble/milestone/2)
+  - [Alpha 3: Link primitives into a graph](https://github.com/PathableAI-org/SpecAble/milestone/3)
+  - [Alpha 4: Validate desired product state](https://github.com/PathableAI-org/SpecAble/milestone/4)
+  - [Alpha 5: MCP-shaped command surface](https://github.com/PathableAI-org/SpecAble/milestone/5)
+  - [Alpha 6: MCP server roots, resources, and tools](https://github.com/PathableAI-org/SpecAble/milestone/6)
+  - [Alpha 7: Local MCP server for desired product state](https://github.com/PathableAI-org/SpecAble/milestone/7)
+- Related issues: setup issues [#17](https://github.com/PathableAI-org/SpecAble/issues/17), [#68](https://github.com/PathableAI-org/SpecAble/issues/68)–[#73](https://github.com/PathableAI-org/SpecAble/issues/73)
 - GitHub Release (when shipped): TBD

@@ -161,7 +161,7 @@ First issue: Create Spec Kit spec, plan, and tasks for <Milestone name>.
 - [ ] Run `/speckit-specify` using the milestone **Inputs to Spec Kit** section as canonical source material
 - [ ] Run `/speckit-plan`
 - [ ] Run `/speckit-tasks`
-- [ ] Run `/speckit-taskstoissues`
+- [ ] Run `/speckit-taskstoissues` (creates one GitHub issue per `tasks.md` phase, with native blocked-by dependencies between phases)
 ```
 
 ### 4. Next steps

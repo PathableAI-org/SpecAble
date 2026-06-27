@@ -121,9 +121,9 @@ synthetic primitives, and passes automated integration tests against local serve
 ## Links
 
 - Release: [docs/releases/alpha.md](../releases/alpha.md)
-- GitHub Milestone: TBD
+- GitHub Milestone: https://github.com/PathableAI-org/SpecAble/milestone/6
 - Spec Kit spec: TBD
-- Issues: TBD
+- Issues: https://github.com/PathableAI-org/SpecAble/issues/72 (setup)
 
 ## Risks or blockers
 

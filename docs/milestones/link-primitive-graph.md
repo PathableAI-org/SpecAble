@@ -112,9 +112,9 @@ match persisted edges, tests cover link/unlink round-trip on both backends.
 ## Links
 
 - Release: [docs/releases/alpha.md](../releases/alpha.md)
-- GitHub Milestone: TBD
+- GitHub Milestone: https://github.com/PathableAI-org/SpecAble/milestone/3
 - Spec Kit spec: TBD
-- Issues: TBD
+- Issues: https://github.com/PathableAI-org/SpecAble/issues/69 (setup)
 
 ## Risks or blockers
 

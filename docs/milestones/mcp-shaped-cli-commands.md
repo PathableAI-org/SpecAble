@@ -112,9 +112,9 @@ fixtures; handlers are importable by MCP server milestone without duplication.
 ## Links
 
 - Release: [docs/releases/alpha.md](../releases/alpha.md)
-- GitHub Milestone: TBD
+- GitHub Milestone: https://github.com/PathableAI-org/SpecAble/milestone/5
 - Spec Kit spec: TBD
-- Issues: TBD
+- Issues: https://github.com/PathableAI-org/SpecAble/issues/71 (setup)
 
 ## Risks or blockers
 

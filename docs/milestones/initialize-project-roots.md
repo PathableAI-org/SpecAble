@@ -131,9 +131,9 @@ at either root.
 ## Links
 
 - Release: [docs/releases/alpha.md](../releases/alpha.md)
-- GitHub Milestone: TBD
-- Spec Kit spec: TBD
-- Issues: TBD
+- GitHub Milestone: https://github.com/PathableAI-org/SpecAble/milestone/1
+- Spec Kit spec: `specs/002-initialize-project-roots/`
+- Issues: https://github.com/PathableAI-org/SpecAble/issues/17 (setup), https://github.com/PathableAI-org/SpecAble/issues?q=is%3Aissue+milestone%3A%22Alpha+1%3A+Initialize+JSON+and+SQLite+project+roots%22 (tasks)
 
 ## Risks or blockers
 

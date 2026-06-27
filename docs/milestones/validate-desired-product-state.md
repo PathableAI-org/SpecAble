@@ -117,9 +117,9 @@ Active failure, Draft warning, and broken reference paths on persisted storage.
 ## Links
 
 - Release: [docs/releases/alpha.md](../releases/alpha.md)
-- GitHub Milestone: TBD
+- GitHub Milestone: https://github.com/PathableAI-org/SpecAble/milestone/4
 - Spec Kit spec: TBD
-- Issues: TBD
+- Issues: https://github.com/PathableAI-org/SpecAble/issues/70 (setup)
 
 ## Risks or blockers
 

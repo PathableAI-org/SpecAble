@@ -80,6 +80,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Phase 3+: One phase per user story (in priority order from spec.md)
    - Each phase includes: story goal, independent test criteria, tests (if requested), implementation tasks
    - Final Phase: Polish & cross-cutting concerns
+   - **Phase boundaries are the GitHub issue unit**: `/speckit-taskstoissues` creates one issue per `## Phase N:` section; keep phases cohesive and include **Purpose**, **Goal**, **Checkpoint**, and a complete task checklist per phase
    - All tasks must follow the strict checklist format (see Task Generation Rules below)
    - Clear file paths for each task
    - Dependencies section showing story completion order
