@@ -37,7 +37,7 @@ Run from the repository root:
 
 1. **lint-staged** — ESLint with `--fix` on staged TypeScript and `.mjs` files
 2. **typecheck** — `pnpm check`
-3. **codegen** — ensures generated `index.ts` files are current when package `src/` changes
+3. **codegen** — runs `pnpm codegen` on every commit; fails if generated `index.ts` files are out of date
 4. **fallow audit** — dead-code and duplication gate against the branch merge-base (default `main`)
 
 Bypass once: `git commit --no-verify`

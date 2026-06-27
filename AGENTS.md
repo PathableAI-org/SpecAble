@@ -95,7 +95,7 @@ Git hooks (installed via `pnpm install` → `prepare` → Husky):
 
 - **lint-staged**: `eslint --fix` on staged `*.{ts,mjs}` under `packages/*/{src,test,examples,scripts}/` and `scripts/`
 - **typecheck**: `pnpm check`
-- **codegen drift**: when `packages/domain/src/` or `packages/cli/src/` changes (except `index.ts`), verifies `pnpm codegen` output is staged
+- **codegen**: runs `pnpm codegen` on every commit and fails if generated `packages/{domain,core,cli}/src/index.ts` files are out of date
 - **fallow audit**: `fallow audit --base <merge-base>` (falls back to `main`; skip with `git commit --no-verify`)
 
 Reinstall the fallow block after editing `.husky/pre-commit`:
@@ -111,6 +111,7 @@ pnpm --filter @specable/domain test
 pnpm --filter @specable/cli test
 pnpm --filter @specable/cli coverage
 pnpm --filter @specable/domain run codegen
+pnpm --filter @specable/core run codegen
 pnpm --filter @specable/cli run codegen
 pnpm build
 pnpm specable check packages/cli/examples/generic/valid
@@ -163,7 +164,7 @@ Placeholder tests do not count as coverage for new behavior.
 ## Package And Publishing Rules
 
 - Use explicit package exports generated through `@effect/build-utils` (`pnpm codegen`).
-- Do not manually edit generated export files (`packages/cli/src/index.ts`).
+- Do not manually edit generated export files (`packages/domain/src/index.ts`, `packages/core/src/index.ts`, `packages/cli/src/index.ts`).
 - Keep package metadata, repository URLs, licenses, and publish settings valid.
 - Add a Changeset for changes to `@specable/domain` or `@specable/cli` unless explicitly exempt.
 - **Pre-MVP**: changesets accumulate on `main`; do not merge the bot's **Version Packages** PR until maintainers enter alpha prerelease mode (`pnpm changeset-pre-enter-alpha`). See `.changeset/README.md`.

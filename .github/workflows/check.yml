@@ -25,7 +25,7 @@ jobs:
       - run: pnpm codegen
       - run: pnpm build
       - name: Check source state
-        run: git add packages/domain/src packages/cli/src && git diff-index --cached HEAD --exit-code packages/domain/src packages/cli/src
+        run: git add packages/domain/src packages/core/src packages/cli/src && git diff-index --cached HEAD --exit-code packages/domain/src packages/core/src packages/cli/src
 
   types:
     name: Types
