@@ -7,6 +7,12 @@ import type { ProjectDescriptor } from "./ProjectDescriptor.js"
 
 import { StorageBackend } from "../storage/StorageBackend.js"
 
+/**
+ * Project root init/inspect orchestration. Compose `ProjectRootService.Default`
+ * with a `StorageBackend` Live Layer and its upstream `FileSystem` parent at the
+ * application entrypoint (for example `packages/cli/src/services/Layers.ts`).
+ * Public methods use `R = never`; `StorageBackend` is captured at Layer build.
+ */
 export type ProjectRootDescribe = (
   projectPath: string
 ) => Effect.Effect<ProjectDescriptor, ProjectInspectError>

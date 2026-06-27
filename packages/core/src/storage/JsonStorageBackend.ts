@@ -23,70 +23,60 @@ const GraphMetadataSchema = Schema.Struct({
 
 const EMPTY_PRIMITIVE_FILE = `${JSON.stringify({ primitives: [] })}\n`
 
-const writeEmptyTypeFiles = (
-  fs: FileSystem.FileSystem,
-  projectRoot: string
-): Effect.Effect<void, PlatformError> =>
-  Effect.forEach(
-    PRIMITIVE_TYPE_FILE_ENTRIES,
-    ({ fileName }) => {
-      const filePath = path.join(projectRoot, fileName)
-
-      return fs.writeFileString(filePath, EMPTY_PRIMITIVE_FILE)
-    },
-    { discard: true }
-  )
-
-const writeGraphMetadata = (
-  fs: FileSystem.FileSystem,
-  projectRoot: string,
-  name: string
-): Effect.Effect<void, PlatformError> =>
-  fs.writeFileString(
-    path.join(projectRoot, GRAPH_METADATA_FILE),
-    `${JSON.stringify({ name, schemaVersion: 1 })}\n`
-  )
-
-const readEmptyPrimitiveFile = (
-  fs: FileSystem.FileSystem,
-  filePath: string
-): Effect.Effect<void, IncompleteProjectError | PlatformError> =>
-  Effect.gen(function*() {
-    const exists = yield* fs.exists(filePath)
-
-    if (!exists) {
-      return yield* Effect.fail(
-        new IncompleteProjectError({
-          message: `Missing primitive file: ${path.basename(filePath)}`,
-          path: filePath
-        })
-      )
-    }
-
-    const content = yield* fs.readFileString(filePath)
-    const decoded = Schema.decodeUnknownEither(EmptyPrimitiveFileSchema)(JSON.parse(content))
-
-    if (decoded._tag === "Left") {
-      return yield* Effect.fail(
-        new IncompleteProjectError({
-          message: `Invalid empty primitive file: ${path.basename(filePath)}`,
-          path: filePath
-        })
-      )
-    }
-
-    if (decoded.right.primitives.length !== 0) {
-      return yield* Effect.fail(
-        new IncompleteProjectError({
-          message: `Expected empty primitives array in ${path.basename(filePath)}`,
-          path: filePath
-        })
-      )
-    }
-  })
-
 export const makeJsonStorageBackend = Effect.gen(function*() {
   const fs = yield* FileSystem.FileSystem
+
+  const writeEmptyTypeFiles = (projectRoot: string): Effect.Effect<void, PlatformError> =>
+    Effect.forEach(
+      PRIMITIVE_TYPE_FILE_ENTRIES,
+      ({ fileName }) => {
+        const filePath = path.join(projectRoot, fileName)
+
+        return fs.writeFileString(filePath, EMPTY_PRIMITIVE_FILE)
+      },
+      { discard: true }
+    )
+
+  const writeGraphMetadata = (projectRoot: string, name: string): Effect.Effect<void, PlatformError> =>
+    fs.writeFileString(
+      path.join(projectRoot, GRAPH_METADATA_FILE),
+      `${JSON.stringify({ name, schemaVersion: 1 })}\n`
+    )
+
+  const readEmptyPrimitiveFile = (filePath: string): Effect.Effect<void, IncompleteProjectError | PlatformError> =>
+    Effect.gen(function*() {
+      const exists = yield* fs.exists(filePath)
+
+      if (!exists) {
+        return yield* Effect.fail(
+          new IncompleteProjectError({
+            message: `Missing primitive file: ${path.basename(filePath)}`,
+            path: filePath
+          })
+        )
+      }
+
+      const content = yield* fs.readFileString(filePath)
+      const decoded = Schema.decodeUnknownEither(EmptyPrimitiveFileSchema)(JSON.parse(content))
+
+      if (decoded._tag === "Left") {
+        return yield* Effect.fail(
+          new IncompleteProjectError({
+            message: `Invalid empty primitive file: ${path.basename(filePath)}`,
+            path: filePath
+          })
+        )
+      }
+
+      if (decoded.right.primitives.length !== 0) {
+        return yield* Effect.fail(
+          new IncompleteProjectError({
+            message: `Expected empty primitives array in ${path.basename(filePath)}`,
+            path: filePath
+          })
+        )
+      }
+    })
 
   const bootstrap: StorageBackendService["bootstrap"] = (projectRoot, config) =>
     Effect.gen(function*() {
@@ -99,7 +89,7 @@ export const makeJsonStorageBackend = Effect.gen(function*() {
         )
       }
 
-      yield* writeEmptyTypeFiles(fs, projectRoot).pipe(
+      yield* writeEmptyTypeFiles(projectRoot).pipe(
         Effect.mapError(
           (cause) =>
             new StorageBootstrapError({
@@ -109,7 +99,7 @@ export const makeJsonStorageBackend = Effect.gen(function*() {
         )
       )
 
-      yield* writeGraphMetadata(fs, projectRoot, config.name).pipe(
+      yield* writeGraphMetadata(projectRoot, config.name).pipe(
         Effect.mapError(
           (cause) =>
             new StorageBootstrapError({
@@ -133,7 +123,7 @@ export const makeJsonStorageBackend = Effect.gen(function*() {
 
       yield* Effect.forEach(
         PRIMITIVE_TYPE_FILE_ENTRIES,
-        ({ fileName }) => readEmptyPrimitiveFile(fs, path.join(projectRoot, fileName)),
+        ({ fileName }) => readEmptyPrimitiveFile(path.join(projectRoot, fileName)),
         { discard: true }
       )
 

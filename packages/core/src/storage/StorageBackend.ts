@@ -1,5 +1,4 @@
 import type { PlatformError } from "@effect/platform/Error"
-import type * as FileSystem from "@effect/platform/FileSystem"
 import type { Effect } from "effect"
 
 import { Context } from "effect"
@@ -11,12 +10,12 @@ import type { GraphStoreSummary } from "../project/ProjectDescriptor.js"
 export type StorageBackendBootstrap = (
   projectRoot: string,
   config: ProjectConfig
-) => Effect.Effect<void, PlatformError | StorageBootstrapError, FileSystem.FileSystem>
+) => Effect.Effect<void, PlatformError | StorageBootstrapError, never>
 
 export type StorageBackendDescribe = (
   projectRoot: string,
   config: ProjectConfig
-) => Effect.Effect<GraphStoreSummary, IncompleteProjectError | PlatformError, FileSystem.FileSystem>
+) => Effect.Effect<GraphStoreSummary, IncompleteProjectError | PlatformError, never>
 
 export type StorageBackendError = IncompleteProjectError | PlatformError | StorageBootstrapError
 

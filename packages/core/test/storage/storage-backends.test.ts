@@ -1,17 +1,13 @@
-import { NodeFileSystem } from "@effect/platform-node"
 import { describe, expect, it } from "@effect/vitest"
 import { Effect } from "effect"
 import * as path from "node:path"
 
 import type { ProjectConfig } from "../../src/project/ProjectConfig.js"
 
-import { JsonStorageBackendLive } from "../../src/storage/JsonStorageBackend.js"
 import { CANONICAL_PRIMITIVE_TYPES } from "../../src/storage/PrimitiveTypes.js"
-import { SqliteStorageBackendLive } from "../../src/storage/SqliteStorageBackend.js"
 import { StorageBackend } from "../../src/storage/StorageBackend.js"
 import { makeTempProjectDir, removeTempDir } from "../fixtures/project/helpers.js"
-
-const nodeFileSystemLayer = NodeFileSystem.layer
+import { jsonStorageTestLayer, sqliteStorageTestLayer } from "../fixtures/project/layers.js"
 
 const sampleJsonConfig = (): ProjectConfig => ({
   createdAt: "2026-06-26T12:00:00.000Z",
@@ -44,7 +40,7 @@ describe("Storage backends", () => {
       expect(summary.countsByType.Actor).toBe(0)
 
       yield* Effect.promise(() => removeTempDir(projectRoot))
-    }).pipe(Effect.provide(JsonStorageBackendLive), Effect.provide(nodeFileSystemLayer)))
+    }).pipe(Effect.provide(jsonStorageTestLayer)))
 
   it.effect("SQLite backend bootstraps and describes an empty graph", () =>
     Effect.gen(function*() {
@@ -60,5 +56,5 @@ describe("Storage backends", () => {
       expect(path.basename(config.storage.location)).toBe("graph.sqlite")
 
       yield* Effect.promise(() => removeTempDir(projectRoot))
-    }).pipe(Effect.provide(SqliteStorageBackendLive), Effect.provide(nodeFileSystemLayer)))
+    }).pipe(Effect.provide(sqliteStorageTestLayer)))
 })
