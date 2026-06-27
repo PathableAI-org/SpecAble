@@ -9,13 +9,15 @@ import { projectRootLiveLayer } from "../services/Layers.js"
 
 const {
   ProjectAlreadyInitializedError,
+  ProjectNotFoundError,
   ProjectPathNotEmptyError,
   StorageBootstrapError,
   UnsupportedStorageTypeError
 } = errors
 
 const projectPath = Args.directory({ name: "path" })
-const storage = Options.text("storage").pipe(Options.withDefault("json"))
+export const initStorageOption = Options.text("storage").pipe(Options.withDefault("json"))
+const storage = initStorageOption
 const name = Options.text("name").pipe(Options.optional)
 
 const SUPPORTED_STORAGE_TYPES = ["json", "sqlite"] as const
@@ -96,6 +98,10 @@ export const resolveInitCommandExit = (
 
   if (Schema.is(ProjectPathNotEmptyError)(error)) {
     return { code: 2, message: `Project path is not empty: ${error.path}` }
+  }
+
+  if (Schema.is(ProjectNotFoundError)(error)) {
+    return { code: 2, message: `Project root not found: ${error.path}` }
   }
 
   if (Schema.is(UnsupportedStorageTypeError)(error)) {

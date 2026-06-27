@@ -1,7 +1,10 @@
+import { CliConfig, Options } from "@effect/cli"
+import { NodeFileSystem } from "@effect/platform-node"
 import { describe, expect, it } from "@effect/vitest"
 import { errors } from "@specable/core"
+import { Effect, HashMap } from "effect"
 
-import { formatInitSuccessOutput, resolveInitCommandExit } from "../../src/cli/InitCommand.js"
+import { formatInitSuccessOutput, initStorageOption, resolveInitCommandExit } from "../../src/cli/InitCommand.js"
 
 const { ProjectAlreadyInitializedError, UnsupportedStorageTypeError } = errors
 
@@ -20,11 +23,12 @@ describe("InitCommand", () => {
     expect(output).toContain("root: /tmp/demo-json")
   })
 
-  it("defaults storage option to json in command definition", async () => {
-    const { initCommand } = await import("../../src/cli/InitCommand.js")
+  it.effect("defaults storage option to json when --storage is omitted", () =>
+    Effect.gen(function*() {
+      const storage = yield* Options.parse(initStorageOption, HashMap.empty(), CliConfig.defaultConfig)
 
-    expect(initCommand).toBeDefined()
-  })
+      expect(storage).toBe("json")
+    }).pipe(Effect.provide(NodeFileSystem.layer)))
 
   it("maps unsupported storage to exit code 2", () => {
     const resolution = resolveInitCommandExit(

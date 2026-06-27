@@ -10,7 +10,7 @@ import type { ProjectDescriptor } from "./ProjectDescriptor.js"
 
 import { CANONICAL_PRIMITIVE_TYPES } from "../storage/PrimitiveTypes.js"
 import { StorageBackend } from "../storage/StorageBackend.js"
-import { ProjectAlreadyInitializedError, ProjectPathNotEmptyError, UnsupportedStorageTypeError } from "./errors.js"
+import { ProjectAlreadyInitializedError, ProjectNotFoundError, ProjectPathNotEmptyError } from "./errors.js"
 import { encodeProjectConfig, type ProjectConfig } from "./ProjectConfig.js"
 
 const SPECABLE_JSON = "specable.json"
@@ -20,12 +20,22 @@ const SQLITE_DATABASE_FILE = "graph.sqlite"
 const storageBindingFor = (storage: "json" | "sqlite"): ProjectConfig["storage"] =>
   storage === "json" ? { location: ".", type: "json" } : { location: SQLITE_DATABASE_FILE, type: "sqlite" }
 
+const resolveProjectName = (projectRoot: string, name?: string): string => {
+  const trimmed = name?.trim()
+
+  if (trimmed !== undefined && trimmed.length > 0) {
+    return trimmed
+  }
+
+  return path.basename(projectRoot)
+}
+
 const buildProjectConfig = (
   projectRoot: string,
   options: ProjectRootInitializeOptions
 ): ProjectConfig => ({
   createdAt: new Date().toISOString(),
-  name: options.name ?? path.basename(projectRoot),
+  name: resolveProjectName(projectRoot, options.name),
   primitiveTypes: [...CANONICAL_PRIMITIVE_TYPES],
   projectId: randomUUID(),
   schemaVersion: 1,
@@ -77,6 +87,21 @@ export class ProjectRootService extends E.Service<ProjectRootService>()("@specab
         }
       })
 
+    const validateInitPathType = (projectRoot: string) =>
+      E.gen(function*() {
+        const exists = yield* fs.exists(projectRoot)
+
+        if (!exists) {
+          return
+        }
+
+        const stat = yield* fs.stat(projectRoot)
+
+        if (stat.type !== "Directory") {
+          return yield* E.fail(new ProjectNotFoundError({ path: projectRoot }))
+        }
+      })
+
     const ensureProjectDirectory = (projectRoot: string) =>
       E.gen(function*() {
         const exists = yield* fs.exists(projectRoot)
@@ -85,12 +110,6 @@ export class ProjectRootService extends E.Service<ProjectRootService>()("@specab
           yield* fs.makeDirectory(projectRoot, { recursive: true })
 
           return
-        }
-
-        const stat = yield* fs.stat(projectRoot)
-
-        if (stat.type !== "Directory") {
-          return yield* E.fail(new ProjectPathNotEmptyError({ path: projectRoot }))
         }
 
         const entries = yield* fs.readDirectory(projectRoot)
@@ -110,12 +129,9 @@ export class ProjectRootService extends E.Service<ProjectRootService>()("@specab
 
     const initialize: ProjectRootInitialize = (projectPath, options) =>
       E.gen(function*() {
-        if (options.storage !== "json" && options.storage !== "sqlite") {
-          return yield* E.fail(new UnsupportedStorageTypeError({ storageType: String(options.storage) }))
-        }
-
         const projectRoot = resolveProjectRoot(projectPath)
 
+        yield* validateInitPathType(projectRoot)
         yield* assertNotInitialized(projectRoot)
         yield* ensureProjectDirectory(projectRoot)
 

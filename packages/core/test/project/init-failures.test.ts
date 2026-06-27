@@ -3,7 +3,11 @@ import { Cause, Effect, Exit, Option } from "effect"
 import * as fs from "node:fs/promises"
 import * as path from "node:path"
 
-import { ProjectAlreadyInitializedError, ProjectPathNotEmptyError } from "../../src/project/errors.js"
+import {
+  ProjectAlreadyInitializedError,
+  ProjectNotFoundError,
+  ProjectPathNotEmptyError
+} from "../../src/project/errors.js"
 import { ProjectRootService } from "../../src/project/ProjectRootService.js"
 import { makeTempProjectDir, readSpecableJson, removeTempDir } from "../fixtures/project/helpers.js"
 import { projectRootJsonTestLayer } from "../fixtures/project/layers.js"
@@ -87,5 +91,28 @@ describe("ProjectRootService.initialize failures", () => {
       })
 
       expect(Exit.isFailure(exit)).toBe(true)
+    }).pipe(Effect.provide(projectRootJsonTestLayer)))
+
+  it.effect("fails when target path exists but is not a directory", () =>
+    Effect.gen(function*() {
+      const parentDir = yield* Effect.promise(() => makeTempProjectDir("specable-init-file-path-"))
+      const filePath = path.join(parentDir, "existing-file")
+      yield* Effect.promise(() => fs.writeFile(filePath, "not a directory\n", "utf8"))
+
+      const service = yield* ProjectRootService
+      const exit = yield* Effect.exit(service.initialize(filePath, { storage: "json" }))
+
+      expect(Exit.isFailure(exit)).toBe(true)
+
+      if (Exit.isFailure(exit)) {
+        const error = Cause.failureOption(exit.cause)
+        expect(Option.isSome(error)).toBe(true)
+
+        if (Option.isSome(error)) {
+          expect(error.value).toBeInstanceOf(ProjectNotFoundError)
+        }
+      }
+
+      yield* Effect.promise(() => removeTempDir(parentDir))
     }).pipe(Effect.provide(projectRootJsonTestLayer)))
 })

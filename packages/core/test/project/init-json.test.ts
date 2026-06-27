@@ -67,4 +67,18 @@ describe("ProjectRootService.initialize (JSON)", () => {
 
       yield* Effect.promise(() => removeTempDir(projectRoot))
     }).pipe(Effect.provide(projectRootJsonTestLayer)))
+
+  it.effect("falls back to basename when --name is blank", () =>
+    Effect.gen(function*() {
+      const parentDir = yield* Effect.promise(() => makeTempProjectDir("specable-init-json-blank-name-"))
+      const projectRoot = path.join(parentDir, "demo-json")
+      const service = yield* ProjectRootService
+
+      yield* service.initialize(projectRoot, { name: "   ", storage: "json" })
+
+      const config = yield* Effect.promise(() => readSpecableJson(projectRoot))
+      expect(config.name).toBe("demo-json")
+
+      yield* Effect.promise(() => removeTempDir(parentDir))
+    }).pipe(Effect.provide(projectRootJsonTestLayer)))
 })
