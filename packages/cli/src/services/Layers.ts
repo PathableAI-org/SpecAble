@@ -1,5 +1,5 @@
 import { NodeFileSystem } from "@effect/platform-node"
-import { layers, ProjectRootService } from "@specable/core"
+import { layers, PrimitiveService, ProjectRootService } from "@specable/core"
 import { Layer } from "effect"
 
 import { GraphLoader } from "../graph/GraphLoader.js"
@@ -17,6 +17,13 @@ export const GraphRepositoryLive = GraphRepository.Default.pipe(
 )
 
 export const GraphServicesLive = Layer.mergeAll(FileSystemLive, GraphRepositoryLive)
+
+export const routedStorageBackendLiveLayer = RoutedStorageBackendLive.pipe(Layer.provide(FileSystemLive))
+
+export const primitiveServiceLiveLayer = PrimitiveService.PrimitiveService.Default.pipe(
+  Layer.provide(routedStorageBackendLiveLayer),
+  Layer.provide(FileSystemLive)
+)
 
 export const projectRootLiveLayer = (storage: "json" | "sqlite") =>
   ProjectRootService.ProjectRootService.Default.pipe(

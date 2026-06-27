@@ -1,4 +1,8 @@
+export * as CreateInput from "./primitive/CreateInput.js"
 export * as errors from "./project/errors.js"
+export * as primitiveErrors from "./primitive/errors.js"
+export * as PrimitiveService from "./primitive/PrimitiveService.js"
+export * as PrimitiveSummary from "./primitive/PrimitiveSummary.js"
 export * as ProjectConfig from "./project/ProjectConfig.js"
 export * as ProjectDescriptor from "./project/ProjectDescriptor.js"
 export * as ProjectRootService from "./project/ProjectRootService.js"

@@ -92,18 +92,18 @@ Per constitution v1.3.0, [plan.md](./plan.md), and
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T017 [P] [US1] JSON create round-trip test in `packages/core/test/storage/create-json.test.ts` (Capability + Actor, `--set` optional field)
-- [ ] T018 [P] [US1] SQLite create round-trip test in `packages/core/test/storage/create-sqlite.test.ts`
-- [ ] T019 [P] [US1] Create failure tests in `packages/core/test/primitive/create-failures.test.ts` (unknown type, invalid fields, missing root, duplicate ID)
+- [x] T017 [P] [US1] JSON create round-trip test in `packages/core/test/storage/create-json.test.ts` (Capability + Actor, `--set` optional field)
+- [x] T018 [P] [US1] SQLite create round-trip test in `packages/core/test/storage/create-sqlite.test.ts`
+- [x] T019 [P] [US1] Create failure tests in `packages/core/test/primitive/create-failures.test.ts` (unknown type, invalid fields, missing root, duplicate ID)
 
 ### Implementation for User Story 1
 
-- [ ] T020 [US1] Implement `PrimitiveService.create` in `packages/core/src/primitive/PrimitiveService.ts` (manifest read, ID assign, Schema decode, delegate storage)
-- [ ] T021 [P] [US1] Implement `PrimitiveCreateCommand` in `packages/cli/src/cli/PrimitiveCreateCommand.ts` with `--type`, `--name`, `--status`, repeatable `--set` per `contracts/cli-commands.md`
-- [ ] T022 [P] [US1] Implement create stdout renderer in `packages/cli/src/cli/render/PrimitiveOutput.ts`
-- [ ] T023 [US1] Register `primitive create` subcommand in `packages/cli/src/cli/RootCommand.ts`
-- [ ] T024 [US1] Compose `PrimitiveServiceLive` in `packages/cli/src/services/Layers.ts` and register primitive error handlers in `packages/cli/src/bin.ts`
-- [ ] T025 [P] [US1] CLI create wiring test in `packages/cli/test/cli/primitive-create-command.test.ts` (flags, exit codes, stdout shape)
+- [x] T020 [US1] Implement `PrimitiveService.create` in `packages/core/src/primitive/PrimitiveService.ts` (manifest read, ID assign, Schema decode, delegate storage)
+- [x] T021 [P] [US1] Implement `PrimitiveCreateCommand` in `packages/cli/src/cli/PrimitiveCreateCommand.ts` with `--type`, `--name`, `--status`, repeatable `--set` per `contracts/cli-commands.md`
+- [x] T022 [P] [US1] Implement create stdout renderer in `packages/cli/src/cli/render/PrimitiveOutput.ts`
+- [x] T023 [US1] Register `primitive create` subcommand in `packages/cli/src/cli/RootCommand.ts`
+- [x] T024 [US1] Compose `PrimitiveServiceLive` in `packages/cli/src/services/Layers.ts` and register primitive error handlers in `packages/cli/src/bin.ts`
+- [x] T025 [P] [US1] CLI create wiring test in `packages/cli/test/cli/primitive-create-command.test.ts` (flags, exit codes, stdout shape)
 
 **Checkpoint**: User Story 1 independently testable — create on JSON and SQLite roots via CLI and core tests.
 

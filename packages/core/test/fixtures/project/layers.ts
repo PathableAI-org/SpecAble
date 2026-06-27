@@ -1,9 +1,11 @@
 import { NodeFileSystem } from "@effect/platform-node"
 import { Layer } from "effect"
 
+import type { PrimitiveService } from "../../../src/primitive/PrimitiveService.js"
 import type { ProjectRootService } from "../../../src/project/ProjectRootService.js"
 import type { StorageBackend } from "../../../src/storage/StorageBackend.js"
 
+import { PrimitiveService as PrimitiveServiceTag } from "../../../src/primitive/PrimitiveService.js"
 import { ProjectRootService as ProjectRootServiceTag } from "../../../src/project/ProjectRootService.js"
 import { JsonStorageBackendLive } from "../../../src/storage/JsonStorageBackend.js"
 import { RoutedStorageBackendLive } from "../../../src/storage/RoutedStorageBackend.js"
@@ -34,6 +36,18 @@ export const projectRootJsonTestLayer: Layer.Layer<ProjectRootService> = Project
 
 /** Project root service with SQLite storage for init contract tests. */
 export const projectRootSqliteTestLayer: Layer.Layer<ProjectRootService> = ProjectRootServiceTag.Default.pipe(
+  Layer.provide(SqliteStorageBackendLive),
+  Layer.provide(nodeFileSystemLayer)
+)
+
+/** Primitive service with JSON storage for create contract tests. */
+export const primitiveServiceJsonTestLayer: Layer.Layer<PrimitiveService> = PrimitiveServiceTag.Default.pipe(
+  Layer.provide(JsonStorageBackendLive),
+  Layer.provide(nodeFileSystemLayer)
+)
+
+/** Primitive service with SQLite storage for create contract tests. */
+export const primitiveServiceSqliteTestLayer: Layer.Layer<PrimitiveService> = PrimitiveServiceTag.Default.pipe(
   Layer.provide(SqliteStorageBackendLive),
   Layer.provide(nodeFileSystemLayer)
 )

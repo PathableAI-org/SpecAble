@@ -6,13 +6,18 @@ import { Effect, Layer } from "effect"
 
 import { handleCheckCommandError } from "./cli/CheckCommand.js"
 import { handleInitCommandError, resolveInitCommandExit } from "./cli/InitCommand.js"
+import { handlePrimitiveCreateCommandError, resolvePrimitiveCreateCommandExit } from "./cli/PrimitiveCreateCommand.js"
 import { handleProjectShowCommandError, resolveProjectShowCommandExit } from "./cli/ProjectShowCommand.js"
 import { rootCommand } from "./cli/RootCommand.js"
-import { GraphRepositoryLive } from "./services/Layers.js"
+import { GraphRepositoryLive, primitiveServiceLiveLayer } from "./services/Layers.js"
 
-const MainLayer = Layer.merge(GraphRepositoryLive, NodeContext.layer)
+const MainLayer = Layer.mergeAll(GraphRepositoryLive, primitiveServiceLiveLayer, NodeContext.layer)
 
 const handleCommandError = (error: unknown): Effect.Effect<void> => {
+  if (resolvePrimitiveCreateCommandExit(error) !== undefined) {
+    return handlePrimitiveCreateCommandError(error)
+  }
+
   if (resolveProjectShowCommandExit(error) !== undefined) {
     return handleProjectShowCommandError(error)
   }
