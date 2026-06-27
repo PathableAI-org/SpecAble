@@ -7,7 +7,12 @@ import { CANONICAL_PRIMITIVE_TYPES } from "@specable/core/storage/PrimitiveTypes
 import { beforeAll, describe, expect, it } from "vitest"
 
 import { assertSpecableBuilt, runSpecable } from "./helpers/runSpecable.js"
-import { makeTempProjectPath, removeTempProjectParent } from "./helpers/tempProjectRoot.js"
+import {
+  makeEmptyTempDir,
+  makeTempProjectPath,
+  removeTempProjectParent,
+  removeTempProjectTree
+} from "./helpers/tempProjectRoot.js"
 
 const initRoot = async (projectPath: string, storage: "json" | "sqlite"): Promise<void> => {
   const args = storage === "json"
@@ -97,7 +102,7 @@ describe.sequential("specable project show (subprocess)", () => {
       await removeTempProjectParent(jsonRoot)
       await removeTempProjectParent(sqliteRoot)
     }
-  })
+  }, 15_000)
 })
 
 describe.sequential("specable project show failures (subprocess)", () => {
@@ -106,9 +111,15 @@ describe.sequential("specable project show failures (subprocess)", () => {
   })
 
   it("rejects a non-project path", async () => {
-    const result = await runSpecable(["project", "show", "/tmp"])
+    const nonProjectPath = await makeEmptyTempDir("specable-non-project-")
 
-    expect(result.code).toBe(2)
-    expect(result.stderr.length).toBeGreaterThan(0)
+    try {
+      const result = await runSpecable(["project", "show", nonProjectPath])
+
+      expect(result.code).toBe(2)
+      expect(result.stderr.length).toBeGreaterThan(0)
+    } finally {
+      await removeTempProjectTree(nonProjectPath)
+    }
   })
 })

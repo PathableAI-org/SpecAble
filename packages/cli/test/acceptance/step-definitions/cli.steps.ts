@@ -1,4 +1,5 @@
 import { Given, Then, When } from "@cucumber/cucumber"
+import { Effect } from "effect"
 import * as fs from "node:fs/promises"
 import * as os from "node:os"
 import * as path from "node:path"
@@ -7,7 +8,11 @@ import { expect } from "vitest"
 
 import type { SpecAbleWorld } from "../support/world.js"
 
-import { assertAllPrimitiveFilesEmpty, readSpecableJson } from "../../integration/helpers/projectLayout.js"
+import {
+  assertAllPrimitiveFilesEmpty,
+  assertSqliteGraphLayout,
+  readSpecableJson
+} from "../../integration/helpers/projectLayout.js"
 import { runSpecable } from "../../integration/helpers/runSpecable.js"
 import { makeTempProjectPath } from "../../integration/helpers/tempProjectRoot.js"
 
@@ -105,6 +110,7 @@ Then("graph.sqlite should exist with zero primitives", async function(this: Spec
   const stat = await fs.stat(dbPath)
 
   expect(stat.isFile()).toBe(true)
+  await Effect.runPromise(assertSqliteGraphLayout(dbPath))
 })
 
 Then("check artifacts should be written", async function(this: SpecAbleWorld) {

@@ -282,7 +282,8 @@ as features land in later phases.
 
 ### Toolchain
 
-Node 20+ and pnpm 11.x (pinned via `packageManager` in root `package.json`). Corepack fetches
+Node 22+ and pnpm 11.x (pinned via `packageManager` in root `package.json`; acceptance-test
+dependencies require Node 22). Corepack fetches
 the correct pnpm version. `jq`, `python3`, `git`, and `bash` are used by Spec Kit scripts.
 
 ### Spec Kit workflow tooling

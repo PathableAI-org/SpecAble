@@ -88,7 +88,7 @@ describe.sequential("specable init (subprocess)", () => {
     }
   })
 
-  it("does not create specable.json when init fails on re-init", async () => {
+  it("leaves specable.json unchanged when init fails on re-init", async () => {
     const projectRoot = await makeTempProjectPath("demo-reinit")
 
     try {

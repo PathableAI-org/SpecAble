@@ -1,7 +1,7 @@
 # Gherkin acceptance tests (Phase 2)
 
 Executable acceptance scenarios for SpecAble CLI vertical slices. These mirror
-[`specs/002-initialize-project-roots/quickstart.md`](../../../../../../specs/002-initialize-project-roots/quickstart.md)
+[`specs/002-initialize-project-roots/quickstart.md`](../../../../specs/002-initialize-project-roots/quickstart.md)
 and reuse subprocess helpers from [`../integration/helpers/`](../integration/helpers/).
 
 ## Run
