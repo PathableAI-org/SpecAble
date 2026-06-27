@@ -1,0 +1,22 @@
+{
+  "createdAt": "2026-06-27T14:39:26.557Z",
+  "name": "demo-json-empty",
+  "primitiveTypes": [
+    "Actor",
+    "Capability",
+    "CapabilityConceptLink",
+    "DomainConcept",
+    "ExpectedResult",
+    "Objective",
+    "Persona",
+    "Story",
+    "Workflow"
+  ],
+  "projectId": "5e1fb086-8a69-44fb-87ad-c54b31e649ac",
+  "schemaVersion": 1,
+  "specableVersion": 1,
+  "storage": {
+    "location": ".",
+    "type": "json"
+  }
+}

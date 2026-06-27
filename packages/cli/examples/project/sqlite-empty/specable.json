@@ -1,0 +1,22 @@
+{
+  "createdAt": "2026-06-27T14:39:27.450Z",
+  "name": "demo-sqlite-empty",
+  "primitiveTypes": [
+    "Actor",
+    "Capability",
+    "CapabilityConceptLink",
+    "DomainConcept",
+    "ExpectedResult",
+    "Objective",
+    "Persona",
+    "Story",
+    "Workflow"
+  ],
+  "projectId": "cbc79178-00de-4dc4-96cb-14357a8640f5",
+  "schemaVersion": 1,
+  "specableVersion": 1,
+  "storage": {
+    "location": "graph.sqlite",
+    "type": "sqlite"
+  }
+}

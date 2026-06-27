@@ -19,6 +19,7 @@
     "changeset-pre-enter-alpha": "changeset pre enter alpha",
     "changeset-pre-exit": "changeset pre exit",
     "changeset-publish": "pnpm build && TEST_DIST= pnpm vitest && changeset publish",
+    "prepare-examples": "pnpm --filter @specable/cli run prepare-examples",
     "prepare": "husky"
   },
   "lint-staged": {

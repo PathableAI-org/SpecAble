@@ -13,3 +13,4 @@ Thumbs.db
 .idea/
 .tsbuildinfo
 packages/*/.tsbuildinfo/
+packages/cli/examples/project/**/graph.sqlite
