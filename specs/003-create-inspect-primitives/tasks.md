@@ -48,8 +48,8 @@ Per constitution v1.3.0, [plan.md](./plan.md), and
 
 **Checkpoint**: `packages/core/src/primitive/` exists; changeset staged for publishable packages.
 
-- [ ] T001 Create `packages/core/src/primitive/` module directory per plan.md (`PrimitiveService.ts`, `CreateInput.ts`, `PrimitiveSummary.ts`, `errors.ts`, `assignPrimitiveId.ts` placeholders acceptable until Phase 2)
-- [ ] T002 [P] Add changeset for `@specable/core` and `@specable/cli` primitive create/list/get in `.changeset/`
+- [x] T001 Create `packages/core/src/primitive/` module directory per plan.md (`PrimitiveService.ts`, `CreateInput.ts`, `PrimitiveSummary.ts`, `errors.ts`, `assignPrimitiveId.ts` placeholders acceptable until Phase 2)
+- [x] T002 [P] Add changeset for `@specable/core` and `@specable/cli` primitive create/list/get in `.changeset/`
 
 ---
 
