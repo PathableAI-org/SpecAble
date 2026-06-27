@@ -5,6 +5,9 @@ export * as CheckArtifactsPlan from "./cli/CheckArtifactsPlan.js"
 export * as CheckCommand from "./cli/CheckCommand.js"
 
 
+export * as InitCommand from "./cli/InitCommand.js"
+
+
 export * as RootCommand from "./cli/RootCommand.js"
 
 

@@ -2,6 +2,7 @@ import { Schema } from "@effect/schema"
 
 export type ProjectInitError =
   | ProjectAlreadyInitializedError
+  | ProjectNotFoundError
   | ProjectPathNotEmptyError
   | StorageBootstrapError
   | UnsupportedStorageTypeError

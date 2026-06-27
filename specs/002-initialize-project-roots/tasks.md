@@ -83,17 +83,17 @@ Per constitution v1.1.0 and [plan.md](./plan.md):
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T019 [P] [US1] JSON init contract test in `packages/core/test/project/init-json.test.ts` (default storage, nine empty type files, `specable.json` fields)
-- [ ] T020 [P] [US1] SQLite init contract test in `packages/core/test/project/init-sqlite.test.ts` (`graph.sqlite`, empty `primitives` table)
-- [ ] T021 [P] [US1] Init failure tests in `packages/core/test/project/init-failures.test.ts` (re-init, non-empty dir, invalid `--storage`, permissions)
+- [x] T019 [P] [US1] JSON init contract test in `packages/core/test/project/init-json.test.ts` (default storage, nine empty type files, `specable.json` fields)
+- [x] T020 [P] [US1] SQLite init contract test in `packages/core/test/project/init-sqlite.test.ts` (`graph.sqlite`, empty `primitives` table)
+- [x] T021 [P] [US1] Init failure tests in `packages/core/test/project/init-failures.test.ts` (re-init, non-empty dir, invalid `--storage`, permissions)
 
 ### Implementation for User Story 1
 
-- [ ] T022 [US1] Implement `ProjectRootService.initialize` in `packages/core/src/project/ProjectRootService.ts` (UUID `projectId`, default `name` from basename, storage bootstrap, write `specable.json` last)
-- [ ] T023 [P] [US1] Implement `InitCommand` in `packages/cli/src/cli/InitCommand.ts` with optional `--storage` defaulting to `json` and optional `--name` per `contracts/cli-commands.md`
-- [ ] T024 [US1] Register `init` command in `packages/cli/src/cli/RootCommand.ts`
-- [ ] T025 [US1] Compose `ProjectRootService` + selected storage Live Layer + platform Layers in `packages/cli/src/services/Layers.ts` and `packages/cli/src/bin.ts`
-- [ ] T026 [P] [US1] CLI init wiring test in `packages/cli/test/cli/init-command.test.ts` verifying `--storage` defaults to `json` and success stdout shape
+- [x] T022 [US1] Implement `ProjectRootService.initialize` in `packages/core/src/project/ProjectRootService.ts` (UUID `projectId`, default `name` from basename, storage bootstrap, write `specable.json` last)
+- [x] T023 [P] [US1] Implement `InitCommand` in `packages/cli/src/cli/InitCommand.ts` with optional `--storage` defaulting to `json` and optional `--name` per `contracts/cli-commands.md`
+- [x] T024 [US1] Register `init` command in `packages/cli/src/cli/RootCommand.ts`
+- [x] T025 [US1] Compose `ProjectRootService` + selected storage Live Layer + platform Layers in `packages/cli/src/services/Layers.ts` and `packages/cli/src/bin.ts`
+- [x] T026 [P] [US1] CLI init wiring test in `packages/cli/test/cli/init-command.test.ts` verifying `--storage` defaults to `json` and success stdout shape
 
 **Checkpoint**: User Story 1 independently testable — init JSON (default) and SQLite roots via CLI.
 
