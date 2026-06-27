@@ -8,6 +8,8 @@
     "paths": {
       "@specable/domain": ["./packages/domain/src/index.ts"],
       "@specable/domain/*": ["./packages/domain/src/*"],
+      "@specable/core": ["./packages/core/src/index.ts"],
+      "@specable/core/*": ["./packages/core/src/*"],
       "@specable/cli": ["./packages/cli/src/index.ts"],
       "@specable/cli/*": ["./packages/cli/src/*"]
     },

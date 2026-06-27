@@ -37,7 +37,7 @@ Run from the repository root:
 
 1. **lint-staged** — ESLint with `--fix` on staged TypeScript and `.mjs` files
 2. **typecheck** — `pnpm check`
-3. **codegen** — ensures generated `index.ts` files are current when package `src/` changes
+3. **codegen** — runs `pnpm codegen` on every commit; fails if generated `index.ts` files are out of date
 4. **fallow audit** — dead-code and duplication gate against the branch merge-base (default `main`)
 
 Bypass once: `git commit --no-verify`
@@ -126,7 +126,7 @@ See [AGENTS.md](./AGENTS.md) for full architecture rules, testing requirements, 
 | **First alpha (MVP)** | Run `pnpm changeset-pre-enter-alpha`, merge Version Packages PR, then trigger **Publish to npm** in Actions. |
 | **Stable** | Run `pnpm changeset-pre-exit`, version, publish to `latest`. |
 
-See [`.changeset/README.md`](./.changeset/README.md) for the full workflow, prerelease mode, and snapshot alternatives.
+See [`.changeset/README.md`](./.changeset/README.md) for the full workflow and prerelease mode.
 
 | Command | Description |
 |---------|-------------|

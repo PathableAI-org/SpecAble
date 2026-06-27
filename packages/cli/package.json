@@ -28,6 +28,7 @@
     "coverage": "vitest --coverage"
   },
   "dependencies": {
+    "@specable/core": "workspace:*",
     "@specable/domain": "workspace:*",
     "@effect/cli": "^0.75.2",
     "@effect/platform": "^0.96.2",
