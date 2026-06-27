@@ -6,6 +6,7 @@ import type { StorageBackend } from "../../../src/storage/StorageBackend.js"
 
 import { ProjectRootService as ProjectRootServiceTag } from "../../../src/project/ProjectRootService.js"
 import { JsonStorageBackendLive } from "../../../src/storage/JsonStorageBackend.js"
+import { RoutedStorageBackendLive } from "../../../src/storage/RoutedStorageBackend.js"
 import { SqliteStorageBackendLive } from "../../../src/storage/SqliteStorageBackend.js"
 
 const nodeFileSystemLayer = NodeFileSystem.layer
@@ -17,6 +18,11 @@ export const jsonStorageTestLayer: Layer.Layer<StorageBackend> = JsonStorageBack
 
 /** SQLite storage + Node FileSystem for tests and examples. */
 export const sqliteStorageTestLayer: Layer.Layer<StorageBackend> = SqliteStorageBackendLive.pipe(
+  Layer.provide(nodeFileSystemLayer)
+)
+
+/** Routed storage + Node FileSystem for primitive CRUD tests. */
+export const routedStorageTestLayer: Layer.Layer<StorageBackend> = RoutedStorageBackendLive.pipe(
   Layer.provide(nodeFileSystemLayer)
 )
 

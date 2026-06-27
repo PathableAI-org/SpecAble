@@ -53,6 +53,33 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Outline
 
+0. **Git workspace setup (required first)** — run before prerequisites, checklists, or implementation:
+
+   Cloud agents and local sessions MUST NOT implement on a stale checkout or a feature branch used as the integration base. PRs from `/speckit-implement` merge into `main`.
+
+   From the repository root:
+
+   ```sh
+   git fetch origin main
+   git checkout main
+   git pull --ff-only origin main
+   ```
+
+   If `main` is checked out but behind `origin/main`, run `git pull --ff-only origin main` before branching.
+
+   Create the implementation branch from updated `main` (adjust the slug as needed; keep the repo's branch naming policy):
+
+   ```sh
+   git checkout -b cursor/<descriptive-name>-<id>
+   ```
+
+   Rules:
+
+   - Branch from `origin/main`, not from another feature branch or an agent default base.
+   - If already on a feature branch with uncommitted work, stash or commit, check out `main`, sync with `origin/main`, then create a fresh branch or rebase onto `origin/main` before continuing.
+   - When opening or updating a PR for this work, set **`base_branch` to `main`**.
+   - Do not target another feature branch unless the user explicitly names that branch as the merge base.
+
 1. Run `.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks` from repo root and parse FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 
 2. **Check checklists status** (if FEATURE_DIR/checklists/ exists):
