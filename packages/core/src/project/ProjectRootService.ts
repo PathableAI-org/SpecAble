@@ -1,6 +1,7 @@
 import type { PlatformError } from "@effect/platform/Error"
 
 import * as FileSystem from "@effect/platform/FileSystem"
+import { ArrayFormatter } from "@effect/schema"
 import { Effect as E } from "effect"
 import { randomUUID } from "node:crypto"
 import * as path from "node:path"
@@ -10,8 +11,13 @@ import type { ProjectDescriptor } from "./ProjectDescriptor.js"
 
 import { CANONICAL_PRIMITIVE_TYPES } from "../storage/PrimitiveTypes.js"
 import { StorageBackend } from "../storage/StorageBackend.js"
-import { ProjectAlreadyInitializedError, ProjectNotFoundError, ProjectPathNotEmptyError } from "./errors.js"
-import { encodeProjectConfig, type ProjectConfig } from "./ProjectConfig.js"
+import {
+  ProjectAlreadyInitializedError,
+  ProjectConfigDecodeError,
+  ProjectNotFoundError,
+  ProjectPathNotEmptyError
+} from "./errors.js"
+import { decodeProjectConfig, encodeProjectConfig, type ProjectConfig } from "./ProjectConfig.js"
 
 const SPECABLE_JSON = "specable.json"
 
@@ -51,7 +57,7 @@ const buildProjectConfig = (
  */
 export type ProjectRootDescribe = (
   projectPath: string
-) => E.Effect<ProjectDescriptor, ProjectInspectError>
+) => E.Effect<ProjectDescriptor, PlatformError | ProjectInspectError>
 
 export type ProjectRootInitialize = (
   projectPath: string,
@@ -127,6 +133,73 @@ export class ProjectRootService extends E.Service<ProjectRootService>()("@specab
         yield* fs.writeFileString(manifestPath, `${JSON.stringify(encoded, null, 2)}\n`)
       })
 
+    const readManifest = (projectRoot: string) =>
+      E.gen(function*() {
+        const manifestPath = path.join(projectRoot, SPECABLE_JSON)
+        const exists = yield* fs.exists(manifestPath)
+
+        if (!exists) {
+          return yield* E.fail(new ProjectNotFoundError({ path: projectRoot }))
+        }
+
+        const content = yield* fs.readFileString(manifestPath)
+        const parsed = yield* E.try({
+          catch: () =>
+            new ProjectConfigDecodeError({
+              message: "Invalid JSON in specable.json"
+            }),
+          try: () => JSON.parse(content) as unknown
+        })
+
+        return yield* decodeProjectConfig(parsed).pipe(
+          E.mapError((error) => {
+            const formatted = ArrayFormatter.formatErrorSync(error)[0]
+            const message = formatted?.message ?? "Invalid specable.json"
+            const fieldPath = formatted?.path?.join(".")
+
+            return fieldPath === undefined
+              ? new ProjectConfigDecodeError({ message })
+              : new ProjectConfigDecodeError({ message, path: fieldPath })
+          })
+        )
+      })
+
+    const assertInspectableProjectRoot = (projectRoot: string) =>
+      E.gen(function*() {
+        const exists = yield* fs.exists(projectRoot)
+
+        if (!exists) {
+          return yield* E.fail(new ProjectNotFoundError({ path: projectRoot }))
+        }
+
+        const stat = yield* fs.stat(projectRoot)
+
+        if (stat.type !== "Directory") {
+          return yield* E.fail(new ProjectNotFoundError({ path: projectRoot }))
+        }
+      })
+
+    const describe: ProjectRootDescribe = (projectPath) =>
+      E.gen(function*() {
+        const projectRoot = resolveProjectRoot(projectPath)
+
+        yield* assertInspectableProjectRoot(projectRoot)
+
+        const config = yield* readManifest(projectRoot)
+        const graph = yield* storage.describe(projectRoot, config)
+
+        return {
+          createdAt: config.createdAt,
+          graph,
+          name: config.name,
+          primitiveTypes: config.primitiveTypes,
+          projectId: config.projectId,
+          rootPath: projectRoot,
+          schemaVersion: config.schemaVersion,
+          storage: config.storage
+        } satisfies ProjectDescriptor
+      })
+
     const initialize: ProjectRootInitialize = (projectPath, options) =>
       E.gen(function*() {
         const projectRoot = resolveProjectRoot(projectPath)
@@ -144,8 +217,7 @@ export class ProjectRootService extends E.Service<ProjectRootService>()("@specab
       })
 
     return {
-      describe: (projectPath) =>
-        E.dieMessage(`ProjectRootService.describe not implemented until Phase 4 (${projectPath})`),
+      describe,
       initialize
     } satisfies ProjectRootServiceApi
   })

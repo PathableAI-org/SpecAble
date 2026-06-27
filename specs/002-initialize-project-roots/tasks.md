@@ -107,16 +107,16 @@ Per constitution v1.1.0 and [plan.md](./plan.md):
 
 ### Tests for User Story 2
 
-- [ ] T027 [P] [US2] Inspect descriptor contract test in `packages/core/test/project/inspect-json.test.ts` for JSON-backed root
-- [ ] T028 [P] [US2] Inspect failure tests in `packages/core/test/project/inspect-failures.test.ts` (missing `specable.json`, decode error, incomplete storage, legacy v0 fixture dir)
+- [x] T027 [P] [US2] Inspect descriptor contract test in `packages/core/test/project/inspect-json.test.ts` for JSON-backed root
+- [x] T028 [P] [US2] Inspect failure tests in `packages/core/test/project/inspect-failures.test.ts` (missing `specable.json`, decode error, incomplete storage, legacy v0 fixture dir)
 
 ### Implementation for User Story 2
 
-- [ ] T029 [US2] Implement `ProjectRootService.describe` in `packages/core/src/project/ProjectRootService.ts` returning `ProjectDescriptor` with `GraphStoreSummary` from active backend
-- [ ] T030 [P] [US2] Implement stdout renderer in `packages/cli/src/cli/render/ProjectShowOutput.ts` with stable field order per `contracts/cli-commands.md`
-- [ ] T031 [US2] Implement `ProjectShowCommand` in `packages/cli/src/cli/ProjectShowCommand.ts` invoking core `describe`
-- [ ] T032 [US2] Register `project show` subcommand in `packages/cli/src/cli/RootCommand.ts`
-- [ ] T033 [P] [US2] CLI output order test in `packages/cli/test/cli/project-show-command.test.ts`
+- [x] T029 [US2] Implement `ProjectRootService.describe` in `packages/core/src/project/ProjectRootService.ts` returning `ProjectDescriptor` with `GraphStoreSummary` from active backend
+- [x] T030 [P] [US2] Implement stdout renderer in `packages/cli/src/cli/render/ProjectShowOutput.ts` with stable field order per `contracts/cli-commands.md`
+- [x] T031 [US2] Implement `ProjectShowCommand` in `packages/cli/src/cli/ProjectShowCommand.ts` invoking core `describe`
+- [x] T032 [US2] Register `project show` subcommand in `packages/cli/src/cli/RootCommand.ts`
+- [x] T033 [P] [US2] CLI output order test in `packages/cli/test/cli/project-show-command.test.ts`
 
 **Checkpoint**: User Stories 1 and 2 independently testable — init and inspect both backends.
 

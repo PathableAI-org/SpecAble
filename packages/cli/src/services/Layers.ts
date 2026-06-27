@@ -5,7 +5,7 @@ import { Layer } from "effect"
 import { GraphLoader } from "../graph/GraphLoader.js"
 import { GraphRepository } from "../graph/GraphRepository.js"
 
-const { JsonStorageBackendLive, SqliteStorageBackendLive } = layers
+const { JsonStorageBackendLive, RoutedStorageBackendLive, SqliteStorageBackendLive } = layers
 
 export const FileSystemLive = NodeFileSystem.layer
 
@@ -23,3 +23,8 @@ export const projectRootLiveLayer = (storage: "json" | "sqlite") =>
     Layer.provide(storage === "json" ? JsonStorageBackendLive : SqliteStorageBackendLive),
     Layer.provide(FileSystemLive)
   )
+
+export const projectRootInspectLiveLayer = ProjectRootService.ProjectRootService.Default.pipe(
+  Layer.provide(RoutedStorageBackendLive),
+  Layer.provide(FileSystemLive)
+)

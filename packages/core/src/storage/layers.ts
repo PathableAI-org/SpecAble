@@ -4,6 +4,7 @@ import type { Layer } from "effect"
 import type { StorageBackend } from "./StorageBackend.js"
 
 import { JsonStorageBackendLive } from "./JsonStorageBackend.js"
+import { RoutedStorageBackendLive } from "./RoutedStorageBackend.js"
 import { SqliteStorageBackendLive } from "./SqliteStorageBackend.js"
 
 /**
@@ -11,6 +12,12 @@ import { SqliteStorageBackendLive } from "./SqliteStorageBackend.js"
  * deps are absorbed at Layer build; `bootstrap` / `describe` run with `R = never`.
  */
 export { JsonStorageBackendLive }
+
+/**
+ * Live Layer routing bootstrap/describe to JSON or SQLite by `config.storage.type`.
+ * Use for inspect flows where the backend is determined from `specable.json`.
+ */
+export { RoutedStorageBackendLive }
 
 /**
  * Live Layer for SQLite storage. Requires `FileSystem` when composing (used for
