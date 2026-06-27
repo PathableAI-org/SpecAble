@@ -5,10 +5,10 @@ import * as FileSystem from "@effect/platform/FileSystem"
 import { Effect as E } from "effect"
 
 import type { CreateInput } from "./CreateInput.js"
-import type { PrimitiveServiceError } from "./errors.js"
 import type { AlphaPrimitiveType, PrimitiveSummary } from "./PrimitiveSummary.js"
 
 import { StorageBackend } from "../storage/StorageBackend.js"
+import { type PrimitiveServiceError, PrimitiveServiceNotImplementedError } from "./errors.js"
 
 export type PrimitiveCreate = (
   input: CreateInput
@@ -43,8 +43,8 @@ export class PrimitiveService extends E.Service<PrimitiveService>()("@specable/c
     yield* FileSystem.FileSystem
     yield* StorageBackend
 
-    const notImplemented = (operation: string): E.Effect<never, never, never> =>
-      E.dieSync(() => new Error(`${operation} is implemented in Phase 3–5`))
+    const notImplemented = (operation: string): E.Effect<never, PrimitiveServiceNotImplementedError> =>
+      E.fail(new PrimitiveServiceNotImplementedError({ operation }))
 
     const create: PrimitiveCreate = (input) => {
       void input

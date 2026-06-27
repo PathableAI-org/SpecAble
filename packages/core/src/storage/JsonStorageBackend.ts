@@ -13,6 +13,7 @@ import { IncompleteProjectError, StorageBootstrapError } from "../project/errors
 import { emptyCountsByType, type GraphStoreSummary } from "../project/ProjectDescriptor.js"
 import { decodePrimitiveUnknown, summaryFromPrimitive } from "./PrimitiveSchemas.js"
 import {
+  ALPHA_PRIMITIVE_TYPE_FILE_ENTRIES,
   CANONICAL_PRIMITIVE_TYPES,
   type CanonicalPrimitiveType,
   PRIMITIVE_TYPE_FILE_ENTRIES,
@@ -36,8 +37,8 @@ const EMPTY_PRIMITIVE_FILE = `${JSON.stringify({ primitives: [] })}\n`
 
 const entriesForFilter = (filter?: PrimitiveListFilter) =>
   filter?.type === undefined
-    ? PRIMITIVE_TYPE_FILE_ENTRIES
-    : PRIMITIVE_TYPE_FILE_ENTRIES.filter(({ type }) => type === filter.type)
+    ? ALPHA_PRIMITIVE_TYPE_FILE_ENTRIES
+    : ALPHA_PRIMITIVE_TYPE_FILE_ENTRIES.filter(({ type }) => type === filter.type)
 
 const readPrimitiveEnvelope = (
   filePath: string,

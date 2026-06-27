@@ -33,3 +33,11 @@ export const PRIMITIVE_TYPE_FILE_ENTRIES = CANONICAL_PRIMITIVE_TYPES.map((type) 
   fileName: PRIMITIVE_TYPE_FILES[type],
   type
 }))
+
+/** Alpha list/get file entries — excludes decode-only CapabilityConceptLink. */
+export const ALPHA_PRIMITIVE_TYPE_FILE_ENTRIES = PRIMITIVE_TYPE_FILE_ENTRIES.filter(
+  ({ type }) => type !== "CapabilityConceptLink"
+)
+
+export const isCanonicalPrimitiveType = (type: string): type is CanonicalPrimitiveType =>
+  (CANONICAL_PRIMITIVE_TYPES as readonly string[]).includes(type)

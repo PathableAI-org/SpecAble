@@ -17,7 +17,7 @@ import { Effect } from "effect"
 
 import type { CanonicalPrimitiveType } from "./PrimitiveTypes.js"
 
-import { PrimitiveValidationError } from "../primitive/errors.js"
+import { isAlphaPrimitiveType, PrimitiveValidationError } from "../primitive/errors.js"
 import { ALPHA_PRIMITIVE_TYPES, AlphaPrimitiveType, type PrimitiveSummary } from "../primitive/PrimitiveSummary.js"
 
 const schemaByType = {
@@ -37,12 +37,18 @@ export const isAlphaCreatableType = (type: string): type is AlphaPrimitiveType =
 
 export const schemaForType = <T extends CanonicalPrimitiveType>(type: T): (typeof schemaByType)[T] => schemaByType[type]
 
-export const summaryFromPrimitive = (primitive: Primitive): PrimitiveSummary => ({
-  id: primitive.id,
-  name: primitive.name,
-  status: primitive.status,
-  type: primitive.type as AlphaPrimitiveType
-})
+export const summaryFromPrimitive = (primitive: Primitive): PrimitiveSummary => {
+  if (!isAlphaPrimitiveType(primitive.type)) {
+    throw new Error(`Cannot summarize non-alpha primitive type: ${primitive.type}`)
+  }
+
+  return {
+    id: primitive.id,
+    name: primitive.name,
+    status: primitive.status,
+    type: primitive.type
+  }
+}
 
 const validationErrorFromParse = (
   type: string,

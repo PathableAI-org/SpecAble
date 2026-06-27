@@ -11,6 +11,7 @@ export type PrimitiveServiceError =
   | InvalidProjectRootError
   | PlatformError
   | PrimitiveNotFoundError
+  | PrimitiveServiceNotImplementedError
   | PrimitiveValidationError
   | UnknownPrimitiveTypeError
 
@@ -76,6 +77,19 @@ export class PrimitiveNotFoundError extends Schema.TaggedError<PrimitiveNotFound
   }
 ) {}
 
+export class PrimitiveServiceNotImplementedError extends Schema.TaggedError<PrimitiveServiceNotImplementedError>(
+  "PrimitiveServiceNotImplementedError"
+)(
+  "PrimitiveServiceNotImplementedError",
+  {
+    operation: Schema.String.annotations({
+      description: "PrimitiveService method that is not yet implemented",
+      identifier: "PrimitiveServiceNotImplementedOperation",
+      title: "Operation"
+    })
+  }
+) {}
+
 export class PrimitiveValidationError extends Schema.TaggedError<PrimitiveValidationError>(
   "PrimitiveValidationError"
 )(
@@ -83,7 +97,7 @@ export class PrimitiveValidationError extends Schema.TaggedError<PrimitiveValida
   {
     fieldPaths: Schema.optional(
       Schema.Array(Schema.String).annotations({
-        description: "JSON Pointer-style paths to invalid fields",
+        description: "Dot-separated Schema path segments to invalid fields (e.g. `name`, `fields.0.id`)",
         identifier: "PrimitiveValidationFieldPaths",
         title: "Field Paths"
       })

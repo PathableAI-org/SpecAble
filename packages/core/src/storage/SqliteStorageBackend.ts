@@ -4,6 +4,7 @@ import type { Primitive } from "@specable/domain"
 import * as Reactivity from "@effect/experimental/Reactivity"
 import * as FileSystem from "@effect/platform/FileSystem"
 import { make as makeSqliteClient } from "@effect/sql-sqlite-node/SqliteClient"
+import { SqlError } from "@effect/sql/SqlError"
 import { Effect, Layer } from "effect"
 import * as path from "node:path"
 
@@ -14,7 +15,7 @@ import { DuplicatePrimitiveIdError, PrimitiveNotFoundError, type StorageReadErro
 import { IncompleteProjectError, StorageBootstrapError } from "../project/errors.js"
 import { emptyCountsByType, type GraphStoreSummary } from "../project/ProjectDescriptor.js"
 import { decodePrimitiveUnknown, summaryFromPrimitive } from "./PrimitiveSchemas.js"
-import { CANONICAL_PRIMITIVE_TYPES, type CanonicalPrimitiveType } from "./PrimitiveTypes.js"
+import { CANONICAL_PRIMITIVE_TYPES, type CanonicalPrimitiveType, isCanonicalPrimitiveType } from "./PrimitiveTypes.js"
 import { StorageBackend, type StorageBackendService } from "./StorageBackend.js"
 
 const GRAPH_SCHEMA_KEY = "graph-schema"
@@ -66,12 +67,29 @@ const buildGraphStoreSummary = (counts: GraphStoreSummary["countsByType"]): Grap
   }
 }
 
-const isSqliteConstraintError = (cause: unknown): boolean =>
-  typeof cause === "object" &&
-  cause !== null &&
-  "message" in cause &&
-  typeof cause.message === "string" &&
-  cause.message.toLowerCase().includes("unique")
+const constraintMessage = (cause: unknown): string | undefined => {
+  if (cause instanceof SqlError) {
+    if (typeof cause.message === "string" && cause.message.length > 0) {
+      return cause.message
+    }
+
+    if (cause.cause !== undefined) {
+      return constraintMessage(cause.cause)
+    }
+  }
+
+  if (cause instanceof Error) {
+    return cause.message
+  }
+
+  return undefined
+}
+
+const isSqliteConstraintError = (cause: unknown): boolean => {
+  const message = (constraintMessage(cause) ?? String(cause)).toLowerCase()
+
+  return message.includes("unique") || message.includes("constraint")
+}
 
 const mapSqliteDescribeError = (projectRoot: string) => (cause: unknown) => {
   if (cause instanceof IncompleteProjectError) {
@@ -157,6 +175,19 @@ const decodePayload = (
     return yield* decodePrimitiveUnknown(type, dbPath, parsed)
   })
 
+const requireCanonicalPrimitiveType = (
+  type: string,
+  path: string
+): Effect.Effect<CanonicalPrimitiveType, IncompleteProjectError> =>
+  isCanonicalPrimitiveType(type)
+    ? Effect.succeed(type)
+    : Effect.fail(
+      new IncompleteProjectError({
+        message: `Unknown primitive type in storage: ${type}`,
+        path
+      })
+    )
+
 export const makeSqliteStorageBackend = Effect.gen(function*() {
   const fs = yield* FileSystem.FileSystem
 
@@ -217,11 +248,30 @@ export const makeSqliteStorageBackend = Effect.gen(function*() {
       const dbPath = resolveDatabasePath(projectRoot, config)
 
       yield* withSqliteClient(dbPath, (sql) =>
-        sql`
-          INSERT INTO primitives (id, type, payload)
-          VALUES (${primitive.id}, ${primitive.type}, ${JSON.stringify(primitive)})
-        `).pipe(
+        Effect.gen(function*() {
+          const existing = yield* sql<{ readonly count: number }>`
+            SELECT COUNT(*) AS count FROM primitives WHERE id = ${primitive.id}
+          `
+
+          if (Number(existing[0]?.count ?? 0) > 0) {
+            return yield* Effect.fail(
+              new DuplicatePrimitiveIdError({
+                id: primitive.id,
+                path: projectRoot
+              })
+            )
+          }
+
+          yield* sql`
+            INSERT INTO primitives (id, type, payload)
+            VALUES (${primitive.id}, ${primitive.type}, ${JSON.stringify(primitive)})
+          `
+        })).pipe(
           Effect.mapError((cause) => {
+            if (cause instanceof DuplicatePrimitiveIdError) {
+              return cause
+            }
+
             if (isSqliteConstraintError(cause)) {
               return new DuplicatePrimitiveIdError({
                 id: primitive.id,
@@ -258,11 +308,13 @@ export const makeSqliteStorageBackend = Effect.gen(function*() {
           const summaries: PrimitiveSummary[] = []
 
           for (const row of rows) {
-            const primitive = yield* decodePayload(
-              dbPath,
-              row.type as CanonicalPrimitiveType,
-              row.payload
-            )
+            const type = yield* requireCanonicalPrimitiveType(row.type, dbPath)
+
+            if (filter?.type === undefined && type === "CapabilityConceptLink") {
+              continue
+            }
+
+            const primitive = yield* decodePayload(dbPath, type, row.payload)
             summaries.push(summaryFromPrimitive(primitive))
           }
 
@@ -302,7 +354,7 @@ export const makeSqliteStorageBackend = Effect.gen(function*() {
             )
           }
 
-          return yield* decodePayload(dbPath, row.type as CanonicalPrimitiveType, row.payload)
+          return yield* decodePayload(dbPath, yield* requireCanonicalPrimitiveType(row.type, dbPath), row.payload)
         })).pipe(
           Effect.mapError((cause) =>
             cause instanceof IncompleteProjectError ||
