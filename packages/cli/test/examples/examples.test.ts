@@ -33,6 +33,15 @@ const loadAndValidate = (projectPath: string) =>
   })
 
 describe("Bundled examples", () => {
+  it.effect("v0 regression: generic valid fixture still passes after project root milestone", () =>
+    loadAndValidate(examplePath(["generic", "valid"])).pipe(
+      Effect.tap(({ validation }) => {
+        expect(validation.summary.passed).toBe(true)
+        expect(validation.summary.failureCount).toBe(0)
+      }),
+      Effect.provide(nodeFileSystemLayer)
+    ))
+
   it.effect("generic valid graph passes validation with full summary sections", () =>
     loadAndValidate(examplePath(["generic", "valid"])).pipe(
       Effect.tap(({ summary, validation }) => {

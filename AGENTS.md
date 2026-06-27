@@ -6,7 +6,7 @@ Keep this file concise and update it when repository structure, commands, or con
 
 ## Project Purpose
 
-SpecAble v0 validates local JSON primitive fixture graphs against the canonical Product Primitives ontology, reports relationship integrity issues, and generates deterministic Markdown summaries and JSON reports via the `specable check` command.
+SpecAble validates local Product Primitive graphs against the canonical ontology. v0 `specable check` reports relationship integrity issues and generates deterministic Markdown summaries and JSON reports on legacy JSON fixture directories. Alpha `specable init` and `specable project show` initialize and inspect JSON- or SQLite-backed project roots via `@specable/core`.
 
 Prefer explicit schemas, typed errors, visible service requirements, deterministic tests, and examples that coding agents can safely imitate.
 
@@ -14,25 +14,30 @@ This repository targets the latest stable Effect v3 release. Do not introduce Ef
 
 ## Repository Structure
 
-v0 uses a **two-package** pnpm workspace: `@specable/domain` (Schema-only primitive models) and `@specable/cli` (graph loading, validation, integrity, summary, and CLI).
+The workspace uses three publishable packages: `@specable/domain` (Schema-only primitive models), `@specable/core` (project root init/inspect and storage backends), and `@specable/cli` (v0 graph validation plus thin CLI adapters).
 
 - `packages/domain`: Publishable schema package — primitive schemas, Schema literal unions, references, and domain decode errors. No graph loaders, validation engines, or Node platform imports.
   - `src/unions/`: Closed-set Schema literal unions (`Status`, roles, …)
   - `src/primitives/`: Nine primitive type schemas
   - `src/Reference.ts`, `src/PrimitiveBase.ts`, `src/errors.ts`
   - `test/`: Minimal encode/decode tests for complex compositions (AC-004)
-- `packages/cli`: Publishable CLI and graph package — depends on `@specable/domain`.
+- `packages/core`: Publishable core library — project configuration, storage backends, and inspect services. Depends on `@specable/domain`. No CLI execution or live resource acquisition on import.
+  - `src/project/`: `ProjectConfig`, `ProjectDescriptor`, `ProjectRootService`, init/inspect errors
+  - `src/storage/`: `StorageBackend` contract, JSON/SQLite backends, `layers.ts`, `PrimitiveTypes.ts`
+  - `test/project/`: Init, inspect, parity, and layout contract suites
+  - `test/fixtures/project/`: Temp-directory helpers and test Layers
+- `packages/cli`: Publishable CLI and v0 graph package — depends on `@specable/domain` and `@specable/core`.
   - `bin/specable.js`: Workspace CLI shim (requires `pnpm build`)
-  - `src/graph/`: JSON loading, graph indexing, and traversal
+  - `src/graph/`: JSON loading, graph indexing, and traversal (v0 check)
   - `src/validation/`: Status-aware validation rules engine (`Draft` / `Active` / `Deprecated`)
   - `src/integrity/`: Duplicate detection, story triples, derivations, and advisories
   - `src/summary/`: Markdown summary and preview generation
   - `src/story/`: Deterministic story text generation
-  - `src/cli/`: `@effect/cli` command definitions (thin adapters)
-  - `src/services/`: FileSystem, GraphRepository, and Layer composition
+  - `src/cli/`: `@effect/cli` command definitions (`check`, `init`, `project show` — thin adapters)
+  - `src/services/`: FileSystem, GraphRepository, and Layer composition (merges core + graph Layers)
   - `src/bin.ts`: Node executable entry (`Command.run`)
   - `test/`: `@effect/vitest` suites and synthetic fixtures
-  - `examples/`: Bundled graph projects (`generic/`, `coachbridge-synthetic/`)
+  - `examples/`: Bundled graph projects (`generic/`, `coachbridge-synthetic/`, `project/`)
 - `scripts/`: Repository maintenance scripts (e.g. `clean.mjs`).
 - `.github/workflows`: Pull request checks, Fallow analysis, and release automation.
 - `specs/`: Feature specifications, plans, contracts, and quickstart guides.
@@ -42,7 +47,7 @@ Executable entrypoint:
 
 - `packages/cli/src/bin.ts`
 
-Importing `@specable/cli` must not execute the CLI or acquire live resources. Runtime execution belongs in `bin.ts` only.
+Importing `@specable/cli` or `@specable/core` must not execute the CLI or acquire live resources. Runtime execution belongs in `bin.ts` only.
 
 ## Architecture Rules
 
@@ -186,7 +191,7 @@ Placeholder tests do not count as coverage for new behavior.
 
 Use Fallow as a repository-analysis aid, not as a substitute for understanding the code.
 
-Fallow is scoped to `packages/domain` and `packages/cli` via `.fallowrc.json`.
+Fallow is scoped to `packages/domain`, `packages/core`, and `packages/cli` via `.fallowrc.json`.
 
 - Run `fallow audit --base main --format json --quiet` before committing AI-generated changes.
 - Use `fallow dead-code --format json --quiet` before removing unused code.

@@ -142,12 +142,12 @@ Per constitution v1.1.0 and [plan.md](./plan.md):
 
 **Purpose**: Documentation, regression, and release validation.
 
-- [ ] T037 [P] Add synthetic init example directories under `packages/cli/examples/project/` if useful for docs and manual demos
-- [ ] T038 Run full `quickstart.md` demo flow manually and fix any gaps in contracts or CLI messages
-- [ ] T039 [P] Update `AGENTS.md` repository structure section for `packages/core/` and revised CLI boundaries
-- [ ] T040 Verify v0 regression: `specable check packages/cli/examples/generic/valid` unchanged in `packages/cli/test/` or manual quickstart step
-- [ ] T041 Run `pnpm codegen`, `pnpm check`, `pnpm lint`, `pnpm test`, `pnpm build` from repository root
-- [ ] T042 Run `pnpm exec fallow audit --base main --format json --quiet` and resolve findings
+- [x] T037 [P] Add synthetic init example directories under `packages/cli/examples/project/` if useful for docs and manual demos
+- [x] T038 Run full `quickstart.md` demo flow manually and fix any gaps in contracts or CLI messages
+- [x] T039 [P] Update `AGENTS.md` repository structure section for `packages/core/` and revised CLI boundaries
+- [x] T040 Verify v0 regression: `specable check packages/cli/examples/generic/valid` unchanged in `packages/cli/test/` or manual quickstart step
+- [x] T041 Run `pnpm codegen`, `pnpm check`, `pnpm lint`, `pnpm test`, `pnpm build` from repository root
+- [x] T042 Run `pnpm exec fallow audit --base main --format json --quiet` and resolve findings
 
 ---
 
