@@ -7,5 +7,3 @@ export * as layers from "./storage/layers.js"
 export * as PrimitiveTypes from "./storage/PrimitiveTypes.js"
 export * as SqliteStorageBackend from "./storage/SqliteStorageBackend.js"
 export * as StorageBackend from "./storage/StorageBackend.js"
-
-
