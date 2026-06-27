@@ -59,10 +59,11 @@ You **MUST** consider the user input before proceeding (if not empty).
    - **Required**: plan.md (tech stack, libraries, structure), spec.md (user stories with priorities)
    - **Optional**: data-model.md (entities), contracts/ (interface contracts), research.md (decisions), quickstart.md (test scenarios)
    - **IF EXISTS**: Load `.specify/memory/constitution.md` for project principles and governance constraints
+   - **IF EXISTS**: Load `.specify/memory/effect-service-patterns.md` for Effect Requirements (`R`), Layer, and test conventions
    - Note: Not all projects have all documents. Generate tasks based on what's available.
 
 3. **Execute task generation workflow**:
-   - Load plan.md and extract tech stack, libraries, project structure
+   - Load plan.md and extract tech stack, libraries, project structure, and Service & Layer map (if present)
    - Load spec.md and extract user stories with their priorities (P1, P2, P3, etc.)
    - If data-model.md exists: Extract entities and map to user stories
    - If contracts/ exists: Map interface contracts to user stories
@@ -195,6 +196,13 @@ Every task MUST strictly follow this format:
    - Shared infrastructure → Setup phase (Phase 1)
    - Foundational/blocking tasks → Foundational phase (Phase 2)
    - Story-specific setup → within that story's phase
+
+5. **From Effect service / I/O boundaries** (when plan Service & Layer map exists):
+   - Foundational: service tag + contract with explicit `Effect<_, _, R>` on methods
+   - Foundational: `*Live` Layer module(s) in owning package
+   - Integration: wire Layers at composition root (`services/Layers.ts`, `bin.ts`)
+   - Tests: `it.effect` + `Effect.provide` with test/live Layers — no floating Requirements
+   - Copy the **Implementation conventions** block from tasks-template.md into generated tasks.md
 
 ### Phase Structure
 

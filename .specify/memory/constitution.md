@@ -1,19 +1,15 @@
 <!--
 Sync Impact Report
 ==================
-Version change: 1.0.0 → 1.1.0
-Modified principles: II (storage abstraction), V (consumer-facing services)
+Version change: 1.2.0 → 1.3.0
+Modified principles: none
 Added sections:
-  - Technical Standards → TypeScript type safety
-  - Technical Standards → Storage and service abstractions
+  - Technical Standards → TypeScript type safety (ADT guard rule)
+  - effect-service-patterns.md → ADT guards and Schema decode
 Removed sections: none
 Templates requiring updates:
-  - .specify/templates/plan-template.md ✅ updated (TypeScript conventions)
-  - .specify/templates/tasks-template.md ✅ updated (implementation conventions)
-  - specs/001-product-primitives-v0/plan.md ✅ updated (Session 2026-06-25 PR review)
-  - specs/001-product-primitives-v0/research.md ✅ updated (R18–R19)
-  - specs/001-product-primitives-v0/data-model.md ✅ updated (GraphRepository boundary)
-  - specs/001-product-primitives-v0/tasks.md ✅ updated (implementation conventions)
+  - AGENTS.md ✅ updated (ADT/decode pointer)
+  - .cursor/skills/speckit-implement/SKILL.md ✅ updated (Either _tag validation)
 Deferred TODOs: none
 -->
 
@@ -235,6 +231,10 @@ operational or UX expansion.
 - When a cast is unavoidable (for example bridging an external library with incomplete
   types), it MUST be localized, documented with a one-line rationale, and covered by
   tests at that boundary.
+- Do NOT access `._tag` on ADTs from external libraries (`Either`, `Option`, etc.).
+  Use library-provided type guards (`Either.isLeft`, `Option.isSome`, …) or `match`
+  APIs. Prefer `Schema.decodeUnknown` (Effect) at boundaries inside `Effect.gen`.
+  See [effect-service-patterns.md](./effect-service-patterns.md) → ADT guards and Schema decode.
 - `null` MUST NOT be used for optional or missing values. Use `Option` for optional
   data, tagged errors or `Effect.fail` for expected failures, and defects only for
   unrecoverable bugs.
@@ -246,6 +246,32 @@ operational or UX expansion.
 - File-backed JSON loading, Node filesystem access, and future SQL/Notion adapters
   are implementation details composed in `services/` Layers—not imported by validation,
   integrity, summary, or CLI command modules.
+
+**Effect services and Requirements (`R`)**
+
+See [effect-service-patterns.md](./effect-service-patterns.md) for examples and
+anti-patterns.
+
+- Every `Effect<A, E, R>` MUST declare dependencies in `R`. Access services with
+  `yield* Tag` inside `Effect.gen`; do NOT pass service instances as function parameters.
+- Platform tags (`FileSystem`, `SqlClient`, etc.) MUST be resolved during Layer
+  construction (`Effect.gen` inside `Layer.effect` / `Effect.Service` effect blocks),
+  not in CLI command modules.
+- Consumer-facing service contracts (Principle V) SHOULD expose public methods with
+  `R = never` when platform deps are absorbed at Layer build. If a method still
+  requires a tag at call time, its signature MUST include that tag in `R` — do not
+  claim `never` while closing over unstated dependencies.
+- Live Layers MUST be composed at one composition root per application entrypoint
+  (for example `packages/cli/src/bin.ts` + `packages/cli/src/services/Layers.ts`).
+  Library packages export per-feature Live modules; they MUST NOT export a
+  pre-composed god Layer that hides backend selection.
+- `@effect/platform-node` MUST NOT be imported from library `src/` (only entrypoints
+  and test harnesses).
+- Tests MUST provide Layers (`Effect.provide`) — prefer `@effect/vitest` `it.effect`
+  with test or live platform Layers.
+- Feature plans touching I/O MUST document a Service & Layer map: tags introduced,
+  Live Layer export paths, composition root, and which tags appear in public method
+  `R` vs absorbed at Layer build.
 
 **Testing**
 
@@ -298,4 +324,4 @@ Core Principles, Technical Standards, and Development Workflow. Use
 `.specify/memory/constitution.md` as the authoritative reference during `/speckit-plan`,
 `/speckit-specify`, `/speckit-tasks`, and `/speckit-implement`.
 
-**Version**: 1.1.0 | **Ratified**: 2026-06-23 | **Last Amended**: 2026-06-25
+**Version**: 1.3.0 | **Ratified**: 2026-06-23 | **Last Amended**: 2026-06-27

@@ -57,17 +57,17 @@ Per constitution v1.1.0 and [plan.md](./plan.md):
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T008 [P] Implement canonical nine-type list in `packages/core/src/storage/PrimitiveTypes.ts` per `data-model.md`
-- [ ] T009 [P] Implement `ProjectConfig` and `StorageBinding` Schema in `packages/core/src/project/ProjectConfig.ts` per `contracts/project-config.md`
-- [ ] T010 [P] Implement `GraphStoreSummary` and `ProjectDescriptor` Schema in `packages/core/src/project/ProjectDescriptor.ts` per `data-model.md`
-- [ ] T011 [P] Implement tagged init/inspect errors in `packages/core/src/project/errors.ts` per `research.md` R11
-- [ ] T012 Implement `StorageBackend` Effect service contract in `packages/core/src/storage/StorageBackend.ts` with `bootstrap` and `describe` per `research.md` R6
-- [ ] T013 [P] Implement JSON bootstrap and graph summary in `packages/core/src/storage/JsonStorageBackend.ts` per `contracts/storage-layouts.md`
-- [ ] T014 [P] Implement SQLite bootstrap and graph summary in `packages/core/src/storage/SqliteStorageBackend.ts` per `contracts/storage-layouts.md` and `research.md` R4–R5
-- [ ] T015 Implement `JsonStorageBackendLive` and `SqliteStorageBackendLive` in `packages/core/src/storage/layers.ts`
-- [ ] T016 Implement `ProjectRootService` Effect service skeleton in `packages/core/src/project/ProjectRootService.ts` with `initialize` and `describe` method signatures
-- [ ] T017 Run `pnpm --filter @specable/core run codegen` and commit generated `packages/core/src/index.ts`
-- [ ] T018 [P] Create temp-directory test helpers in `packages/core/test/fixtures/project/helpers.ts`
+- [x] T008 [P] Implement canonical nine-type list in `packages/core/src/storage/PrimitiveTypes.ts` per `data-model.md`
+- [x] T009 [P] Implement `ProjectConfig` and `StorageBinding` Schema in `packages/core/src/project/ProjectConfig.ts` per `contracts/project-config.md`
+- [x] T010 [P] Implement `GraphStoreSummary` and `ProjectDescriptor` Schema in `packages/core/src/project/ProjectDescriptor.ts` per `data-model.md`
+- [x] T011 [P] Implement tagged init/inspect errors in `packages/core/src/project/errors.ts` per `research.md` R11
+- [x] T012 Implement `StorageBackend` Effect service contract in `packages/core/src/storage/StorageBackend.ts` with `bootstrap` and `describe` per `research.md` R6
+- [x] T013 [P] Implement JSON bootstrap and graph summary in `packages/core/src/storage/JsonStorageBackend.ts` per `contracts/storage-layouts.md`
+- [x] T014 [P] Implement SQLite bootstrap and graph summary in `packages/core/src/storage/SqliteStorageBackend.ts` per `contracts/storage-layouts.md` and `research.md` R4–R5
+- [x] T015 Implement `JsonStorageBackendLive` and `SqliteStorageBackendLive` in `packages/core/src/storage/layers.ts`
+- [x] T016 Implement `ProjectRootService` Effect service skeleton in `packages/core/src/project/ProjectRootService.ts` with `initialize` and `describe` method signatures
+- [x] T017 Run `pnpm --filter @specable/core run codegen` and commit generated `packages/core/src/index.ts`
+- [x] T018 [P] Create temp-directory test helpers in `packages/core/test/fixtures/project/helpers.ts`
 
 **Checkpoint**: Foundation ready — user story implementation can now begin.
 

@@ -28,10 +28,22 @@ description: "Task list template for feature implementation"
 
 ## Implementation conventions
 
-Per constitution and plan.md:
+Per constitution v1.2.0, plan.md, and
+[effect-service-patterns.md](../../.specify/memory/effect-service-patterns.md):
 
 - Never use `any`; avoid type casts unless documented at an external boundary.
 - Hide storage/adapter mechanics behind repository services; feature modules depend on stable load/query contracts, not loader internals.
+- Declare service dependencies in `Effect<A, E, R>`; access via `yield* Tag` — never pass service instances as function parameters.
+- Resolve platform tags during Layer construction; public consumer methods SHOULD have `R = never` when deps are absorbed at Layer build.
+- Compose Live Layers at entrypoints (`bin.ts`, `services/Layers.ts`) and in test harnesses — not in CLI command modules.
+- Tests use `@effect/vitest` `it.effect` with `Effect.provide(TestLayer)` or live platform Layers.
+
+**Task patterns for I/O features** (adjust IDs and paths per feature):
+
+- Foundational: define service tag + contract with explicit `Effect<_, _, R>` on methods
+- Foundational: implement `*Live` Layer module(s) in owning package
+- Integration: wire Layers at composition root (`packages/cli/src/services/Layers.ts`, `bin.ts`)
+- Tests: `it.effect` + `Effect.provide` with test/live Layers (no floating Requirements)
 
 <!--
   ============================================================================

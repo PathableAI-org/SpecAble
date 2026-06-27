@@ -93,6 +93,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - **IF EXISTS**: Read contracts/ for API specifications and test requirements
    - **IF EXISTS**: Read research.md for technical decisions and constraints
    - **IF EXISTS**: Read .specify/memory/constitution.md for governance constraints
+   - **IF EXISTS**: Read .specify/memory/effect-service-patterns.md for Effect Requirements (`R`), Layer, and test conventions
    - **IF EXISTS**: Read quickstart.md for integration scenarios
 
 4. **Project Setup Verification**:
@@ -158,6 +159,8 @@ You **MUST** consider the user input before proceeding (if not empty).
    - **Core development**: Implement models, services, CLI commands, endpoints
    - **Integration work**: Database connections, middleware, logging, external services
    - **Polish and validation**: Unit tests, performance optimization, documentation
+   - **Effect Requirements**: For new/changed services, verify public method `R` matches Layer absorption (see `effect-service-patterns.md`); resolve platform tags in Layer construction; compose Live Layers only at entrypoints (`bin.ts`, `services/Layers.ts`) and test harnesses; never import `@effect/platform-node` from library `src/`
+   - **ADT guards**: In changed files, do not use `._tag === "Left"` or `._tag === "Right"` on `Either`/`Option` results; use `Either.match` / guards or `Schema.decodeUnknown` (see `effect-service-patterns.md` → ADT guards and Schema decode)
 
 8. Progress tracking and error handling:
    - Report progress after each completed task
@@ -172,6 +175,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Check that implemented features match the original specification
    - Validate that tests pass and coverage meets requirements
    - Confirm the implementation follows the technical plan
+   - When I/O services were touched: confirm Service & Layer map from plan.md was followed; public API `R` types are honest; tests use `Effect.provide` with Layers
 
 Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `/speckit-tasks` first to regenerate the task list.
 

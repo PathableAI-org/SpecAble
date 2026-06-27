@@ -109,12 +109,24 @@ SpecAble/
 
 ### TypeScript and service conventions
 
-Per `.specify/memory/constitution.md` v1.1.0+:
+Per `.specify/memory/constitution.md` v1.2.0+ and
+[`.specify/memory/effect-service-patterns.md`](../../.specify/memory/effect-service-patterns.md):
 
 - **No `any`**: Schema-inferred types for config and inspect DTOs in `@specable/core`.
 - **Avoid type casts**: SQLite row decode via Schema at storage boundary in core.
 - **Hide storage I/O**: CLI commands depend on `ProjectRootService` from core; JSON/SQLite Live Layers exported from `packages/core/src/storage/layers.ts`.
 - **Import safety**: `@specable/core` exports library modules only; no runtime side effects on import.
+- **Requirements (`R`)**: Public service methods use `R = never` when platform deps are absorbed at Layer build.
+
+### Service & Layer map
+
+| Item | Detail |
+|------|--------|
+| Tags introduced | `@specable/core/StorageBackend`, `@specable/core/ProjectRootService` |
+| Live Layer modules | `packages/core/src/storage/layers.ts` → `JsonStorageBackendLive`, `SqliteStorageBackendLive` (each requires `FileSystem` parent when composing) |
+| Composition root | `packages/cli/src/services/Layers.ts` and `packages/cli/src/bin.ts` (Phase 3) |
+| Public method `R` | `StorageBackend.bootstrap` / `describe` → `never`; `ProjectRootService.initialize` / `describe` → `never` |
+| Local references | `packages/cli/src/graph/GraphLoader.ts`, `GraphRepository.ts`, `services/Layers.ts`, `bin.ts` |
 
 ## Complexity Tracking
 

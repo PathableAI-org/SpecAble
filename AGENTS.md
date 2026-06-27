@@ -68,9 +68,17 @@ Before introducing an abstraction, look for an existing local example that can b
 
 Do not rely on model memory for Effect APIs.
 
+**Requirements (`R`) and Layers**: Read [`.specify/memory/effect-service-patterns.md`](.specify/memory/effect-service-patterns.md) before implementing services or I/O. Key rules:
+
+- Declare dependencies in `Effect<A, E, R>`; access services with `yield* Tag` inside `Effect.gen`.
+- Resolve platform tags (`FileSystem`, `SqlClient`) during Layer construction; public consumer methods SHOULD have `R = never` when deps are absorbed at build time.
+- Compose Live Layers at entrypoints (`packages/cli/src/bin.ts`, `packages/cli/src/services/Layers.ts`) and in tests — not in CLI command modules.
+- Never import `@effect/platform-node` from library `src/`; tests use `Effect.provide` with test or live Layers.
+- Do not access `._tag` on foreign ADTs (`Either`, `Option`); use guards or `Schema.decodeUnknown` — see **ADT guards and Schema decode** in `effect-service-patterns.md`.
+
 Before implementing an unfamiliar Effect pattern:
 
-1. Inspect the closest local example under `packages/domain/src/` or `packages/cli/src/`.
+1. Inspect the closest local example under `packages/domain/src/`, `packages/core/src/`, or `packages/cli/src/` (see reference table in `effect-service-patterns.md`).
 2. Consult version-matched guidance at [effect.website](https://effect.website/docs/).
 3. Consult the official documentation at [effect.website/docs](https://effect.website/docs/).
 4. Confirm the API against the installed package types in `node_modules/effect`.
