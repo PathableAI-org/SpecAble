@@ -2,6 +2,9 @@
   "private": true,
   "license": "Unlicense",
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "packageManager": "pnpm@11.8.0+sha512.c1f5e7c4cb241c8f174b743851d82f42b802324afc8b0f116b96adb15aa06664948dde36960a3ba1079ba5b4b29dd0140135b94b5b5f5263592249d68e555f26",
   "scripts": {
     "clean": "node scripts/clean.mjs",
@@ -12,6 +15,8 @@
     "lint": "eslint \"**/{src,test,examples,scripts}/**/*.{ts,mjs}\"",
     "lint-fix": "pnpm lint --fix",
     "test": "vitest --config vitest.config.ts",
+    "test:integration": "pnpm build && vitest run --config vitest.config.ts packages/cli/test/integration",
+    "test:acceptance": "pnpm build && vitest run --config vitest.acceptance.config.ts",
     "coverage": "vitest --config vitest.config.ts --coverage",
     "specable": "node packages/cli/bin/specable.js",
     "changeset": "changeset",
@@ -32,10 +37,12 @@
     "@babel/plugin-transform-modules-commonjs": "^8.0.1",
     "@changesets/changelog-github": "^0.7.0",
     "@changesets/cli": "^2.31.0",
+    "@cucumber/cucumber": "^12.9.0",
     "@effect/build-utils": "^0.8.9",
     "@effect/eslint-plugin": "^0.3.2",
     "@effect/language-service": "^0.86.2",
     "@effect/vitest": "^0.29.0",
+    "@lotun/vitest-cucumber": "^0.2.10",
     "@types/node": "^26.0.0",
     "@vitest/coverage-v8": "4.1.9",
     "babel-plugin-annotate-pure-calls": "^0.5.0",
