@@ -292,6 +292,15 @@ The spec-driven workflow is driven by `speckit-*` skills which call bash scripts
 `.specify/scripts/bash/` (e.g. `check-prerequisites.sh`, `create-new-feature.sh`,
 `setup-plan.sh`, `setup-tasks.sh`).
 
+**Before `/speckit-implement`**: sync `main` and branch from `origin/main` — do not implement on another feature branch or a stale checkout. PRs from implementation work merge into `main`.
+
+```sh
+git fetch origin main
+git checkout main
+git pull --ff-only origin main
+git checkout -b cursor/<descriptive-name>-<id>
+```
+
 Non-obvious caveats:
 
 - These scripts resolve the repo root by searching **upward from the current working
