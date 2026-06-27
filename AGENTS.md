@@ -127,6 +127,7 @@ pnpm --filter @specable/domain run codegen
 pnpm --filter @specable/core run codegen
 pnpm --filter @specable/cli run codegen
 pnpm build
+pnpm prepare-examples   # materialize SQLite example fixtures from graph.schema.sql
 pnpm specable check packages/cli/examples/generic/valid
 ```
 

@@ -1,4 +1,4 @@
-import { describe, expect, it } from "@effect/vitest"
+import { beforeAll, describe, expect, it } from "@effect/vitest"
 import { PrimitiveTypes, ProjectRootService } from "@specable/core"
 import { Effect } from "effect"
 import * as path from "node:path"
@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url"
 
 import { formatProjectShowOutput } from "../../src/cli/render/ProjectShowOutput.js"
 import { projectRootInspectLiveLayer } from "../../src/services/Layers.js"
+import { materializeSqliteFromSchema } from "../fixtures/project/prepareSqliteFixture.js"
 
 const { CANONICAL_PRIMITIVE_TYPES } = PrimitiveTypes
 
@@ -15,6 +16,10 @@ const examplesDir = path.join(testDir, "../../examples/project")
 const examplePath = (name: string): string => path.join(examplesDir, name)
 
 describe("Bundled project root examples", () => {
+  beforeAll(async () => {
+    await materializeSqliteFromSchema(examplePath("sqlite-empty"))
+  })
+
   it.effect("json-empty describes an empty JSON-backed root", () =>
     Effect.gen(function*() {
       const service = yield* ProjectRootService.ProjectRootService

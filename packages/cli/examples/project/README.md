@@ -9,7 +9,7 @@ These differ from v0 fixture directories under `generic/` and `coachbridge-synth
 | Directory | Storage | Purpose |
 |-----------|---------|---------|
 | `json-empty/` | JSON (default) | Empty JSON-backed root with nine type files |
-| `sqlite-empty/` | SQLite | Empty SQLite-backed root with `graph.sqlite` |
+| `sqlite-empty/` | SQLite | Empty SQLite-backed root; `graph.schema.sql` is the reviewable source, `graph.sqlite` is generated locally |
 
 On-disk layouts match [storage-layouts.md](../../../../specs/002-initialize-project-roots/contracts/storage-layouts.md).
 
@@ -18,6 +18,9 @@ On-disk layouts match [storage-layouts.md](../../../../specs/002-initialize-proj
 From the repository root (after `pnpm build`):
 
 ```bash
+# Materialize SQLite example databases from graph.schema.sql (required for sqlite-empty)
+pnpm prepare-examples
+
 # Inspect JSON-backed empty root
 pnpm specable project show packages/cli/examples/project/json-empty
 
@@ -44,4 +47,12 @@ To recreate from scratch (new `projectId` values):
 rm -rf packages/cli/examples/project/json-empty packages/cli/examples/project/sqlite-empty
 pnpm specable init packages/cli/examples/project/json-empty --name demo-json-empty
 pnpm specable init packages/cli/examples/project/sqlite-empty --storage sqlite --name demo-sqlite-empty
+```
+
+For SQLite examples, copy the schema DDL from the generated database into `graph.schema.sql`, remove the committed `graph.sqlite`, and run `pnpm prepare-examples` to verify materialization.
+
+Alternatively, edit `sqlite-empty/graph.schema.sql` directly and run:
+
+```bash
+pnpm prepare-examples
 ```
