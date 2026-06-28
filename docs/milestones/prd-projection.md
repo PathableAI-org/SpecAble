@@ -176,9 +176,11 @@ from the semantic product model. It proves the end-to-end chain:
 author semantic documents → interpret → validate readiness → project PRD
 ```
 
-Later milestones may expose the same model through MCP and additional views. This
-milestone establishes the projection pattern — derived, traceable, non-authoritative —
-that those surfaces inherit.
+Later milestones may expose projection through CLI or MCP surfaces over the same
+semantic model; this milestone defines the conceptual contract those implementations
+will follow. Additional views may follow the same pattern. This milestone establishes
+the projection pattern — derived, traceable, non-authoritative — that those surfaces
+inherit.
 
 ## What projection answers
 
@@ -392,8 +394,7 @@ milestone.
   not decisions made here
 - Align with derivation-over-duplication: the PRD derives from wiki-backed knowledge;
   generated PRD text is never an input to interpretation or validation
-- Align with constitution principle I (Primitive Graph is Canonical): semantic product
-  knowledge remains authoritative; the PRD is an output, not the model
+- Semantic product knowledge remains authoritative; the PRD is an output, not the model
 
 ### Non-goals
 
@@ -418,7 +419,7 @@ independent source of truth or prescribing templates and rendering technology.
 ## Links
 
 - Release: [docs/releases/alpha.md](../releases/alpha.md)
-- GitHub Milestone: TBD
+- GitHub Milestone: https://github.com/PathableAI-org/SpecAble/milestone/6
 - Prior milestones: [readable-semantic-wiki.md](readable-semantic-wiki.md),
   [semantic-interpretation-layer.md](semantic-interpretation-layer.md),
   [validate-desired-product-state.md](validate-desired-product-state.md)
