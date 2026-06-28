@@ -11,6 +11,9 @@ export * as InitCommand from "./cli/InitCommand.js"
 export * as PrimitiveCreateCommand from "./cli/PrimitiveCreateCommand.js"
 
 
+export * as PrimitiveGetCommand from "./cli/PrimitiveGetCommand.js"
+
+
 export * as PrimitiveListCommand from "./cli/PrimitiveListCommand.js"
 
 
