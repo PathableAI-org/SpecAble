@@ -6,7 +6,7 @@ Keep this file concise and update it when repository structure, commands, or con
 
 ## Project Purpose
 
-SpecAble validates local Product Primitive graphs against the canonical ontology. v0 `specable check` reports relationship integrity issues and generates deterministic Markdown summaries and JSON reports on legacy JSON fixture directories. Alpha `specable init` and `specable project show` initialize and inspect JSON- or SQLite-backed project roots via `@specable/core`.
+SpecAble validates local Product Primitive graphs against the canonical ontology. v0 `specable check` reports relationship integrity issues and generates deterministic Markdown summaries and JSON reports on legacy JSON fixture directories. Alpha `specable init`, `specable project show`, and `specable primitive` (create, list, get) initialize, inspect, and persist primitives in JSON- or SQLite-backed project roots via `@specable/core`.
 
 Prefer explicit schemas, typed errors, visible service requirements, deterministic tests, and examples that coding agents can safely imitate.
 
@@ -14,18 +14,22 @@ This repository targets the latest stable Effect v3 release. Do not introduce Ef
 
 ## Repository Structure
 
-The workspace uses three publishable packages: `@specable/domain` (Schema-only primitive models), `@specable/core` (project root init/inspect and storage backends), and `@specable/cli` (v0 graph validation plus thin CLI adapters).
+The workspace uses three publishable packages: `@specable/domain` (Schema-only primitive models), `@specable/core` (project root init/inspect, primitive CRUD, and storage backends), and `@specable/cli` (v0 graph validation plus thin CLI adapters).
 
 - `packages/domain`: Publishable schema package — primitive schemas, Schema literal unions, references, and domain decode errors. No graph loaders, validation engines, or Node platform imports.
   - `src/unions/`: Closed-set Schema literal unions (`Status`, roles, …)
   - `src/primitives/`: Nine primitive type schemas
   - `src/Reference.ts`, `src/PrimitiveBase.ts`, `src/errors.ts`
   - `test/`: Minimal encode/decode tests for complex compositions (AC-004)
-- `packages/core`: Publishable core library — project configuration, storage backends, and inspect services. Depends on `@specable/domain`. No CLI execution or live resource acquisition on import.
+- `packages/core`: Publishable core library — project configuration, storage backends, primitive CRUD, and inspect services. Depends on `@specable/domain`. No CLI execution or live resource acquisition on import.
   - `src/project/`: `ProjectConfig`, `ProjectDescriptor`, `ProjectRootService`, init/inspect errors
+  - `src/primitive/`: `PrimitiveService`, `CreateInput`, `PrimitiveSummary`, ID assignment, primitive errors
   - `src/storage/`: `StorageBackend` contract, JSON/SQLite backends, `layers.ts`, `PrimitiveTypes.ts`
   - `test/project/`: Init, inspect, parity, and layout contract suites
+  - `test/primitive/`: `PrimitiveService` contract and failure-path tests
+  - `test/storage/`: JSON/SQLite create, list, and get round-trip tests
   - `test/fixtures/project/`: Temp-directory helpers and test Layers
+  - `test/fixtures/primitive/`: Synthetic create inputs and project-root helpers
 - `packages/cli`: Publishable CLI and v0 graph package — depends on `@specable/domain` and `@specable/core`.
   - `bin/specable.js`: Workspace CLI shim (requires `pnpm build`)
   - `src/graph/`: JSON loading, graph indexing, and traversal (v0 check)
@@ -33,7 +37,7 @@ The workspace uses three publishable packages: `@specable/domain` (Schema-only p
   - `src/integrity/`: Duplicate detection, story triples, derivations, and advisories
   - `src/summary/`: Markdown summary and preview generation
   - `src/story/`: Deterministic story text generation
-  - `src/cli/`: `@effect/cli` command definitions (`check`, `init`, `project show` — thin adapters)
+  - `src/cli/`: `@effect/cli` command definitions (`check`, `init`, `project show`, `primitive create|list|get` — thin adapters)
   - `src/services/`: FileSystem, GraphRepository, and Layer composition (merges core + graph Layers)
   - `src/bin.ts`: Node executable entry (`Command.run`)
   - `test/`: `@effect/vitest` suites and synthetic fixtures
@@ -129,6 +133,10 @@ pnpm --filter @specable/cli run codegen
 pnpm build
 pnpm prepare-examples   # materialize SQLite example fixtures from graph.schema.sql
 pnpm specable check packages/cli/examples/generic/valid
+pnpm specable init /tmp/demo-json
+pnpm specable primitive create /tmp/demo-json --type Capability --name "Schedule session" --status Draft
+pnpm specable primitive list /tmp/demo-json
+pnpm specable primitive get /tmp/demo-json --id <capability-id>
 ```
 
 Run the complete validation suite before requesting review:

@@ -5,27 +5,27 @@ import * as path from "node:path"
 import { PrimitiveService } from "../../src/primitive/PrimitiveService.js"
 import { ProjectRootService } from "../../src/project/ProjectRootService.js"
 import { CANONICAL_PRIMITIVE_TYPES } from "../../src/storage/PrimitiveTypes.js"
-import { sampleCreateInput, withJsonProjectRoot } from "../fixtures/primitive/helpers.js"
+import { sampleCreateInput, withSqliteProjectRoot } from "../fixtures/primitive/helpers.js"
 import { withTempDir } from "../fixtures/project/helpers.js"
-import { primitiveServiceJsonTestLayer, projectRootJsonTestLayer } from "../fixtures/project/layers.js"
+import { primitiveServiceSqliteTestLayer, projectRootSqliteTestLayer } from "../fixtures/project/layers.js"
 
-const inspectJsonTestLayer = Layer.merge(projectRootJsonTestLayer, primitiveServiceJsonTestLayer)
+const inspectSqliteTestLayer = Layer.merge(projectRootSqliteTestLayer, primitiveServiceSqliteTestLayer)
 
-describe("ProjectRootService.describe (JSON)", () => {
-  it.effect("returns ProjectDescriptor for an initialized JSON-backed root", () =>
-    withTempDir("specable-inspect-json-", (parentDir) =>
+describe("ProjectRootService.describe (SQLite)", () => {
+  it.effect("returns ProjectDescriptor for an initialized SQLite-backed root", () =>
+    withTempDir("specable-inspect-sqlite-", (parentDir) =>
       Effect.gen(function*() {
-        const projectRoot = path.join(parentDir, "demo-json")
+        const projectRoot = path.join(parentDir, "demo-sqlite")
         const service = yield* ProjectRootService
 
-        const config = yield* service.initialize(projectRoot, { storage: "json" })
+        const config = yield* service.initialize(projectRoot, { storage: "sqlite" })
         const descriptor = yield* service.describe(projectRoot)
 
         expect(descriptor.projectId).toBe(config.projectId)
-        expect(descriptor.name).toBe("demo-json")
+        expect(descriptor.name).toBe("demo-sqlite")
         expect(descriptor.rootPath).toBe(path.resolve(projectRoot))
         expect(descriptor.schemaVersion).toBe(1)
-        expect(descriptor.storage).toEqual({ location: ".", type: "json" })
+        expect(descriptor.storage).toEqual({ location: "graph.sqlite", type: "sqlite" })
         expect(descriptor.primitiveTypes).toEqual([...CANONICAL_PRIMITIVE_TYPES])
         expect(descriptor.graph.totalPrimitives).toBe(0)
         expect(descriptor.graph.empty).toBe(true)
@@ -35,10 +35,10 @@ describe("ProjectRootService.describe (JSON)", () => {
         }
 
         expect(descriptor.createdAt).toBe(config.createdAt)
-      })).pipe(Effect.provide(projectRootJsonTestLayer)))
+      })).pipe(Effect.provide(projectRootSqliteTestLayer)))
 
   it.effect("reports non-empty graph counts after primitives are created", () =>
-    withJsonProjectRoot(({ projectRoot }) =>
+    withSqliteProjectRoot(({ projectRoot }) =>
       Effect.gen(function*() {
         const primitiveService = yield* PrimitiveService
         const rootService = yield* ProjectRootService
@@ -63,5 +63,5 @@ describe("ProjectRootService.describe (JSON)", () => {
           }
         }
       })
-    ).pipe(Effect.provide(inspectJsonTestLayer)))
+    ).pipe(Effect.provide(inspectSqliteTestLayer)))
 })

@@ -165,13 +165,13 @@ Per constitution v1.3.0, [plan.md](./plan.md), and
 
 **Checkpoint**: Milestone acceptance criteria satisfied; ready for merge.
 
-- [ ] T042 [P] Update inspect tests for non-empty graph in `packages/core/test/project/inspect-json.test.ts` and `packages/core/test/project/inspect-sqlite.test.ts` (if separate)
-- [ ] T043 Run full `quickstart.md` demo flow manually and fix any gaps in contracts or CLI messages
-- [ ] T044 [P] Update Spec Kit link from TBD in `docs/milestones/create-inspect-primitives.md` to `specs/003-create-inspect-primitives/spec.md`
-- [ ] T045 [P] Update `AGENTS.md` repository structure and commands section for `specable primitive` commands
-- [ ] T046 Verify v0 regression: `specable check packages/cli/examples/generic/valid` unchanged
-- [ ] T047 Run `pnpm codegen`, `pnpm check`, `pnpm lint`, `pnpm test`, `pnpm build` from repository root
-- [ ] T048 Run `pnpm exec fallow audit --base main --format json --quiet` and resolve findings
+- [x] T042 [P] Update inspect tests for non-empty graph in `packages/core/test/project/inspect-json.test.ts` and `packages/core/test/project/inspect-sqlite.test.ts` (if separate)
+- [x] T043 Run full `quickstart.md` demo flow manually and fix any gaps in contracts or CLI messages
+- [x] T044 [P] Update Spec Kit link from TBD in `docs/milestones/create-inspect-primitives.md` to `specs/003-create-inspect-primitives/spec.md`
+- [x] T045 [P] Update `AGENTS.md` repository structure and commands section for `specable primitive` commands
+- [x] T046 Verify v0 regression: `specable check packages/cli/examples/generic/valid` unchanged
+- [x] T047 Run `pnpm codegen`, `pnpm check`, `pnpm lint`, `pnpm test`, `pnpm build` from repository root
+- [x] T048 Run `pnpm exec fallow audit --base main --format json --quiet` and resolve findings
 
 ---
 
