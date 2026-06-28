@@ -59,17 +59,13 @@ export const formatPrimitiveGetSuccessOutput = (primitive: Primitive): string =>
     .filter((key) => !reserved.has(key))
     .sort((left, right) => left.localeCompare(right))
 
-  for (const key of extraKeys) {
+  const extraLines = extraKeys.flatMap((key) => {
     const value = primitive[key as keyof Primitive]
 
-    if (value === undefined) {
-      continue
-    }
+    return value === undefined ? [] : [`${key}: ${formatPrimitiveFieldValue(value)}`]
+  })
 
-    lines.push(`${key}: ${formatPrimitiveFieldValue(value)}`)
-  }
-
-  return lines.join("\n")
+  return [...lines, ...extraLines].join("\n")
 }
 
 const formatPrimitiveFieldValue = (value: unknown): string => {
