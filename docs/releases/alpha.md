@@ -90,7 +90,7 @@ Expected usage:
 - Capture and refine product knowledge as readable semantic wiki pages
 - Inspect the derived primitive graph, relationships, and validation state
 - Project wiki-backed knowledge into a PRD or similar summary artifact
-- Expose the same semantic model through a local MCP server to AI clients
+- Expose the same semantic model through an MCP adapter to AI clients
 - Test semantic wiki behavior without Pathable-hosted infrastructure or
   Pathable-managed inference billing
 
@@ -108,7 +108,7 @@ Parent vision: [AI-assisted product-to-design-to-engineering platform](https://a
 - Validation of product understanding and PRD readiness
 - PRD projection traceable to wiki-backed primitives
 - CLI commands for wiki maintenance, graph inspection, validation, and projection
-- MCP adapter exposing wiki-backed semantic resources and maintenance tools
+- MCP adapter exposing wiki-backed semantic product knowledge to agents — interpreted concepts, relationships, provenance, validation findings, and derived artifacts such as the PRD
 - Placeholder prompt workflows for common product-review tasks
 - Local-first / low-risk adoption model
 - Basic projections over product knowledge (PRD as primary alpha projection)
@@ -139,8 +139,8 @@ Evidence / Source (open question: core primitives vs operating metadata).
 - [ ] A user can evaluate interpreted product knowledge for PRD readiness and receive structured findings that guide wiki refinement — not merely document parse failures *(milestone 5)*
 - [ ] CLI output is usable by humans and AI tools
 - [ ] A user can project wiki-backed product knowledge into a high-quality, traceable PRD (or equivalent summary artifact)
-- [ ] The MCP server exposes root-aware semantic resources over the wiki-backed model (project, schema, graph, primitives, relationships, validation, projections)
-- [ ] The MCP server exposes root-aware tools for wiki/graph maintenance, validation, search, and summarization
+- [ ] The MCP adapter exposes semantic product knowledge to agents over the same wiki-backed model humans use — interpreted concepts, relationships, provenance, validation findings, and derived artifacts such as the PRD *(milestone 7)*
+- [ ] Agents consuming through the MCP adapter remain grounded in the same explicit product understanding as human collaborators — no parallel source of truth
 - [ ] Alpha runs fully locally without Pathable-hosted infrastructure
 
 ## Vertical slice milestone list
@@ -154,25 +154,20 @@ Ordered by demoable product capability, not internal architecture.
 
 **Remaining work (revised scope):**
 
-Milestone documents for slice 7 will be revised to match this roadmap
-([#90](https://github.com/PathableAI-org/SpecAble/issues/90)). Slices 5–6
-are defined in [#93](https://github.com/PathableAI-org/SpecAble/issues/93) and
-[#94](https://github.com/PathableAI-org/SpecAble/issues/94).
+Slice 7 is defined in [#95](https://github.com/PathableAI-org/SpecAble/issues/95).
 
 3. **[Readable semantic wiki](../milestones/readable-semantic-wiki.md)** — define the semantic document model: human-readable product knowledge with formal structure, stable identity, typed relationships, and provenance; adapter-agnostic contract before format or parser choices
 4. **[Semantic interpretation layer](../milestones/semantic-interpretation-layer.md)** — define how SpecAble understands semantic documents: interpreted concepts, explicit relationships, provenance, gaps, and derivable views; adapter-agnostic contract before parser or storage choices
 5. **[PRD readiness validation](../milestones/validate-desired-product-state.md)** — define validation as reasoning over interpreted product knowledge: completeness, coherence, uncertainty, and traceability for PRD projection readiness; adapter-agnostic contract before rule engine or CLI choices
 6. **[PRD projection](../milestones/prd-projection.md)** — define how SpecAble derives a coherent, traceable PRD from validated interpreted product knowledge; adapter-agnostic contract before generator, CLI, or rendering choices
-7. **MCP adapter for structured product wiki** — End-to-end alpha: MCP server exposes wiki-backed semantic resources and tools for agent consumption, including validation state and PRD projection
+7. **[MCP adapter](../milestones/mcp-adapter.md)** — define how SpecAble exposes semantic product knowledge to AI agents: same wiki-backed model as humans, including relationships, provenance, validation findings, and derived artifacts; adapter-agnostic contract before protocol, transport, or server choices
 
-Prior milestone documents for slice 7
+Prior graph-first MCP milestone documents
 ([mcp-shaped-cli-commands](../milestones/mcp-shaped-cli-commands.md),
 [mcp-server-roots-resources-tools](../milestones/mcp-server-roots-resources-tools.md),
 [local-mcp-desired-product-state](../milestones/local-mcp-desired-product-state.md))
-reflect the earlier graph-first sequencing and will be superseded. Slice 5 was
-revised from graph-first validation to
-[PRD readiness validation](../milestones/validate-desired-product-state.md)
-([#93](https://github.com/PathableAI-org/SpecAble/issues/93)). The former
+are superseded by [mcp-adapter.md](../milestones/mcp-adapter.md)
+([#95](https://github.com/PathableAI-org/SpecAble/issues/95)). The former
 slice 3 document ([link-primitive-graph](../milestones/link-primitive-graph.md))
 is superseded by
 [readable-semantic-wiki](../milestones/readable-semantic-wiki.md)
@@ -214,6 +209,6 @@ is superseded by
   - [Alpha 4: Semantic interpretation layer](https://github.com/PathableAI-org/SpecAble/milestone/4) — wiki-to-model interpretation contract ([#92](https://github.com/PathableAI-org/SpecAble/issues/92))
   - [Alpha 5: PRD readiness validation](https://github.com/PathableAI-org/SpecAble/milestone/5) — [validate-desired-product-state.md](../milestones/validate-desired-product-state.md) ([#93](https://github.com/PathableAI-org/SpecAble/issues/93); title and description to be updated after merge)
   - [Alpha 6: PRD projection](https://github.com/PathableAI-org/SpecAble/milestone/6) — [prd-projection.md](../milestones/prd-projection.md) ([#94](https://github.com/PathableAI-org/SpecAble/issues/94))
-  - Alpha 7: title and milestone document to be revised per [#90](https://github.com/PathableAI-org/SpecAble/issues/90)
+  - [Alpha 7: MCP adapter](https://github.com/PathableAI-org/SpecAble/milestone/7) — [mcp-adapter.md](../milestones/mcp-adapter.md) ([#95](https://github.com/PathableAI-org/SpecAble/issues/95))
 - Related issues: setup issues [#17](https://github.com/PathableAI-org/SpecAble/issues/17), [#68](https://github.com/PathableAI-org/SpecAble/issues/68)–[#73](https://github.com/PathableAI-org/SpecAble/issues/73)
 - GitHub Release (when shipped): TBD

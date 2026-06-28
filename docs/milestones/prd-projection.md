@@ -212,7 +212,7 @@ Milestone 5: PRD readiness validation (whether understanding is sufficient)
 Milestone 6: PRD projection (first major human-readable derived artifact)  ← this milestone
         │
         ▼
-Later: MCP adapter and additional views over the same semantic model
+Later: [MCP adapter](mcp-adapter.md) and additional views over the same semantic model
 ```
 
 - **Wiki** — canonical editable representation; humans edit semantic documents only.
