@@ -2,7 +2,7 @@ import type { PlatformError } from "@effect/platform/Error"
 
 import { Schema } from "@effect/schema"
 
-import type { IncompleteProjectError } from "../project/errors.js"
+import type { IncompleteProjectError, ProjectConfigDecodeError, ProjectNotFoundError } from "../project/errors.js"
 import type { AlphaPrimitiveType } from "./PrimitiveSummary.js"
 
 export type PrimitiveServiceError =
@@ -13,6 +13,8 @@ export type PrimitiveServiceError =
   | PrimitiveNotFoundError
   | PrimitiveServiceNotImplementedError
   | PrimitiveValidationError
+  | ProjectConfigDecodeError
+  | ProjectNotFoundError
   | UnknownPrimitiveTypeError
 
 export type StorageCreateError = DuplicatePrimitiveIdError | IncompleteProjectError | PlatformError
