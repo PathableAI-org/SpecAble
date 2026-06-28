@@ -99,7 +99,7 @@ Parent vision: [AI-assisted product-to-design-to-engineering platform](https://a
 ## Scope
 
 - Structured semantic product wiki (human-readable pages backed by formal semantics)
-- Product primitive graph derived from wiki content
+- Product knowledge model derived from wiki content through semantic interpretation
 - Product primitive storage abstraction with adapter implementations
 - Local JSON and SQLite storage adapters (from completed foundation work)
 - Readable wiki storage adapter (Markdown or equivalent for alpha)
@@ -135,7 +135,7 @@ Evidence / Source (open question: core primitives vs operating metadata).
 - [ ] The semantic document model is defined: metadata vs body, relationships, stable identity, and provenance — adapter-agnostic and grounded in existing product primitives *(milestone 3)*
 - [ ] A user can author and edit product knowledge as readable semantic documents in a local project root
 - [ ] Semantic documents round-trip through storage without losing typed primitive semantics or stable identifiers
-- [ ] A semantic graph is derived from wiki-backed knowledge with typed relationships
+- [ ] Semantic documents are interpreted into a coherent product knowledge model with explicit typed relationships and traceable provenance *(milestone 4)*
 - [ ] A user can run validation and receive structured issues guiding product-understanding refinement and PRD readiness
 - [ ] CLI output is usable by humans and AI tools
 - [ ] A user can project wiki-backed product knowledge into a high-quality, traceable PRD (or equivalent summary artifact)
@@ -154,17 +154,17 @@ Ordered by demoable product capability, not internal architecture.
 
 **Remaining work (revised scope):**
 
-Milestone documents for slices 4–7 will be revised to match this roadmap
+Milestone documents for slices 5–7 will be revised to match this roadmap
 ([#90](https://github.com/PathableAI-org/SpecAble/issues/90)). Until those
 documents are updated, this release definition is authoritative for their intent.
 
 3. **[Readable semantic wiki](../milestones/readable-semantic-wiki.md)** — define the semantic document model: human-readable product knowledge with formal structure, stable identity, typed relationships, and provenance; adapter-agnostic contract before format or parser choices
-4. **Wiki-backed semantic graph** — CLI derives typed primitive relationships from wiki structure and exposes the resulting graph for inspection
-5. **PRD readiness validation** — CLI runs validation rules over wiki-backed knowledge and returns structured issues for missing or inconsistent product understanding
-6. **PRD projection** — CLI projects validated wiki-backed knowledge into a high-quality, traceable PRD (or equivalent summary artifact)
+4. **[Semantic interpretation layer](../milestones/semantic-interpretation-layer.md)** — define how SpecAble understands semantic documents: interpreted concepts, explicit relationships, provenance, gaps, and derivable views; adapter-agnostic contract before parser or storage choices
+5. **PRD readiness validation** — CLI runs validation rules over interpreted product knowledge and returns structured issues for missing or inconsistent product understanding
+6. **PRD projection** — CLI projects validated interpreted product knowledge into a high-quality, traceable PRD (or equivalent summary artifact)
 7. **MCP adapter for structured product wiki** — End-to-end alpha: MCP server exposes wiki-backed semantic resources and tools for agent consumption, including validation state and PRD projection
 
-Prior milestone documents for slices 4–7
+Prior milestone documents for slices 5–7
 ([validate-desired-product-state](../milestones/validate-desired-product-state.md),
 [mcp-shaped-cli-commands](../milestones/mcp-shaped-cli-commands.md),
 [mcp-server-roots-resources-tools](../milestones/mcp-server-roots-resources-tools.md),
@@ -208,6 +208,7 @@ is superseded by
   - [Alpha 1: Initialize JSON and SQLite project roots](https://github.com/PathableAI-org/SpecAble/milestone/1) — complete
   - [Alpha 2: Create and inspect primitives](https://github.com/PathableAI-org/SpecAble/milestone/2) — complete
   - [Alpha 3: Readable semantic wiki](https://github.com/PathableAI-org/SpecAble/milestone/3) — semantic document model ([#91](https://github.com/PathableAI-org/SpecAble/issues/91))
-  - Alpha 4–7: titles and milestone documents to be revised per [#90](https://github.com/PathableAI-org/SpecAble/issues/90)
+  - [Alpha 4: Semantic interpretation layer](https://github.com/PathableAI-org/SpecAble/milestone/4) — wiki-to-model interpretation contract ([#92](https://github.com/PathableAI-org/SpecAble/issues/92))
+  - Alpha 5–7: titles and milestone documents to be revised per [#90](https://github.com/PathableAI-org/SpecAble/issues/90)
 - Related issues: setup issues [#17](https://github.com/PathableAI-org/SpecAble/issues/17), [#68](https://github.com/PathableAI-org/SpecAble/issues/68)–[#73](https://github.com/PathableAI-org/SpecAble/issues/73)
 - GitHub Release (when shipped): TBD

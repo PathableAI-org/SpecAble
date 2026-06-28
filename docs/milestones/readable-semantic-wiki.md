@@ -109,8 +109,9 @@ Conceptually:
 - Removing or editing a relationship MUST NOT silently reassign primitive
   identity.
 
-Graph inspection, traversal, and validation in later milestones operate on the
-**semantic interpretation** of these relationships, derived from wiki content.
+The [semantic interpretation layer](semantic-interpretation-layer.md) in the
+next milestone defines how SpecAble understands these relationships as explicit,
+traceable edges derived from wiki content.
 
 ### Stable identity
 
@@ -278,7 +279,8 @@ round-trip belong in later milestones.
 - Automated contract or parity tests (later milestones prove executable
   round-trip)
 - CLI commands that read or write wiki documents
-- Graph derivation commands (next milestone: wiki-backed semantic graph)
+- Semantic interpretation layer definition (next milestone:
+  [semantic-interpretation-layer.md](semantic-interpretation-layer.md))
 - Validation rules and PRD readiness checks
 - PRD projection templates
 - MCP resources and tools
@@ -349,7 +351,7 @@ syntax or building parsers in this milestone.
 
 - Reference adapter, parser, or CLI wiki read/write implementation
 - Automated contract or parity tests
-- Deriving or querying the full relationship graph (next milestone)
+- Defining the semantic interpretation layer (next milestone)
 - Active-status validation and PRD readiness rules
 - MCP exposure
 - External tool sync (Notion, Confluence, Jira, etc.)
@@ -359,7 +361,7 @@ syntax or building parsers in this milestone.
 
 The semantic document model is ratified, contract examples or acceptance
 fixtures demonstrate that milestone 2 primitives can be represented without
-semantic loss, and reviewers confirm the model is ready for wiki-backed graph
+semantic loss, and reviewers confirm the model is ready for semantic
 interpretation and adapter implementation in later milestones.
 
 ## Links
