@@ -92,4 +92,22 @@ export const initSqliteProjectRoot = async (name = "demo-sqlite"): Promise<{
 
 export const cleanupProjectRoot = async (parentDir: string): Promise<void> => removeTempDir(parentDir)
 
+export const withJsonProjectRoot = <A, E, R>(
+  use: (fixture: Awaited<ReturnType<typeof initJsonProjectRoot>>) => Effect.Effect<A, E, R>
+): Effect.Effect<A, E, R> =>
+  Effect.acquireUseRelease(
+    Effect.promise(() => initJsonProjectRoot()),
+    use,
+    ({ parentDir }) => Effect.promise(() => cleanupProjectRoot(parentDir))
+  )
+
+export const withSqliteProjectRoot = <A, E, R>(
+  use: (fixture: Awaited<ReturnType<typeof initSqliteProjectRoot>>) => Effect.Effect<A, E, R>
+): Effect.Effect<A, E, R> =>
+  Effect.acquireUseRelease(
+    Effect.promise(() => initSqliteProjectRoot()),
+    use,
+    ({ parentDir }) => Effect.promise(() => cleanupProjectRoot(parentDir))
+  )
+
 export const defaultPrimitiveTypes = [...CANONICAL_PRIMITIVE_TYPES] as const

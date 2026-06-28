@@ -14,7 +14,7 @@ This repository targets the latest stable Effect v3 release. Do not introduce Ef
 
 ## Repository Structure
 
-The workspace uses three publishable packages: `@specable/domain` (Schema-only primitive models), `@specable/core` (project root init/inspect and storage backends), and `@specable/cli` (v0 graph validation plus thin CLI adapters).
+The workspace uses three publishable packages: `@specable/domain` (Schema-only primitive models), `@specable/core` (project root init/inspect, primitive CRUD, and storage backends), and `@specable/cli` (v0 graph validation plus thin CLI adapters).
 
 - `packages/domain`: Publishable schema package — primitive schemas, Schema literal unions, references, and domain decode errors. No graph loaders, validation engines, or Node platform imports.
   - `src/unions/`: Closed-set Schema literal unions (`Status`, roles, …)

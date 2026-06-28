@@ -25,6 +25,16 @@ export const removeTempDir = async (dirPath: string): Promise<void> => {
   await fs.rm(dirPath, { force: true, recursive: true })
 }
 
+export const withTempDir = <A, E, R>(
+  prefix: string,
+  use: (parentDir: string) => Effect.Effect<A, E, R>
+): Effect.Effect<A, E, R> =>
+  Effect.acquireUseRelease(
+    Effect.promise(() => makeTempProjectDir(prefix)),
+    use,
+    (parentDir) => Effect.promise(() => removeTempDir(parentDir))
+  )
+
 export const writeSpecableJson = async (dirPath: string, config: ProjectConfig): Promise<string> => {
   const filePath = path.join(dirPath, SPECABLE_JSON)
   await fs.writeFile(filePath, `${JSON.stringify(config, null, 2)}\n`, "utf8")
