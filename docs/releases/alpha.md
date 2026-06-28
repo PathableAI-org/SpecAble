@@ -154,20 +154,18 @@ Ordered by demoable product capability, not internal architecture.
 
 **Remaining work (revised scope):**
 
-Milestone documents for slices 6–7 will be revised to match this roadmap
-([#90](https://github.com/PathableAI-org/SpecAble/issues/90)). Slice 5
-([PRD readiness validation](../milestones/validate-desired-product-state.md))
-is defined in [#93](https://github.com/PathableAI-org/SpecAble/issues/93).
-Until remaining documents are updated, this release definition is authoritative
-for their intent.
+Milestone documents for slice 7 will be revised to match this roadmap
+([#90](https://github.com/PathableAI-org/SpecAble/issues/90)). Slices 5–6
+are defined in [#93](https://github.com/PathableAI-org/SpecAble/issues/93) and
+[#94](https://github.com/PathableAI-org/SpecAble/issues/94).
 
 3. **[Readable semantic wiki](../milestones/readable-semantic-wiki.md)** — define the semantic document model: human-readable product knowledge with formal structure, stable identity, typed relationships, and provenance; adapter-agnostic contract before format or parser choices
 4. **[Semantic interpretation layer](../milestones/semantic-interpretation-layer.md)** — define how SpecAble understands semantic documents: interpreted concepts, explicit relationships, provenance, gaps, and derivable views; adapter-agnostic contract before parser or storage choices
 5. **[PRD readiness validation](../milestones/validate-desired-product-state.md)** — define validation as reasoning over interpreted product knowledge: completeness, coherence, uncertainty, and traceability for PRD projection readiness; adapter-agnostic contract before rule engine or CLI choices
-6. **PRD projection** — CLI projects validated interpreted product knowledge into a high-quality, traceable PRD (or equivalent summary artifact)
+6. **[PRD projection](../milestones/prd-projection.md)** — define how SpecAble derives a coherent, traceable PRD from validated interpreted product knowledge; adapter-agnostic contract before generator, CLI, or rendering choices
 7. **MCP adapter for structured product wiki** — End-to-end alpha: MCP server exposes wiki-backed semantic resources and tools for agent consumption, including validation state and PRD projection
 
-Prior milestone documents for slices 6–7
+Prior milestone documents for slice 7
 ([mcp-shaped-cli-commands](../milestones/mcp-shaped-cli-commands.md),
 [mcp-server-roots-resources-tools](../milestones/mcp-server-roots-resources-tools.md),
 [local-mcp-desired-product-state](../milestones/local-mcp-desired-product-state.md))
@@ -215,6 +213,7 @@ is superseded by
   - [Alpha 3: Readable semantic wiki](https://github.com/PathableAI-org/SpecAble/milestone/3) — semantic document model ([#91](https://github.com/PathableAI-org/SpecAble/issues/91))
   - [Alpha 4: Semantic interpretation layer](https://github.com/PathableAI-org/SpecAble/milestone/4) — wiki-to-model interpretation contract ([#92](https://github.com/PathableAI-org/SpecAble/issues/92))
   - [Alpha 5: PRD readiness validation](https://github.com/PathableAI-org/SpecAble/milestone/5) — [validate-desired-product-state.md](../milestones/validate-desired-product-state.md) ([#93](https://github.com/PathableAI-org/SpecAble/issues/93); title and description to be updated after merge)
-  - Alpha 6–7: titles and milestone documents to be revised per [#90](https://github.com/PathableAI-org/SpecAble/issues/90)
+  - [Alpha 6: PRD projection](https://github.com/PathableAI-org/SpecAble/milestone/6) — [prd-projection.md](../milestones/prd-projection.md) ([#94](https://github.com/PathableAI-org/SpecAble/issues/94))
+  - Alpha 7: title and milestone document to be revised per [#90](https://github.com/PathableAI-org/SpecAble/issues/90)
 - Related issues: setup issues [#17](https://github.com/PathableAI-org/SpecAble/issues/17), [#68](https://github.com/PathableAI-org/SpecAble/issues/68)–[#73](https://github.com/PathableAI-org/SpecAble/issues/73)
 - GitHub Release (when shipped): TBD
