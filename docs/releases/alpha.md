@@ -132,8 +132,9 @@ Evidence / Source (open question: core primitives vs operating metadata).
 
 - [x] A user can initialize JSON-backed and SQLite-backed project roots with the same semantic graph contract *(milestone 1)*
 - [x] A user can create, list, and inspect product primitives through the CLI *(milestone 2)*
-- [ ] A user can author and edit product knowledge as readable semantic wiki pages in a local project root
-- [ ] Wiki content round-trips through storage without losing typed primitive semantics or stable identifiers
+- [ ] The semantic document model is defined: metadata vs body, relationships, stable identity, and provenance — adapter-agnostic and grounded in existing product primitives *(milestone 3)*
+- [ ] A user can author and edit product knowledge as readable semantic documents in a local project root
+- [ ] Semantic documents round-trip through storage without losing typed primitive semantics or stable identifiers
 - [ ] A semantic graph is derived from wiki-backed knowledge with typed relationships
 - [ ] A user can run validation and receive structured issues guiding product-understanding refinement and PRD readiness
 - [ ] CLI output is usable by humans and AI tools
@@ -153,23 +154,26 @@ Ordered by demoable product capability, not internal architecture.
 
 **Remaining work (revised scope):**
 
-Milestone documents for slices 3–7 will be revised to match this roadmap
+Milestone documents for slices 4–7 will be revised to match this roadmap
 ([#90](https://github.com/PathableAI-org/SpecAble/issues/90)). Until those
 documents are updated, this release definition is authoritative for their intent.
 
-3. **Readable semantic wiki storage** — CLI reads and writes human-readable wiki pages that encode typed product primitives with stable identifiers and provenance
+3. **[Readable semantic wiki](../milestones/readable-semantic-wiki.md)** — define the semantic document model: human-readable product knowledge with formal structure, stable identity, typed relationships, and provenance; adapter-agnostic contract before format or parser choices
 4. **Wiki-backed semantic graph** — CLI derives typed primitive relationships from wiki structure and exposes the resulting graph for inspection
 5. **PRD readiness validation** — CLI runs validation rules over wiki-backed knowledge and returns structured issues for missing or inconsistent product understanding
 6. **PRD projection** — CLI projects validated wiki-backed knowledge into a high-quality, traceable PRD (or equivalent summary artifact)
 7. **MCP adapter for structured product wiki** — End-to-end alpha: MCP server exposes wiki-backed semantic resources and tools for agent consumption, including validation state and PRD projection
 
-Prior milestone documents for slices 3–7
-([link-primitive-graph](../milestones/link-primitive-graph.md),
-[validate-desired-product-state](../milestones/validate-desired-product-state.md),
+Prior milestone documents for slices 4–7
+([validate-desired-product-state](../milestones/validate-desired-product-state.md),
 [mcp-shaped-cli-commands](../milestones/mcp-shaped-cli-commands.md),
 [mcp-server-roots-resources-tools](../milestones/mcp-server-roots-resources-tools.md),
 [local-mcp-desired-product-state](../milestones/local-mcp-desired-product-state.md))
-reflect the earlier graph-first sequencing and will be superseded.
+reflect the earlier graph-first sequencing and will be superseded. The former
+slice 3 document ([link-primitive-graph](../milestones/link-primitive-graph.md))
+is superseded by
+[readable-semantic-wiki](../milestones/readable-semantic-wiki.md)
+([#91](https://github.com/PathableAI-org/SpecAble/issues/91)).
 
 ## Risks and mitigations
 
@@ -185,7 +189,7 @@ reflect the earlier graph-first sequencing and will be superseded.
 ## Open questions
 
 - Minimum canonical schema for each primitive type in alpha
-- Wiki page format and authoring conventions (Markdown front matter, Org properties, etc.)
+- Concrete wiki serialization and authoring conventions (deferred to Spec Kit plan phase after semantic document model is ratified — see [readable-semantic-wiki](../milestones/readable-semantic-wiki.md))
 - Whether Product Decision, Product Risk, and Evidence are core primitives or metadata
 - Destructive delete vs archive/deactivate for write tools
 - Mandatory relationship types for alpha
@@ -203,6 +207,7 @@ reflect the earlier graph-first sequencing and will be superseded.
 - GitHub Milestones:
   - [Alpha 1: Initialize JSON and SQLite project roots](https://github.com/PathableAI-org/SpecAble/milestone/1) — complete
   - [Alpha 2: Create and inspect primitives](https://github.com/PathableAI-org/SpecAble/milestone/2) — complete
-  - Alpha 3–7: titles and milestone documents to be revised per [#90](https://github.com/PathableAI-org/SpecAble/issues/90)
+  - [Alpha 3: Readable semantic wiki](https://github.com/PathableAI-org/SpecAble/milestone/3) — semantic document model ([#91](https://github.com/PathableAI-org/SpecAble/issues/91))
+  - Alpha 4–7: titles and milestone documents to be revised per [#90](https://github.com/PathableAI-org/SpecAble/issues/90)
 - Related issues: setup issues [#17](https://github.com/PathableAI-org/SpecAble/issues/17), [#68](https://github.com/PathableAI-org/SpecAble/issues/68)–[#73](https://github.com/PathableAI-org/SpecAble/issues/73)
 - GitHub Release (when shipped): TBD
