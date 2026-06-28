@@ -122,7 +122,7 @@ See [AGENTS.md](./AGENTS.md) for full architecture rules, testing requirements, 
 
 | Phase | What happens |
 |-------|----------------|
-| **Pre-MVP (now)** | Add `pnpm changeset` with publishable PRs. CI opens a **Version Packages** PR — do **not** merge it until MVP. |
+| **Pre-MVP (now)** | Add `pnpm changeset` for headline features or shipped-behavior changes only; most PRs skip. Do **not** merge **Version Packages** until MVP. |
 | **First alpha (MVP)** | Run `pnpm changeset-pre-enter-alpha`, merge Version Packages PR, then trigger **Publish to npm** in Actions. |
 | **Stable** | Run `pnpm changeset-pre-exit`, version, publish to `latest`. |
 

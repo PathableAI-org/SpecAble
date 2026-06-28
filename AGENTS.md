@@ -180,7 +180,7 @@ Placeholder tests do not count as coverage for new behavior.
 - Use explicit package exports generated through `@effect/build-utils` (`pnpm codegen`).
 - Do not manually edit generated export files (`packages/domain/src/index.ts`, `packages/core/src/index.ts`, `packages/cli/src/index.ts`).
 - Keep package metadata, repository URLs, licenses, and publish settings valid.
-- Add a Changeset for changes to `@specable/domain` or `@specable/cli` unless explicitly exempt.
+- Add a Changeset only when a PR changes shipped user-facing behavior, introduces a headline user-facing feature, or breaks the public API of `@specable/domain`, `@specable/core`, or `@specable/cli`. Most pre-release PRs do not need one. See `.changeset/README.md` for when to add and how to write product-focused release notes.
 - **Pre-MVP**: changesets accumulate on `main`; do not merge the bot's **Version Packages** PR until maintainers enter alpha prerelease mode (`pnpm changeset-pre-enter-alpha`). See `.changeset/README.md`.
 - **Alpha releases**: while `.changeset/pre.json` exists, versions are `x.y.z-alpha.N` and npm publishes use the `alpha` dist-tag.
 - **Stable releases**: run `pnpm changeset-pre-exit` before the first non-prerelease publish.
@@ -266,7 +266,7 @@ Before declaring work complete:
 - documentation and examples remain accurate;
 - no sensitive content is logged;
 - typecheck, lint, tests, build, and Fallow checks pass;
-- publishable changes include an appropriate Changeset.
+- user-visible or post-release changes include an appropriate Changeset when required by `.changeset/README.md`.
 
 ## Cursor Cloud specific instructions
 
