@@ -114,7 +114,7 @@ matching structured output and automated tests at storage boundary.
 
 - Release: [docs/releases/alpha.md](../releases/alpha.md)
 - GitHub Milestone: https://github.com/PathableAI-org/SpecAble/milestone/2
-- Spec Kit spec: TBD
+- Spec Kit spec: [specs/003-create-inspect-primitives/spec.md](../../specs/003-create-inspect-primitives/spec.md)
 - Issues: https://github.com/PathableAI-org/SpecAble/issues/68 (setup)
 
 ## Risks or blockers
