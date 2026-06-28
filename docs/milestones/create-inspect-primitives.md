@@ -11,8 +11,8 @@ of the semantic storage layer without MCP or external planning-tool integration.
 ## Why this matters
 
 Users must be able to start building desired product state locally. This slice
-proves persistence and read models for primitive records before relationships
-and validation polish.
+proves persistence and read models for primitive records before the semantic
+wiki document model, graph interpretation, and validation polish.
 
 ## Demo
 
@@ -54,7 +54,7 @@ Repeat with Actor, Objective, or other core types using synthetic names.
 
 ## Out of scope
 
-- Typed relationship edges (next milestone)
+- Semantic wiki document model ([readable semantic wiki](readable-semantic-wiki.md)); typed relationship graph derived from wiki structure (following milestone)
 - Full validation rule engine (later milestone)
 - Update, delete/archive (may be minimal; full lifecycle in MCP milestone)
 - MCP exposure
