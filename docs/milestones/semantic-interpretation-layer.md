@@ -411,7 +411,7 @@ competing editable source of truth.
 ## Links
 
 - Release: [docs/releases/alpha.md](../releases/alpha.md)
-- GitHub Milestone: TBD
+- GitHub Milestone: https://github.com/PathableAI-org/SpecAble/milestone/4
 - Prior milestone: [readable-semantic-wiki.md](readable-semantic-wiki.md)
 - Superseded: [link-primitive-graph.md](link-primitive-graph.md)
 - Spec Kit spec: TBD

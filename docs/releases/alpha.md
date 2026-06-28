@@ -154,17 +154,17 @@ Ordered by demoable product capability, not internal architecture.
 
 **Remaining work (revised scope):**
 
-Milestone documents for slices 4–7 will be revised to match this roadmap
+Milestone documents for slices 5–7 will be revised to match this roadmap
 ([#90](https://github.com/PathableAI-org/SpecAble/issues/90)). Until those
 documents are updated, this release definition is authoritative for their intent.
 
 3. **[Readable semantic wiki](../milestones/readable-semantic-wiki.md)** — define the semantic document model: human-readable product knowledge with formal structure, stable identity, typed relationships, and provenance; adapter-agnostic contract before format or parser choices
 4. **[Semantic interpretation layer](../milestones/semantic-interpretation-layer.md)** — define how SpecAble understands semantic documents: interpreted concepts, explicit relationships, provenance, gaps, and derivable views; adapter-agnostic contract before parser or storage choices
 5. **PRD readiness validation** — CLI runs validation rules over interpreted product knowledge and returns structured issues for missing or inconsistent product understanding
-6. **PRD projection** — CLI projects validated wiki-backed knowledge into a high-quality, traceable PRD (or equivalent summary artifact)
+6. **PRD projection** — CLI projects validated interpreted product knowledge into a high-quality, traceable PRD (or equivalent summary artifact)
 7. **MCP adapter for structured product wiki** — End-to-end alpha: MCP server exposes wiki-backed semantic resources and tools for agent consumption, including validation state and PRD projection
 
-Prior milestone documents for slices 4–7
+Prior milestone documents for slices 5–7
 ([validate-desired-product-state](../milestones/validate-desired-product-state.md),
 [mcp-shaped-cli-commands](../milestones/mcp-shaped-cli-commands.md),
 [mcp-server-roots-resources-tools](../milestones/mcp-server-roots-resources-tools.md),
