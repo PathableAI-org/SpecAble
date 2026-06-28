@@ -18,6 +18,29 @@ import { type PrimitiveServiceError, PrimitiveServiceNotImplementedError, Unknow
 
 const SPECABLE_JSON = "specable.json"
 
+const comparePrimitiveSummaries = (
+  left: PrimitiveSummary,
+  right: PrimitiveSummary
+): number => {
+  const typeCompare = left.type.localeCompare(right.type)
+
+  if (typeCompare !== 0) {
+    return typeCompare
+  }
+
+  const nameCompare = left.name.localeCompare(right.name)
+
+  if (nameCompare !== 0) {
+    return nameCompare
+  }
+
+  return left.id.localeCompare(right.id)
+}
+
+const sortPrimitiveSummaries = (
+  summaries: readonly PrimitiveSummary[]
+): readonly PrimitiveSummary[] => [...summaries].sort(comparePrimitiveSummaries)
+
 export type PrimitiveCreate = (
   input: CreateInput
 ) => E.Effect<Primitive, PrimitiveServiceError, never>
@@ -128,11 +151,25 @@ export class PrimitiveService extends E.Service<PrimitiveService>()("@specable/c
         return primitive
       })
 
-    const list: PrimitiveList = (rootPath, filter) => {
-      void rootPath
-      void filter
-      return notImplemented("PrimitiveService.list")
-    }
+    const list: PrimitiveList = (rootPath, filter) =>
+      E.gen(function*() {
+        if (filter?.type !== undefined && !isAlphaCreatableType(filter.type)) {
+          return yield* E.fail(new UnknownPrimitiveTypeError({ type: filter.type }))
+        }
+
+        const projectRoot = resolveProjectRoot(rootPath)
+
+        yield* assertInspectableProjectRoot(projectRoot)
+
+        const config = yield* readManifest(projectRoot)
+        const summaries = yield* storage.list(
+          projectRoot,
+          config,
+          filter?.type === undefined ? undefined : { type: filter.type }
+        )
+
+        return sortPrimitiveSummaries(summaries)
+      })
 
     const get: PrimitiveGet = (rootPath, id) => {
       void rootPath
