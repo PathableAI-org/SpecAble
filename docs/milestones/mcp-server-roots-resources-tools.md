@@ -69,7 +69,7 @@ Use synthetic project and primitive data only.
 
 - [MCP-shaped command surface](mcp-shaped-cli-commands.md)
 - [Create and inspect primitives](create-inspect-primitives.md)
-- [Readable semantic wiki](readable-semantic-wiki.md) and wiki-backed semantic graph (milestones 3–4 per [alpha release](../releases/alpha.md); this document reflects prior graph-first sequencing and will be superseded)
+- [Readable semantic wiki](readable-semantic-wiki.md) and [semantic interpretation layer](semantic-interpretation-layer.md) (milestones 3–4 per [alpha release](../releases/alpha.md); this document reflects prior graph-first sequencing and will be superseded)
 
 ## Inputs to Spec Kit
 

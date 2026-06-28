@@ -64,7 +64,7 @@ Include one graph that passes Active checks and one with known failures.
 
 ## Dependencies
 
-- [Readable semantic wiki](readable-semantic-wiki.md) and wiki-backed semantic graph (milestones 3–4 per [alpha release](../releases/alpha.md); this document reflects prior graph-first sequencing and will be superseded)
+- [Readable semantic wiki](readable-semantic-wiki.md) and [semantic interpretation layer](semantic-interpretation-layer.md) (milestones 3–4 per [alpha release](../releases/alpha.md); this document reflects prior graph-first sequencing and will be superseded)
 - v0 validation rules and severity policy as reference (`specs/001-product-primitives-v0/`)
 
 ## Inputs to Spec Kit

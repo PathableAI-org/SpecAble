@@ -8,8 +8,9 @@
 >
 > 1. **[Readable semantic wiki](readable-semantic-wiki.md)** — define the
 >    semantic document model (human-editable product knowledge)
-> 2. **Wiki-backed semantic graph** — derive typed relationships from wiki
->    structure (milestone 4 in [docs/releases/alpha.md](../releases/alpha.md))
+> 2. **[Semantic interpretation layer](semantic-interpretation-layer.md)** —
+>    define how SpecAble understands semantic documents into a derived product
+>    knowledge model (milestone 4 in [docs/releases/alpha.md](../releases/alpha.md))
 >
 > See [docs/releases/alpha.md](../releases/alpha.md) for the current milestone
 > sequence.
