@@ -3,4 +3,4 @@
 "@specable/cli": minor
 ---
 
-Add `specable init` for JSON and SQLite project roots (Phase 3 US1, T019–T026).
+Add `specable init` to initialize JSON or SQLite project roots.

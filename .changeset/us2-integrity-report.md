@@ -2,4 +2,4 @@
 "@specable/cli": minor
 ---
 
-Add integrity analysis engine and `--integrity-only` CLI mode for User Story 2 (orphan detection, duplicate/likely-duplicate names, workflow derivability, story triple summary).
+Add integrity analysis to `specable check` with `--integrity-only` for orphan detection, duplicate names, workflow derivability, and story triple summaries.

@@ -3,4 +3,4 @@
 "@specable/core": minor
 ---
 
-Add `specable primitive get` command and `PrimitiveService.get` for full primitive read projection on JSON and SQLite project roots.
+Add `specable primitive get` to read full primitive details from JSON and SQLite project roots.

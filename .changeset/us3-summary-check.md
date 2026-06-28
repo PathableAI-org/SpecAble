@@ -2,4 +2,4 @@
 "@specable/cli": minor
 ---
 
-Add deterministic story text and Markdown summary generation, complete default `specable check`, and `--summary-only` / `--out` artifact output for User Story 3.
+`specable check` now writes deterministic Markdown summaries and supports `--summary-only` and `--out`.
