@@ -63,7 +63,7 @@ Validation assessment
         ▼  project
 Derived artifacts (PRD, summaries, …)
         │
-        ▼  expose (read + bounded write)
+        ▼  expose
 MCP adapter  →  agent consumption                 ← integration layer
 ```
 
@@ -98,9 +98,11 @@ The adapter MUST NOT:
   protocol boundary;
 - become part of the product primitive model or a new source of truth.
 
-**Write boundaries:** when the adapter permits mutations, those operations MUST
-change semantic documents or their formal metadata through explicit, bounded
-actions — never through implicit ingestion of generated summaries or projections.
+**Future write semantics (deferred):** later implementation milestones MAY define
+explicit write operations that propose or apply changes only by updating semantic
+documents through normal authoring boundaries. This milestone does not define
+agent mutation semantics; it establishes that the adapter exposes knowledge and
+does not create it.
 
 ### What the adapter exposes
 
@@ -127,8 +129,8 @@ Humans and agents MUST operate over **one coherent semantic model**:
 
 - humans **edit** semantic documents;
 - SpecAble **interprets, validates, and projects** from those documents;
-- agents **inspect and bounded-write** through the adapter using the same derived
-  understanding — not a simplified or agent-only graph.
+- agents **inspect** through the adapter using the same derived understanding —
+  not a simplified or agent-only graph.
 
 When a human reviews interpreted concepts, validation findings, or a projected PRD,
 and an agent inspects the same knowledge through the adapter, both MUST be
@@ -207,8 +209,7 @@ Milestone 6: PRD projection (first major human-readable derived artifact)
 Milestone 7: MCP adapter (agent consumption over the same semantic model)  ← this milestone
 ```
 
-- **Wiki** — canonical editable representation; humans and bounded writes target
-  semantic documents only.
+- **Wiki** — canonical editable representation; humans edit semantic documents.
 - **Interpretation, validation, projection** — SpecAble derives understanding and
   artifacts from the wiki.
 - **MCP adapter** — exposes that understanding to agents; does not redefine it.
@@ -239,7 +240,7 @@ Conceptual walkthrough with **synthetic** product knowledge only:
 7. Confirm the end-to-end alpha story:
 
 ```text
-readable semantic wiki → validation → PRD projection → agent access
+readable semantic wiki → interpretation → validation → PRD projection → agent access
 ```
 
 This demo ratifies the conceptual adapter contract. Protocol servers, transport
@@ -250,8 +251,8 @@ later milestones.
 
 - The MCP adapter is documented and ratified as the alpha contract for agent
   consumption over the semantic product model.
-- Exposure boundaries, write limits, same-model grounding, and non-authoritative
-  adapter status are defined without protocol or implementation prescriptions.
+- Exposure boundaries, same-model grounding, and non-authoritative adapter status
+  are defined without protocol or implementation prescriptions.
 - Reviewers agree the model is sufficient for later implementation milestones to
   wire MCP resources and tools — without revisiting ontology boundaries, inventing
   agent-only knowledge stores, or treating MCP as the product.
@@ -269,9 +270,8 @@ later milestones.
   state.
 - Agents remain **grounded in the same product understanding** as human
   collaborators — identical primitive identities and relationship semantics.
-- **Product knowledge changes** only through semantic document edits (and explicit
-  bounded write operations that target those documents) — not through adapter-side
-  prose ingestion or projection edits.
+- **Product knowledge changes** only through semantic document edits — not through
+  adapter-side prose ingestion or projection edits.
 - Disabling MCP does not change product meaning; it only removes one access path.
 
 ## Acceptance criteria
@@ -306,7 +306,7 @@ later milestones.
 - Exposure categories: interpreted knowledge, relationships, provenance, validation
   findings, derived artifacts
 - Same-model grounding for humans and agents
-- Exposure-over-creation principle and bounded write boundaries
+- Exposure-over-creation principle (write semantics deferred to implementation milestones)
 - MCP as integration layer, not ontology or source of truth
 - Relationship to milestones 3–6 and completion of the alpha architecture chain
 - Contract examples or acceptance fixtures showing adapter-agnostic exposure parity
@@ -375,8 +375,8 @@ handlers, URI schemes, tool catalogs, or transport in this milestone.
   grounding in primitive identities and relationship semantics
 - The adapter **does not create** product knowledge; it surfaces what interpretation,
   validation, and projection already derived
-- **Semantic documents remain authoritative**; bounded writes target the wiki, not
-  generated prose or projections
+- **Semantic documents remain authoritative**; the adapter does not treat generated
+  prose or projections as editable canonical state
 - JSON, Markdown, Org, and SQLite adapter paths normalize to the same exposure
   contract over the same interpreted, validated, and projected model
 - Disabling the adapter does not alter product meaning

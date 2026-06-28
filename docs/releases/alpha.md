@@ -90,7 +90,7 @@ Expected usage:
 - Capture and refine product knowledge as readable semantic wiki pages
 - Inspect the derived primitive graph, relationships, and validation state
 - Project wiki-backed knowledge into a PRD or similar summary artifact
-- Expose the same semantic model through a local MCP server to AI clients
+- Expose the same semantic model through an MCP adapter to AI clients
 - Test semantic wiki behavior without Pathable-hosted infrastructure or
   Pathable-managed inference billing
 
