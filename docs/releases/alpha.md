@@ -214,7 +214,7 @@ is superseded by
   - [Alpha 2: Create and inspect primitives](https://github.com/PathableAI-org/SpecAble/milestone/2) — complete
   - [Alpha 3: Readable semantic wiki](https://github.com/PathableAI-org/SpecAble/milestone/3) — semantic document model ([#91](https://github.com/PathableAI-org/SpecAble/issues/91))
   - [Alpha 4: Semantic interpretation layer](https://github.com/PathableAI-org/SpecAble/milestone/4) — wiki-to-model interpretation contract ([#92](https://github.com/PathableAI-org/SpecAble/issues/92))
-  - Alpha 5: PRD readiness validation — [validate-desired-product-state.md](../milestones/validate-desired-product-state.md) ([#93](https://github.com/PathableAI-org/SpecAble/issues/93); GitHub Milestone to be renumbered per [#90](https://github.com/PathableAI-org/SpecAble/issues/90))
+  - [Alpha 5: PRD readiness validation](https://github.com/PathableAI-org/SpecAble/milestone/5) — [validate-desired-product-state.md](../milestones/validate-desired-product-state.md) ([#93](https://github.com/PathableAI-org/SpecAble/issues/93); title and description to be updated after merge)
   - Alpha 6–7: titles and milestone documents to be revised per [#90](https://github.com/PathableAI-org/SpecAble/issues/90)
 - Related issues: setup issues [#17](https://github.com/PathableAI-org/SpecAble/issues/17), [#68](https://github.com/PathableAI-org/SpecAble/issues/68)–[#73](https://github.com/PathableAI-org/SpecAble/issues/73)
 - GitHub Release (when shipped): TBD

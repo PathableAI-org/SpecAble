@@ -275,8 +275,8 @@ later milestones.
   evidence posture — not storage paths or serialization internals.
 - Future agents consume the same validation assessment whether documents live in
   wiki pages, JSON fixtures, or SQLite indexes.
-- Generated PRD text is never treated as source of truth; validation assesses wiki-
-  backed knowledge only.
+- Generated PRD text is never treated as source of truth; validation assesses
+  interpreted product knowledge only.
 
 ## Acceptance criteria
 
@@ -374,7 +374,7 @@ this milestone.
   is sufficient for credible PRD projection, with explicit rationale
 - Validation produces **findings** for missing understanding, missing relationships,
   unsupported decisions, unresolved assumptions, insufficient evidence, and incomplete
-  product intent — as product-understanding gaps, not an closed exhaustive rule list
+  product intent — as product-understanding gaps, not a closed exhaustive rule list
 - Each finding conceptually supports stable identity, severity, affected concept
   identities, finding kind, explanation, suggested next action, and downstream
   blocker signaling
@@ -428,7 +428,8 @@ a competing editable source of truth or collapsing validation into parser rules.
 ## Links
 
 - Release: [docs/releases/alpha.md](../releases/alpha.md)
-- GitHub Milestone: TBD (to be revised per [#93](https://github.com/PathableAI-org/SpecAble/issues/93))
+- GitHub Milestone: https://github.com/PathableAI-org/SpecAble/milestone/5 (title and
+  description to be updated after merge per [#93](https://github.com/PathableAI-org/SpecAble/issues/93))
 - Prior milestones: [readable-semantic-wiki.md](readable-semantic-wiki.md),
   [semantic-interpretation-layer.md](semantic-interpretation-layer.md)
 - Supersedes prior graph-first validation scope in this document
