@@ -117,17 +117,17 @@ Per constitution v1.3.0, [plan.md](./plan.md), and
 
 ### Tests for User Story 2
 
-- [ ] T026 [P] [US2] JSON list all and type-filter tests in `packages/core/test/storage/list-json.test.ts`
-- [ ] T027 [P] [US2] SQLite list tests in `packages/core/test/storage/list-sqlite.test.ts`
-- [ ] T028 [P] [US2] List failure tests in `packages/core/test/primitive/list-failures.test.ts` (invalid root, invalid filter type, empty root)
+- [x] T026 [P] [US2] JSON list all and type-filter tests in `packages/core/test/storage/list-json.test.ts`
+- [x] T027 [P] [US2] SQLite list tests in `packages/core/test/storage/list-sqlite.test.ts`
+- [x] T028 [P] [US2] List failure tests in `packages/core/test/primitive/list-failures.test.ts` (invalid root, invalid filter type, empty root)
 
 ### Implementation for User Story 2
 
-- [ ] T029 [US2] Implement `PrimitiveService.list` in `packages/core/src/primitive/PrimitiveService.ts` with stable sort order per `contracts/primitive-operations.md`
-- [ ] T030 [P] [US2] Implement list stdout renderer in `packages/cli/src/cli/render/PrimitiveOutput.ts`
-- [ ] T031 [US2] Implement `PrimitiveListCommand` in `packages/cli/src/cli/PrimitiveListCommand.ts`
-- [ ] T032 [US2] Register `primitive list` subcommand in `packages/cli/src/cli/RootCommand.ts`
-- [ ] T033 [P] [US2] CLI list wiring test in `packages/cli/test/cli/primitive-list-command.test.ts`
+- [x] T029 [US2] Implement `PrimitiveService.list` in `packages/core/src/primitive/PrimitiveService.ts` with stable sort order per `contracts/primitive-operations.md`
+- [x] T030 [P] [US2] Implement list stdout renderer in `packages/cli/src/cli/render/PrimitiveOutput.ts`
+- [x] T031 [US2] Implement `PrimitiveListCommand` in `packages/cli/src/cli/PrimitiveListCommand.ts`
+- [x] T032 [US2] Register `primitive list` subcommand in `packages/cli/src/cli/RootCommand.ts`
+- [x] T033 [P] [US2] CLI list wiring test in `packages/cli/test/cli/primitive-list-command.test.ts`
 
 **Checkpoint**: User Stories 1 and 2 independently testable — create and list on both backends.
 
