@@ -184,30 +184,31 @@ Validation · PRD projection · MCP resources
   formats are interchangeable storage and presentation implementations over the
   same semantic document model.
 - **JSON and SQLite** (milestones 1–2) — remain useful as local proving
-  adapters and contract tests; they are not the defining authoring experience
-  for alpha.
+  adapters and illustrative mappings; they are not the defining authoring
+  experience for alpha.
 
 ## Demo
 
-Walkthrough with **synthetic** product knowledge only:
+Conceptual walkthrough with **synthetic** product knowledge only:
 
-1. Start from primitives created in milestone 2 (Capability, Actor, Story, or
-   similar) in a local JSON or SQLite root.
-2. Show how each primitive **projects** to a semantic document under the model:
+1. Start from example primitives aligned with milestone 2 (Capability, Actor,
+   Story, or similar) — drawn from existing JSON or SQLite fixtures or
+   equivalent acceptance examples.
+2. Show how each primitive **maps** to a semantic document under the model:
    identity and type in metadata, formal fields separated from explanatory
    body, relationships referencing other primitives by stable ID, provenance
    attached where applicable.
-3. Open the human-readable view **without SpecAble** and confirm a reviewer can
-   understand product intent from the document.
-4. Show SpecAble (or a contract test harness) **interpreting** the same
-   documents back into typed primitives with no semantic loss at the domain
-   boundary.
-5. Sketch how a second backend (for example, an alternate readable format or the
-   existing SQLite adapter) could represent the **same** semantic content —
-   proving the contract is adapter-agnostic.
+3. Present a human-readable example document and confirm a reviewer can
+   understand product intent **without SpecAble**.
+4. Walk through how the model would be **interpreted** into typed primitives at
+   the domain boundary — illustrating recoverability of required semantics
+   without running an adapter or parser.
+5. Sketch a second representation perspective (for example, structured storage
+   vs human-readable prose) expressing the **same semantic contract** —
+   proving the model is adapter-agnostic.
 
-Exact CLI commands and format choices are defined in Spec Kit; this demo
-validates the conceptual model and round-trip contract.
+This demo ratifies the conceptual model. CLI commands, parsers, and executable
+round-trip belong in later milestones.
 
 ## Expected result
 
@@ -215,8 +216,8 @@ validates the conceptual model and round-trip contract.
   contract.
 - Every core alpha primitive type has a defined mapping: metadata fields, body
   role, relationship participation, identity rules, and provenance expectations.
-- Synthetic primitives from milestone 2 round-trip through the model without
-  losing typed semantics or stable IDs.
+- Milestone 2 primitives can be **represented** by the model without losing
+  typed semantics or stable IDs in principle.
 - Reviewers agree the model is sufficient for later milestones to derive a
   graph, run validation, project a PRD, and expose MCP resources — without
   revisiting ontology boundaries.
@@ -248,11 +249,13 @@ validates the conceptual model and round-trip contract.
 - [ ] The representation is **local-first** and **tool-agnostic**: documents
   remain meaningful in ordinary editors without network services or
   vendor-specific runtimes.
-- [ ] At least two adapter perspectives (for example, JSON proving adapter plus
-  one human-readable representation) demonstrate the **same semantic contract**
-  without adapter-specific concepts in the ontology.
-- [ ] Round-trip preserves stable primitive identity, type, status, required
-  formal fields, typed relationships, and available provenance.
+- [ ] **Contract examples or acceptance fixtures** show at least two
+  representation perspectives (for example, structured storage plus
+  human-readable prose) satisfying the **same semantic contract** without
+  adapter-specific concepts in the ontology.
+- [ ] The model's identity and recoverability requirements preserve stable
+  primitive identity, type, status, required formal fields, typed
+  relationships, and available provenance when representations change.
 - [ ] Demo uses synthetic product knowledge only.
 
 ## Scope
@@ -260,9 +263,10 @@ validates the conceptual model and round-trip contract.
 - Semantic document model definition and alpha wiki contract
 - Mapping from existing product primitive types to document structure
   (metadata, body, relationships, provenance)
-- Identity and round-trip requirements across adapters
-- Contract tests or equivalent evidence that milestone 2 primitives satisfy the
-  model
+- Identity and recoverability requirements the contract imposes on any adapter
+- Contract examples or acceptance fixtures showing milestone 2 primitives can
+  be represented by the model
+- Reference mappings or example document models per primitive type
 - Documentation preparing Notion, Confluence, and additional readable backends
   as future adapters over the same contract
 
@@ -270,6 +274,10 @@ validates the conceptual model and round-trip contract.
 
 - Choosing or specifying Markdown vs Org vs other concrete syntax
 - Frontmatter keys, property drawers, parser algorithms, or file layout
+- Reference adapter or parser implementation
+- Automated contract or parity tests (later milestones prove executable
+  round-trip)
+- CLI commands that read or write wiki documents
 - Graph derivation commands (next milestone: wiki-backed semantic graph)
 - Validation rules and PRD readiness checks
 - PRD projection templates
@@ -290,11 +298,12 @@ validates the conceptual model and round-trip contract.
 
 Formalize the **semantic document model** as the alpha wiki contract: specify
 how each supported product primitive type maps to a semantic document (metadata,
-body, relationships, identity, provenance), define round-trip and
-interpretation requirements at the domain boundary, and deliver at least one
-reference adapter path plus evidence that milestone 2 primitives satisfy the
-contract. Prepare for additional readable backends without prescribing their
-syntax in this specification phase.
+body, relationships, identity, provenance), define interpretation and
+recoverability requirements at the domain boundary, and deliver reference
+mappings or example document models plus contract examples or acceptance
+fixtures demonstrating that milestone 2 primitives can be represented by the
+model. Prepare for additional readable backends without prescribing their
+syntax or building parsers in this milestone.
 
 ### Users / actors
 
@@ -314,10 +323,12 @@ syntax in this specification phase.
   relationship kind from the canonical ontology
 - Provenance and source references attach where available; gaps are detectable
   later, not silently invented
-- Round-trip through the reference path preserves semantic parity with milestone
-  2 create/list/get projections at the domain boundary
-- A human can read and understand the document without SpecAble; SpecAble can
-  interpret the document without NLP on the body for required fields
+- The model must allow recovery of milestone 2 primitive semantics (identity,
+  type, status, required fields) at the domain boundary without prose-only
+  inference for required fields
+- A human can read and understand example documents without SpecAble; the
+  contract defines how SpecAble would interpret required semantics without NLP
+  on the body
 - JSON and SQLite adapters remain valid proving implementations; the semantic
   contract does not inherit storage-format-specific concepts
 
@@ -325,17 +336,19 @@ syntax in this specification phase.
 
 - Extend the existing primitive ontology — the wiki is a representation, not a
   new primitive type
-- Local-first; synthetic fixtures only in demos and tests
+- Local-first; synthetic fixtures only in demos and contract examples
 - Adapter-based: core semantics stay in domain schemas; parsers live at adapter
   boundaries only
 - Traceability: provenance and stable IDs support later projection and
   validation
-- No concrete wiki syntax or parser design in the specification — those are
-  implementation decisions for the plan phase unless the spec explicitly
+- No concrete wiki syntax or parser design in this milestone — those are
+  implementation decisions for later milestones unless the spec explicitly
   records open choices as decisions to make, not decisions made
 
 ### Non-goals
 
+- Reference adapter, parser, or CLI wiki read/write implementation
+- Automated contract or parity tests
 - Deriving or querying the full relationship graph (next milestone)
 - Active-status validation and PRD readiness rules
 - MCP exposure
@@ -344,10 +357,10 @@ syntax in this specification phase.
 
 ### Success definition
 
-The semantic document model is ratified, synthetic primitives round-trip through
-it without semantic loss, contract tests demonstrate adapter-agnostic parity,
-and reviewers confirm the model is ready for wiki-backed graph interpretation
-in the next milestone.
+The semantic document model is ratified, contract examples or acceptance
+fixtures demonstrate that milestone 2 primitives can be represented without
+semantic loss, and reviewers confirm the model is ready for wiki-backed graph
+interpretation and adapter implementation in later milestones.
 
 ## Links
 
@@ -360,9 +373,9 @@ in the next milestone.
 
 ## Risks or blockers
 
-- Tension between keeping the spec format-agnostic and proving round-trip in
-  implementation — mitigate with contract tests at the domain boundary and a
-  single reference adapter chosen in plan phase, not in this milestone doc
+- Tension between keeping the spec format-agnostic and wanting executable proof
+  — mitigate by separating contract ratification (this milestone) from adapter
+  implementation and automated parity tests (later milestones)
 - Product Decision, Product Risk, and Evidence boundary (core primitive vs
   operating metadata) may affect metadata vs provenance split
 - Minimum required fields per primitive type must stay aligned with milestone 2
@@ -373,5 +386,6 @@ in the next milestone.
 - [ ] Semantic document model section reviewed and accepted as alpha wiki contract
 - [ ] Demo walkthrough completed with synthetic data
 - [ ] Acceptance criteria satisfied
-- [ ] Round-trip or contract tests demonstrate adapter-agnostic semantic parity
+- [ ] Contract examples or acceptance fixtures demonstrate adapter-agnostic
+  semantic parity at the model level
 - [ ] Related GitHub issues closed or retargeted for revised scope
