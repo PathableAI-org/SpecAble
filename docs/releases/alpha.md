@@ -16,8 +16,9 @@ Pathable-hosted infrastructure or managed inference costs.
 
 The semantic wiki is the primary editable representation of product knowledge.
 The product primitive graph is the semantic interpretation of that wiki, not a
-separately authored artifact. JSON, SQLite, Markdown, Org, and MCP are adapters
-over the same domain model rather than competing sources of truth.
+separately authored artifact. JSON, SQLite, Markdown, and Org are storage and
+presentation adapters over the same domain model; MCP is a protocol adapter that
+exposes that model to AI clients — none of them are competing sources of truth.
 
 ## Release thesis
 
@@ -130,7 +131,7 @@ Evidence / Source (open question: core primitives vs operating metadata).
 ## Success criteria
 
 - [x] A user can initialize JSON-backed and SQLite-backed project roots with the same semantic graph contract *(milestone 1)*
-- [x] A user can create, inspect, update, and archive product primitives through the CLI *(milestone 2)*
+- [x] A user can create, list, and inspect product primitives through the CLI *(milestone 2)*
 - [ ] A user can author and edit product knowledge as readable semantic wiki pages in a local project root
 - [ ] Wiki content round-trips through storage without losing typed primitive semantics or stable identifiers
 - [ ] A semantic graph is derived from wiki-backed knowledge with typed relationships
@@ -147,8 +148,8 @@ Ordered by demoable product capability, not internal architecture.
 
 **Completed foundation (unchanged):**
 
-1. **[Initialize JSON and SQLite project roots](docs/milestones/initialize-project-roots.md)** — ✅ Complete. CLI initializes and inspects local SpecAble project roots for JSON and SQLite backends.
-2. **[Create and inspect primitives](docs/milestones/create-inspect-primitives.md)** — ✅ Complete. CLI creates product primitives and reads them back as structured graph data from a configured root.
+1. **[Initialize JSON and SQLite project roots](../milestones/initialize-project-roots.md)** — ✅ Complete. CLI initializes and inspects local SpecAble project roots for JSON and SQLite backends.
+2. **[Create and inspect primitives](../milestones/create-inspect-primitives.md)** — ✅ Complete. CLI creates, lists, and inspects product primitives as structured graph data from a configured root.
 
 **Remaining work (revised scope):**
 
@@ -163,11 +164,11 @@ documents are updated, this release definition is authoritative for their intent
 7. **MCP adapter for structured product wiki** — End-to-end alpha: MCP server exposes wiki-backed semantic resources and tools for agent consumption, including validation state and PRD projection
 
 Prior milestone documents for slices 3–7
-([link-primitive-graph](docs/milestones/link-primitive-graph.md),
-[validate-desired-product-state](docs/milestones/validate-desired-product-state.md),
-[mcp-shaped-cli-commands](docs/milestones/mcp-shaped-cli-commands.md),
-[mcp-server-roots-resources-tools](docs/milestones/mcp-server-roots-resources-tools.md),
-[local-mcp-desired-product-state](docs/milestones/local-mcp-desired-product-state.md))
+([link-primitive-graph](../milestones/link-primitive-graph.md),
+[validate-desired-product-state](../milestones/validate-desired-product-state.md),
+[mcp-shaped-cli-commands](../milestones/mcp-shaped-cli-commands.md),
+[mcp-server-roots-resources-tools](../milestones/mcp-server-roots-resources-tools.md),
+[local-mcp-desired-product-state](../milestones/local-mcp-desired-product-state.md))
 reflect the earlier graph-first sequencing and will be superseded.
 
 ## Risks and mitigations
