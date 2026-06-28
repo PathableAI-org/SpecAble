@@ -416,7 +416,7 @@ competing editable source of truth.
 - Superseded: [link-primitive-graph.md](link-primitive-graph.md)
 - Spec Kit spec: TBD
 - Issues: https://github.com/PathableAI-org/SpecAble/issues/92 (pivot),
-  https://github.com/PathableAI-org/SpecAble/issues/70 (setup — to be revised)
+  https://github.com/PathableAI-org/SpecAble/issues/70 (setup — revise after [#93](https://github.com/PathableAI-org/SpecAble/issues/93))
 
 ## Risks or blockers
 
