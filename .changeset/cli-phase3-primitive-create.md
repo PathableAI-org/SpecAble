@@ -1,6 +1,6 @@
 ---
-"@specable/core": patch
-"@specable/cli": patch
+"@specable/core": minor
+"@specable/cli": minor
 ---
 
-Add `specable primitive create` command and `PrimitiveService.create` orchestration (Phase 3, T017–T025).
+Add `specable primitive create` to create primitives in a configured project root.

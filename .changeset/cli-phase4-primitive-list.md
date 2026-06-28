@@ -1,6 +1,6 @@
 ---
-"@specable/core": patch
-"@specable/cli": patch
+"@specable/core": minor
+"@specable/cli": minor
 ---
 
-Add `specable primitive list` command and `PrimitiveService.list` orchestration (Phase 4, T026–T033).
+Add `specable primitive list` to list primitives in a configured project root.
