@@ -2,6 +2,8 @@ import type { Primitive } from "@specable/domain"
 
 const TYPE_COLUMN_WIDTH = 14
 
+const PRIMITIVE_HEADER_FIELDS = ["id", "type", "name", "status"] as const
+
 export interface PrimitiveCreateSuccessDetails {
   readonly id: string
   readonly name: string
@@ -42,4 +44,38 @@ export const formatPrimitiveListSuccessOutput = (
   })
 
   return [header, "", ...lines].join("\n")
+}
+
+export const formatPrimitiveGetSuccessOutput = (primitive: Primitive): string => {
+  const lines = [
+    `id: ${primitive.id}`,
+    `type: ${primitive.type}`,
+    `name: ${primitive.name}`,
+    `status: ${primitive.status}`
+  ]
+
+  const reserved = new Set<string>(PRIMITIVE_HEADER_FIELDS)
+  const extraKeys = Object.keys(primitive)
+    .filter((key) => !reserved.has(key))
+    .sort((left, right) => left.localeCompare(right))
+
+  const extraLines = extraKeys.flatMap((key) => {
+    const value = primitive[key as keyof Primitive]
+
+    return value === undefined ? [] : [`${key}: ${formatPrimitiveFieldValue(value)}`]
+  })
+
+  return [...lines, ...extraLines].join("\n")
+}
+
+const formatPrimitiveFieldValue = (value: unknown): string => {
+  if (typeof value === "string") {
+    return value
+  }
+
+  if (typeof value === "number" || typeof value === "boolean") {
+    return String(value)
+  }
+
+  return JSON.stringify(value)
 }

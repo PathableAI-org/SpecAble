@@ -14,7 +14,7 @@ import { decodeProjectConfig } from "../project/ProjectConfig.js"
 import { decodeAlphaPrimitiveUnknown, isAlphaCreatableType } from "../storage/PrimitiveSchemas.js"
 import { StorageBackend } from "../storage/StorageBackend.js"
 import { assignPrimitiveId } from "./assignPrimitiveId.js"
-import { type PrimitiveServiceError, PrimitiveServiceNotImplementedError, UnknownPrimitiveTypeError } from "./errors.js"
+import { type PrimitiveServiceError, UnknownPrimitiveTypeError } from "./errors.js"
 
 const SPECABLE_JSON = "specable.json"
 
@@ -120,9 +120,6 @@ export class PrimitiveService extends E.Service<PrimitiveService>()("@specable/c
         }
       })
 
-    const notImplemented = (operation: string): E.Effect<never, PrimitiveServiceNotImplementedError> =>
-      E.fail(new PrimitiveServiceNotImplementedError({ operation }))
-
     const create: PrimitiveCreate = (input) =>
       E.gen(function*() {
         if (!isAlphaCreatableType(input.type)) {
@@ -171,11 +168,16 @@ export class PrimitiveService extends E.Service<PrimitiveService>()("@specable/c
         return sortPrimitiveSummaries(summaries)
       })
 
-    const get: PrimitiveGet = (rootPath, id) => {
-      void rootPath
-      void id
-      return notImplemented("PrimitiveService.get")
-    }
+    const get: PrimitiveGet = (rootPath, id) =>
+      E.gen(function*() {
+        const projectRoot = resolveProjectRoot(rootPath)
+
+        yield* assertInspectableProjectRoot(projectRoot)
+
+        const config = yield* readManifest(projectRoot)
+
+        return yield* storage.get(projectRoot, config, id)
+      })
 
     return {
       create,

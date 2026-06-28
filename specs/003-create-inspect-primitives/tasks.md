@@ -141,17 +141,17 @@ Per constitution v1.3.0, [plan.md](./plan.md), and
 
 ### Tests for User Story 3
 
-- [ ] T034 [P] [US3] JSON get round-trip test in `packages/core/test/storage/get-json.test.ts`
-- [ ] T035 [P] [US3] SQLite get round-trip test in `packages/core/test/storage/get-sqlite.test.ts`
-- [ ] T036 [P] [US3] Get not-found and cross-backend parity test in `packages/core/test/primitive/get-parity.test.ts`
+- [x] T034 [P] [US3] JSON get round-trip test in `packages/core/test/storage/get-json.test.ts`
+- [x] T035 [P] [US3] SQLite get round-trip test in `packages/core/test/storage/get-sqlite.test.ts`
+- [x] T036 [P] [US3] Get not-found and cross-backend parity test in `packages/core/test/primitive/get-parity.test.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T037 [US3] Implement `PrimitiveService.get` in `packages/core/src/primitive/PrimitiveService.ts`
-- [ ] T038 [P] [US3] Implement get stdout renderer in `packages/cli/src/cli/render/PrimitiveOutput.ts` with stable field order per `contracts/cli-commands.md`
-- [ ] T039 [US3] Implement `PrimitiveGetCommand` in `packages/cli/src/cli/PrimitiveGetCommand.ts`
-- [ ] T040 [US3] Register `primitive get` subcommand in `packages/cli/src/cli/RootCommand.ts`
-- [ ] T041 [P] [US3] CLI get wiring test in `packages/cli/test/cli/primitive-get-command.test.ts`
+- [x] T037 [US3] Implement `PrimitiveService.get` in `packages/core/src/primitive/PrimitiveService.ts`
+- [x] T038 [P] [US3] Implement get stdout renderer in `packages/cli/src/cli/render/PrimitiveOutput.ts` with stable field order per `contracts/cli-commands.md`
+- [x] T039 [US3] Implement `PrimitiveGetCommand` in `packages/cli/src/cli/PrimitiveGetCommand.ts`
+- [x] T040 [US3] Register `primitive get` subcommand in `packages/cli/src/cli/RootCommand.ts`
+- [x] T041 [P] [US3] CLI get wiring test in `packages/cli/test/cli/primitive-get-command.test.ts`
 
 **Checkpoint**: All user stories independently functional — full create/list/get loop on both backends.
 

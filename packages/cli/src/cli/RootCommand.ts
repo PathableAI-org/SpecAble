@@ -3,6 +3,7 @@ import { Command } from "@effect/cli"
 import { checkCommand } from "./CheckCommand.js"
 import { initCommand } from "./InitCommand.js"
 import { primitiveCreateCommand } from "./PrimitiveCreateCommand.js"
+import { primitiveGetCommand } from "./PrimitiveGetCommand.js"
 import { primitiveListCommand } from "./PrimitiveListCommand.js"
 import { projectShowCommand } from "./ProjectShowCommand.js"
 
@@ -12,7 +13,7 @@ const projectCommand = Command.make("project").pipe(
 )
 
 const primitiveCommand = Command.make("primitive").pipe(
-  Command.withSubcommands([primitiveCreateCommand, primitiveListCommand]),
+  Command.withSubcommands([primitiveCreateCommand, primitiveGetCommand, primitiveListCommand]),
   Command.withDescription("Product primitive commands")
 )
 

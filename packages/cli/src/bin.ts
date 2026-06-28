@@ -7,6 +7,7 @@ import { Effect, Layer } from "effect"
 import { handleCheckCommandError } from "./cli/CheckCommand.js"
 import { handleInitCommandError, resolveInitCommandExit } from "./cli/InitCommand.js"
 import { handlePrimitiveCreateCommandError, resolvePrimitiveCreateCommandExit } from "./cli/PrimitiveCreateCommand.js"
+import { handlePrimitiveGetCommandError, resolvePrimitiveGetCommandExit } from "./cli/PrimitiveGetCommand.js"
 import { handlePrimitiveListCommandError, resolvePrimitiveListCommandExit } from "./cli/PrimitiveListCommand.js"
 import { handleProjectShowCommandError, resolveProjectShowCommandExit } from "./cli/ProjectShowCommand.js"
 import { rootCommand } from "./cli/RootCommand.js"
@@ -18,6 +19,10 @@ const commandErrorHandlers = [
   {
     handle: handlePrimitiveCreateCommandError,
     resolve: resolvePrimitiveCreateCommandExit
+  },
+  {
+    handle: handlePrimitiveGetCommandError,
+    resolve: resolvePrimitiveGetCommandExit
   },
   {
     handle: handlePrimitiveListCommandError,
