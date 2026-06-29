@@ -32,6 +32,6 @@
 ## Notes
 
 - Validation passed on first iteration (2026-06-27).
-- Spec derived from milestone canonical input: `docs/milestones/create-inspect-primitives.md`.
+- Spec derived from milestone canonical input: `docs/milestones/alpha/002-create-inspect-primitives.md`.
 - Active-status minimum-field enforcement intentionally deferred per milestone risk; documented in Assumptions.
 - Ready for `/speckit-plan`.

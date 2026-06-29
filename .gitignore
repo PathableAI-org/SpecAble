@@ -14,3 +14,4 @@ Thumbs.db
 .tsbuildinfo
 packages/*/.tsbuildinfo/
 packages/cli/examples/project/**/graph.sqlite
+.pnpm-store/

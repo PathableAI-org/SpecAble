@@ -32,6 +32,6 @@
 ## Notes
 
 - Validation passed on first iteration (2026-06-26); re-validated after clarification sessions 2026-06-26 (10 questions integrated across two sessions).
-- Spec derived from milestone canonical input: `docs/milestones/initialize-project-roots.md`.
+- Spec derived from milestone canonical input: `docs/milestones/alpha/001-initialize-project-roots.md`.
 - Second session clarified `--storage` default, `@specable/core` package split, Layer composition, and test ownership.
 - Ready for `/speckit-plan` refresh to align plan.md with clarified spec.

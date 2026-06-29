@@ -326,7 +326,7 @@ later milestones.
 
 ## Dependencies
 
-- [Readable semantic wiki](readable-semantic-wiki.md)
+- [Readable semantic wiki](003-readable-semantic-wiki.md)
 
 ## Inputs to Spec Kit
 
@@ -412,8 +412,8 @@ competing editable source of truth.
 
 - Release: [docs/releases/alpha.md](../releases/alpha.md)
 - GitHub Milestone: https://github.com/PathableAI-org/SpecAble/milestone/4
-- Prior milestone: [readable-semantic-wiki.md](readable-semantic-wiki.md)
-- Superseded: [link-primitive-graph.md](link-primitive-graph.md)
+- Prior milestone: [readable-semantic-wiki.md](003-readable-semantic-wiki.md)
+<!-- Superseded: link-primitive-graph.md deleted -->
 - Spec Kit spec: TBD
 - Issues: https://github.com/PathableAI-org/SpecAble/issues/92 (pivot),
   https://github.com/PathableAI-org/SpecAble/issues/70 (setup — revise after [#93](https://github.com/PathableAI-org/SpecAble/issues/93))

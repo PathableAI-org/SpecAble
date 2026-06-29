@@ -331,10 +331,10 @@ later milestones.
 
 ## Dependencies
 
-- [Readable semantic wiki](readable-semantic-wiki.md)
-- [Semantic interpretation layer](semantic-interpretation-layer.md)
-- [PRD readiness validation](validate-desired-product-state.md)
-- [PRD projection](prd-projection.md)
+- [Readable semantic wiki](003-readable-semantic-wiki.md)
+- [Semantic interpretation layer](004-semantic-interpretation-layer.md)
+- [PRD readiness validation](005-validate-desired-product-state.md)
+- [PRD projection](006-prd-projection.md)
 
 ## Inputs to Spec Kit
 
@@ -418,13 +418,11 @@ in later milestones without treating MCP as the product or part of the ontology.
 
 - Release: [docs/releases/alpha.md](../releases/alpha.md)
 - GitHub Milestone: https://github.com/PathableAI-org/SpecAble/milestone/7
-- Prior milestones: [readable-semantic-wiki.md](readable-semantic-wiki.md),
-  [semantic-interpretation-layer.md](semantic-interpretation-layer.md),
-  [validate-desired-product-state.md](validate-desired-product-state.md),
-  [prd-projection.md](prd-projection.md)
-- Superseded graph-first MCP docs: [mcp-shaped-cli-commands.md](mcp-shaped-cli-commands.md),
-  [mcp-server-roots-resources-tools.md](mcp-server-roots-resources-tools.md),
-  [local-mcp-desired-product-state.md](local-mcp-desired-product-state.md)
+- Prior milestones: [readable-semantic-wiki.md](003-readable-semantic-wiki.md),
+  [semantic-interpretation-layer.md](004-semantic-interpretation-layer.md),
+  [validate-desired-product-state.md](005-validate-desired-product-state.md),
+  [prd-projection.md](006-prd-projection.md)
+<!-- Superseded graph-first MCP docs deleted -->
 - Spec Kit spec: TBD
 - Issues: https://github.com/PathableAI-org/SpecAble/issues/95
 
