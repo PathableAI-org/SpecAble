@@ -149,18 +149,18 @@ Ordered by demoable product capability, not internal architecture.
 
 **Completed foundation (unchanged):**
 
-1. **[Initialize JSON and SQLite project roots](milestones/alpha/001-initialize-project-roots.md)** — ✅ Complete. CLI initializes and inspects local SpecAble project roots for JSON and SQLite backends.
-2. **[Create and inspect primitives](milestones/alpha/002-create-inspect-primitives.md)** — ✅ Complete. CLI creates, lists, and inspects product primitives as structured graph data from a configured root.
+1. **[Initialize JSON and SQLite project roots](../milestones/alpha/001-initialize-project-roots.md)** — ✅ Complete. CLI initializes and inspects local SpecAble project roots for JSON and SQLite backends.
+2. **[Create and inspect primitives](../milestones/alpha/002-create-inspect-primitives.md)** — ✅ Complete. CLI creates, lists, and inspects product primitives as structured graph data from a configured root.
 
 **Remaining work (revised scope):**
 
 Slice 7 is defined in [#95](https://github.com/PathableAI-org/SpecAble/issues/95).
 
-3. **[Readable semantic wiki](milestones/alpha/003-readable-semantic-wiki.md)** — define the semantic document model: human-readable product knowledge with formal structure, stable identity, typed relationships, and provenance; adapter-agnostic contract before format or parser choices
-4. **[Semantic interpretation layer](milestones/alpha/004-semantic-interpretation-layer.md)** — define how SpecAble understands semantic documents: interpreted concepts, explicit relationships, provenance, gaps, and derivable views; adapter-agnostic contract before parser or storage choices
-5. **[PRD readiness validation](milestones/alpha/005-validate-desired-product-state.md)** — define validation as reasoning over interpreted product knowledge: completeness, coherence, uncertainty, and traceability for PRD projection readiness; adapter-agnostic contract before rule engine or CLI choices
-6. **[PRD projection](milestones/alpha/006-prd-projection.md)** — define how SpecAble derives a coherent, traceable PRD from validated interpreted product knowledge; adapter-agnostic contract before generator, CLI, or rendering choices
-7. **[MCP adapter](milestones/alpha/007-mcp-adapter.md)** — define how SpecAble exposes semantic product knowledge to AI agents: same wiki-backed model as humans, including relationships, provenance, validation findings, and derived artifacts; adapter-agnostic contract before protocol, transport, or server choices
+3. **[Readable semantic wiki](../milestones/alpha/003-readable-semantic-wiki.md)** — define the semantic document model: human-readable product knowledge with formal structure, stable identity, typed relationships, and provenance; adapter-agnostic contract before format or parser choices
+4. **[Semantic interpretation layer](../milestones/alpha/004-semantic-interpretation-layer.md)** — define how SpecAble understands semantic documents: interpreted concepts, explicit relationships, provenance, gaps, and derivable views; adapter-agnostic contract before parser or storage choices
+5. **[PRD readiness validation](../milestones/alpha/005-validate-desired-product-state.md)** — define validation as reasoning over interpreted product knowledge: completeness, coherence, uncertainty, and traceability for PRD projection readiness; adapter-agnostic contract before rule engine or CLI choices
+6. **[PRD projection](../milestones/alpha/006-prd-projection.md)** — define how SpecAble derives a coherent, traceable PRD from validated interpreted product knowledge; adapter-agnostic contract before generator, CLI, or rendering choices
+7. **[MCP adapter](../milestones/alpha/007-mcp-adapter.md)** — define how SpecAble exposes semantic product knowledge to AI agents: same wiki-backed model as humans, including relationships, provenance, validation findings, and derived artifacts; adapter-agnostic contract before protocol, transport, or server choices
 
 Prior graph-first MCP milestone documents
 (mcp-shaped-cli-commands.md,
@@ -187,7 +187,7 @@ is superseded by
 ## Open questions
 
 - Minimum canonical schema for each primitive type in alpha
-- Concrete wiki serialization and authoring conventions (deferred to Spec Kit plan phase after semantic document model is ratified — see [readable-semantic-wiki](milestones/alpha/003-readable-semantic-wiki.md))
+- Concrete wiki serialization and authoring conventions (deferred to Spec Kit plan phase after semantic document model is ratified — see [readable-semantic-wiki](../milestones/alpha/003-readable-semantic-wiki.md))
 - Whether Product Decision, Product Risk, and Evidence are core primitives or metadata
 - Destructive delete vs archive/deactivate for write tools
 - Mandatory relationship types for alpha
@@ -207,8 +207,8 @@ is superseded by
   - [Alpha 2: Create and inspect primitives](https://github.com/PathableAI-org/SpecAble/milestone/2) — complete
   - [Alpha 3: Readable semantic wiki](https://github.com/PathableAI-org/SpecAble/milestone/3) — semantic document model ([#91](https://github.com/PathableAI-org/SpecAble/issues/91))
   - [Alpha 4: Semantic interpretation layer](https://github.com/PathableAI-org/SpecAble/milestone/4) — wiki-to-model interpretation contract ([#92](https://github.com/PathableAI-org/SpecAble/issues/92))
-  - [Alpha 5: PRD readiness validation](https://github.com/PathableAI-org/SpecAble/milestone/5) — [validate-desired-product-state.md](milestones/alpha/005-validate-desired-product-state.md) ([#93](https://github.com/PathableAI-org/SpecAble/issues/93); title and description to be updated after merge)
-  - [Alpha 6: PRD projection](https://github.com/PathableAI-org/SpecAble/milestone/6) — [prd-projection.md](milestones/alpha/006-prd-projection.md) ([#94](https://github.com/PathableAI-org/SpecAble/issues/94))
-  - [Alpha 7: MCP adapter](https://github.com/PathableAI-org/SpecAble/milestone/7) — [mcp-adapter.md](milestones/alpha/007-mcp-adapter.md) ([#95](https://github.com/PathableAI-org/SpecAble/issues/95))
+  - [Alpha 5: PRD readiness validation](https://github.com/PathableAI-org/SpecAble/milestone/5) — [validate-desired-product-state.md](../milestones/alpha/005-validate-desired-product-state.md) ([#93](https://github.com/PathableAI-org/SpecAble/issues/93); title and description to be updated after merge)
+  - [Alpha 6: PRD projection](https://github.com/PathableAI-org/SpecAble/milestone/6) — [prd-projection.md](../milestones/alpha/006-prd-projection.md) ([#94](https://github.com/PathableAI-org/SpecAble/issues/94))
+  - [Alpha 7: MCP adapter](https://github.com/PathableAI-org/SpecAble/milestone/7) — [mcp-adapter.md](../milestones/alpha/007-mcp-adapter.md) ([#95](https://github.com/PathableAI-org/SpecAble/issues/95))
 - Related issues: setup issues [#17](https://github.com/PathableAI-org/SpecAble/issues/17), [#68](https://github.com/PathableAI-org/SpecAble/issues/68)–[#73](https://github.com/PathableAI-org/SpecAble/issues/73)
 - GitHub Release (when shipped): TBD

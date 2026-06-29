@@ -1,6 +1,6 @@
 # Semantic interpretation layer
 
-**Release:** [docs/releases/alpha.md](../releases/alpha.md)
+**Release:** [docs/releases/alpha.md](../../releases/alpha.md)
 
 One GitHub Milestone should correspond to this document. The GitHub Milestone
 description should link here and to the parent release definition.
@@ -410,7 +410,7 @@ competing editable source of truth.
 
 ## Links
 
-- Release: [docs/releases/alpha.md](../releases/alpha.md)
+- Release: [docs/releases/alpha.md](../../releases/alpha.md)
 - GitHub Milestone: https://github.com/PathableAI-org/SpecAble/milestone/4
 - Prior milestone: [readable-semantic-wiki.md](003-readable-semantic-wiki.md)
 <!-- Superseded: link-primitive-graph.md deleted -->

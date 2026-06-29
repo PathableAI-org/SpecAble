@@ -1,6 +1,6 @@
 # PRD readiness validation
 
-**Release:** [docs/releases/alpha.md](../releases/alpha.md)
+**Release:** [docs/releases/alpha.md](../../releases/alpha.md)
 
 One GitHub Milestone should correspond to this document. The GitHub Milestone
 description should link here and to the parent release definition.
@@ -427,7 +427,7 @@ a competing editable source of truth or collapsing validation into parser rules.
 
 ## Links
 
-- Release: [docs/releases/alpha.md](../releases/alpha.md)
+- Release: [docs/releases/alpha.md](../../releases/alpha.md)
 - GitHub Milestone: https://github.com/PathableAI-org/SpecAble/milestone/5 (title and
   description to be updated after merge per [#93](https://github.com/PathableAI-org/SpecAble/issues/93))
 - Prior milestones: [readable-semantic-wiki.md](003-readable-semantic-wiki.md),

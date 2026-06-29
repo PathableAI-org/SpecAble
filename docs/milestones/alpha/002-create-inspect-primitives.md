@@ -1,6 +1,6 @@
 # Create and inspect primitives
 
-**Release:** [docs/releases/alpha.md](../releases/alpha.md)
+**Release:** [docs/releases/alpha.md](../../releases/alpha.md)
 
 ## Goal
 
@@ -112,7 +112,7 @@ matching structured output and automated tests at storage boundary.
 
 ## Links
 
-- Release: [docs/releases/alpha.md](../releases/alpha.md)
+- Release: [docs/releases/alpha.md](../../releases/alpha.md)
 - GitHub Milestone: https://github.com/PathableAI-org/SpecAble/milestone/2
 - Spec Kit spec: [specs/003-create-inspect-primitives/spec.md](../../specs/003-create-inspect-primitives/spec.md)
 - Issues: https://github.com/PathableAI-org/SpecAble/issues/68 (setup)
