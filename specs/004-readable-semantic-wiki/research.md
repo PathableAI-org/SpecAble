@@ -39,7 +39,7 @@ Structured-storage proving fixtures (milestone 2 perspective) live under `packag
 
 **Decision**: Ratify the semantic document model as Spec Kit documentation and static contract examples only. No new packages, services, CLI commands, or domain Schema changes in this milestone.
 
-**Rationale**: The milestone explicitly out-of-scopes parsers, adapters, automated parity tests, and the semantic interpretation layer. Delivering a stable contract before implementation prevents adapter-specific concepts from leaking into the ontology and matches the milestone risk mitigation (separate contract ratification from executable round-trip).
+**Rationale**: The milestone explicitly scopes out parsers, adapters, automated parity tests, and the semantic interpretation layer. Delivering a stable contract before implementation prevents adapter-specific concepts from leaking into the ontology and matches the milestone risk mitigation (separate contract ratification from executable round-trip).
 
 **Alternatives considered**:
 

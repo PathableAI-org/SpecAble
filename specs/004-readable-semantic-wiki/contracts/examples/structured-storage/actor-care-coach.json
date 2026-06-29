@@ -1,0 +1,8 @@
+{
+  "type": "Actor",
+  "id": "actor-care-coach",
+  "name": "Care coach",
+  "status": "Active",
+  "category": "Human",
+  "description": "Coach responsible for preparing and running coaching sessions."
+}

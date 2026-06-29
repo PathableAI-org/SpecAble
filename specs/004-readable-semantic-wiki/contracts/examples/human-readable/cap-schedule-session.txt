@@ -1,0 +1,26 @@
+Semantic Document: Schedule coaching session
+Primitive type: Capability
+
+--- Metadata ---
+
+id: cap-schedule-session
+type: Capability
+name: Schedule coaching session
+status: Active
+description: Let coaches create, update, and confirm coaching sessions.
+actors: actor-care-coach
+domainConcepts: concept-session
+expectedResults: result-less-manual-scheduling
+workflows: workflow-session-scheduling
+
+--- Body ---
+
+Care coaches need a reliable way to create and update coaching sessions without
+back-and-forth email coordination. This capability covers the core scheduling
+flow: selecting participants, choosing a time, and confirming session details.
+
+When a coach schedules a session, the system should validate that required
+participant information is present before confirmation. The capability touches
+the Session domain concept and supports the Session scheduling workflow.
+
+--- End ---

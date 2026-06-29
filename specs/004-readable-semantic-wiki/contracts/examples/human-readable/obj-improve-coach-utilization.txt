@@ -1,0 +1,25 @@
+Semantic Document: Improve coach utilization
+Primitive type: Objective
+
+--- Metadata ---
+
+id: obj-improve-coach-utilization
+type: Objective
+name: Improve coach utilization
+status: Active
+description: Improve how coaches coordinate and prepare for recurring client sessions.
+successCriteria: Coaches spend less time coordinating sessions and more time preparing.
+expectedResults: result-less-manual-scheduling
+workflows: workflow-session-scheduling
+
+--- Body ---
+
+Coaches currently lose time to manual session coordination — confirming times,
+chasing participant details, and reconciling calendar conflicts. This
+objective prioritizes reducing that overhead so coaches can focus on session
+preparation and delivery.
+
+The Session scheduling workflow operationalizes this objective. Progress is
+observable through the Less manual scheduling expected result.
+
+--- End ---

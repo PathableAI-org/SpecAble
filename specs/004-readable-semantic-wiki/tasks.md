@@ -62,11 +62,11 @@ Per constitution v1.3.0, [plan.md](./plan.md), and
 
 **Checkpoint**: Maintainer can answer all six contract questions from spec acceptance criteria using foundational artifacts alone.
 
-- [ ] T003 Write normative alpha wiki contract in `specs/004-readable-semantic-wiki/contracts/semantic-document-model.md` (semantic node, metadata/body, relationships, identity, provenance, human+machine processability)
-- [ ] T004 Write semantic document entities and non-conformance rules in `specs/004-readable-semantic-wiki/data-model.md`
-- [ ] T005 Write per-type metadata/body/relationship mappings for all eight alpha types in `specs/004-readable-semantic-wiki/contracts/reference-mappings.md`
+- [x] T003 Write normative alpha wiki contract in `specs/004-readable-semantic-wiki/contracts/semantic-document-model.md` (semantic node, metadata/body, relationships, identity, provenance, human+machine processability)
+- [x] T004 Write semantic document entities and non-conformance rules in `specs/004-readable-semantic-wiki/data-model.md`
+- [x] T005 Write per-type metadata/body/relationship mappings for all eight alpha types in `specs/004-readable-semantic-wiki/contracts/reference-mappings.md`
 - [ ] T006 Add bidirectional cross-links between `specs/004-readable-semantic-wiki/data-model.md` and `specs/004-readable-semantic-wiki/contracts/semantic-document-model.md`
-- [ ] T007 Add explicit non-conformance examples (body-only required semantics, adapter-local ID as canonical identity) to `specs/004-readable-semantic-wiki/contracts/semantic-document-model.md` per spec edge cases
+- [x] T007 Add explicit non-conformance examples (body-only required semantics, adapter-local ID as canonical identity) to `specs/004-readable-semantic-wiki/contracts/semantic-document-model.md` per spec edge cases
 - [ ] T008 Document Product Decision / Product Risk / Evidence boundary as assumption in `specs/004-readable-semantic-wiki/contracts/reference-mappings.md` per milestone risk register
 
 **Checkpoint**: Foundation ready — user story example and validation work can begin.
@@ -81,10 +81,10 @@ Per constitution v1.3.0, [plan.md](./plan.md), and
 
 ### Implementation for User Story 1
 
-- [ ] T009 [P] [US1] Write human-readable Capability example in `specs/004-readable-semantic-wiki/contracts/examples/human-readable/cap-schedule-session.txt`
-- [ ] T010 [P] [US1] Write human-readable Story example in `specs/004-readable-semantic-wiki/contracts/examples/human-readable/story-coach-schedules-session.txt`
-- [ ] T011 [P] [US1] Write human-readable Actor example in `specs/004-readable-semantic-wiki/contracts/examples/human-readable/actor-care-coach.txt`
-- [ ] T012 [P] [US1] Write human-readable Objective example in `specs/004-readable-semantic-wiki/contracts/examples/human-readable/obj-improve-coach-utilization.txt`
+- [x] T009 [P] [US1] Write human-readable Capability example in `specs/004-readable-semantic-wiki/contracts/examples/human-readable/cap-schedule-session.txt`
+- [x] T010 [P] [US1] Write human-readable Story example in `specs/004-readable-semantic-wiki/contracts/examples/human-readable/story-coach-schedules-session.txt`
+- [x] T011 [P] [US1] Write human-readable Actor example in `specs/004-readable-semantic-wiki/contracts/examples/human-readable/actor-care-coach.txt`
+- [x] T012 [P] [US1] Write human-readable Objective example in `specs/004-readable-semantic-wiki/contracts/examples/human-readable/obj-improve-coach-utilization.txt`
 - [ ] T013 [P] [US1] Write human-readable Persona example in `specs/004-readable-semantic-wiki/contracts/examples/human-readable/persona-busy-coach.txt` aligned with `packages/domain/src/primitives/Persona.ts` example
 - [ ] T014 [P] [US1] Write human-readable DomainConcept example in `specs/004-readable-semantic-wiki/contracts/examples/human-readable/concept-session.txt` aligned with `packages/domain/src/primitives/DomainConcept.ts` example
 - [ ] T015 [P] [US1] Write human-readable ExpectedResult example in `specs/004-readable-semantic-wiki/contracts/examples/human-readable/result-less-manual-scheduling.txt` aligned with `packages/domain/src/primitives/ExpectedResult.ts` example
@@ -103,11 +103,11 @@ Per constitution v1.3.0, [plan.md](./plan.md), and
 
 ### Implementation for User Story 2
 
-- [ ] T018 Write representation perspective rules in `specs/004-readable-semantic-wiki/contracts/representation-perspectives.md`
-- [ ] T019 [P] [US2] Write structured-storage Capability example in `specs/004-readable-semantic-wiki/contracts/examples/structured-storage/cap-schedule-session.json`
-- [ ] T020 [P] [US2] Write structured-storage Story example in `specs/004-readable-semantic-wiki/contracts/examples/structured-storage/story-coach-schedules-session.json`
-- [ ] T021 [P] [US2] Write structured-storage Actor example in `specs/004-readable-semantic-wiki/contracts/examples/structured-storage/actor-care-coach.json`
-- [ ] T022 [P] [US2] Write structured-storage Objective example in `specs/004-readable-semantic-wiki/contracts/examples/structured-storage/obj-improve-coach-utilization.json`
+- [x] T018 Write representation perspective rules in `specs/004-readable-semantic-wiki/contracts/representation-perspectives.md`
+- [x] T019 [P] [US2] Write structured-storage Capability example in `specs/004-readable-semantic-wiki/contracts/examples/structured-storage/cap-schedule-session.json`
+- [x] T020 [P] [US2] Write structured-storage Story example in `specs/004-readable-semantic-wiki/contracts/examples/structured-storage/story-coach-schedules-session.json`
+- [x] T021 [P] [US2] Write structured-storage Actor example in `specs/004-readable-semantic-wiki/contracts/examples/structured-storage/actor-care-coach.json`
+- [x] T022 [P] [US2] Write structured-storage Objective example in `specs/004-readable-semantic-wiki/contracts/examples/structured-storage/obj-improve-coach-utilization.json`
 - [ ] T023 [P] [US2] Write structured-storage Persona example in `specs/004-readable-semantic-wiki/contracts/examples/structured-storage/persona-busy-coach.json`
 - [ ] T024 [P] [US2] Write structured-storage DomainConcept example in `specs/004-readable-semantic-wiki/contracts/examples/structured-storage/concept-session.json`
 - [ ] T025 [P] [US2] Write structured-storage ExpectedResult example in `specs/004-readable-semantic-wiki/contracts/examples/structured-storage/result-less-manual-scheduling.json`
@@ -127,7 +127,7 @@ Per constitution v1.3.0, [plan.md](./plan.md), and
 
 ### Implementation for User Story 3
 
-- [ ] T029 [US3] Write reviewer validation guide in `specs/004-readable-semantic-wiki/quickstart.md`
+- [x] T029 [US3] Write reviewer validation guide in `specs/004-readable-semantic-wiki/quickstart.md`
 - [ ] T030 [US3] Create synthetic graph index linking all eight primitive IDs and relationship edges in `specs/004-readable-semantic-wiki/contracts/examples/README.md`
 - [ ] T031 [US3] Add domain-boundary recoverability trace table (example field → domain Schema path) in `specs/004-readable-semantic-wiki/contracts/examples/README.md`
 - [ ] T032 [US3] Execute quickstart reviewer walkthrough per `specs/004-readable-semantic-wiki/quickstart.md` and record pass/fail in `specs/004-readable-semantic-wiki/checklists/requirements.md` Notes section
@@ -233,7 +233,7 @@ Task: "Write Workflow JSON in contracts/examples/structured-storage/workflow-ses
 
 ## Notes
 
-- Phase 1 (T001–T002) establishes contract example directories and domain schema research references.
+- Phase 1 (T001–T002) and planning artifacts (`/speckit-plan`) delivered spec, plan, data-model, contracts, quickstart, and four example pairs.
 - No `packages/*` code changes unless optional Schema annotation cross-links are added later.
 - Automated parity tests explicitly out of scope — manual review only
 - Synthetic IDs must match domain Schema examples: `cap-schedule-session`, `story-coach-schedules-session`, `actor-care-coach`, `obj-improve-coach-utilization`, `persona-busy-coach`, `concept-session`, `result-less-manual-scheduling`, `workflow-session-scheduling`

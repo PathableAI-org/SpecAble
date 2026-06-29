@@ -1,0 +1,11 @@
+{
+  "type": "Capability",
+  "id": "cap-schedule-session",
+  "name": "Schedule coaching session",
+  "status": "Active",
+  "description": "Let coaches create, update, and confirm coaching sessions.",
+  "actors": ["actor-care-coach"],
+  "domainConcepts": ["concept-session"],
+  "expectedResults": ["result-less-manual-scheduling"],
+  "workflows": ["workflow-session-scheduling"]
+}

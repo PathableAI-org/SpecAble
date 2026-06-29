@@ -1,0 +1,20 @@
+Semantic Document: Care coach
+Primitive type: Actor
+
+--- Metadata ---
+
+id: actor-care-coach
+type: Actor
+name: Care coach
+status: Active
+category: Human
+description: Coach responsible for preparing and running coaching sessions.
+
+--- Body ---
+
+Care coaches are human participants who prepare for and lead coaching sessions.
+They coordinate schedules with clients, review readiness materials, and run
+live sessions. They are distinct from the Busy coach persona, which describes
+research-backed motivations — this actor is the concrete graph participant.
+
+--- End ---

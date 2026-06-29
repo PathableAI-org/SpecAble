@@ -1,0 +1,26 @@
+Semantic Document: Coach schedules session
+Primitive type: Story
+
+--- Metadata ---
+
+id: story-coach-schedules-session
+type: Story
+name: Coach schedules session
+status: Active
+text: As a Care coach, I can schedule a coaching session so that session coordination takes less manual work.
+actor: actor-care-coach
+capability: cap-schedule-session
+expectedResult: result-less-manual-scheduling
+workflows: workflow-session-scheduling
+
+--- Body ---
+
+This story captures the primary scheduling happy path for care coaches. The
+coach initiates scheduling when they know a client is ready for the next
+session. Success means less manual coordination overhead, not merely that
+a calendar entry exists.
+
+The story belongs to the Session scheduling workflow and depends on the
+Schedule coaching session capability being available.
+
+--- End ---

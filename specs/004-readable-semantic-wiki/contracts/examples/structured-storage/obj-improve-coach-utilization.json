@@ -1,0 +1,10 @@
+{
+  "type": "Objective",
+  "id": "obj-improve-coach-utilization",
+  "name": "Improve coach utilization",
+  "status": "Active",
+  "description": "Improve how coaches coordinate and prepare for recurring client sessions.",
+  "successCriteria": "Coaches spend less time coordinating sessions and more time preparing.",
+  "expectedResults": ["result-less-manual-scheduling"],
+  "workflows": ["workflow-session-scheduling"]
+}

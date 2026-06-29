@@ -1,0 +1,11 @@
+{
+  "type": "Story",
+  "id": "story-coach-schedules-session",
+  "name": "Coach schedules session",
+  "status": "Active",
+  "text": "As a Care coach, I can schedule a coaching session so that session coordination takes less manual work.",
+  "actor": "actor-care-coach",
+  "capability": "cap-schedule-session",
+  "expectedResult": "result-less-manual-scheduling",
+  "workflows": ["workflow-session-scheduling"]
+}
