@@ -20,14 +20,14 @@ export const initStorageOption = Options.text("storage").pipe(Options.withDefaul
 const storage = initStorageOption
 const name = Options.text("name").pipe(Options.optional)
 
-const SUPPORTED_STORAGE_TYPES = ["json", "sqlite"] as const
+const SUPPORTED_STORAGE_TYPES = ["json", "sqlite", "md", "org"] as const
 
 type SupportedStorageType = (typeof SUPPORTED_STORAGE_TYPES)[number]
 
 const parseStorageType = (
   value: string
 ): Effect.Effect<SupportedStorageType, InstanceType<typeof UnsupportedStorageTypeError>> => {
-  if (value === "json" || value === "sqlite") {
+  if (value === "json" || value === "sqlite" || value === "md" || value === "org") {
     return Effect.succeed(value)
   }
 

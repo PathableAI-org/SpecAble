@@ -25,7 +25,7 @@ export const primitiveServiceLiveLayer = PrimitiveService.PrimitiveService.Defau
   Layer.provide(FileSystemLive)
 )
 
-export const projectRootLiveLayer = (storage: "json" | "sqlite") =>
+export const projectRootLiveLayer = (storage: "json" | "md" | "org" | "sqlite") =>
   ProjectRootService.ProjectRootService.Default.pipe(
     Layer.provide(storage === "json" ? JsonStorageBackendLive : SqliteStorageBackendLive),
     Layer.provide(FileSystemLive)

@@ -14,7 +14,7 @@ import {
   removeTempProjectTree
 } from "./helpers/tempProjectRoot.js"
 
-const initRoot = async (projectPath: string, storage: "json" | "sqlite"): Promise<void> => {
+const initRoot = async (projectPath: string, storage: "json" | "md" | "org" | "sqlite"): Promise<void> => {
   const args = storage === "json"
     ? ["init", projectPath]
     : ["init", projectPath, "--storage", storage]

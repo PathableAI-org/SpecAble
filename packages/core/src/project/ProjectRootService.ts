@@ -23,8 +23,11 @@ const SPECABLE_JSON = "specable.json"
 
 const SQLITE_DATABASE_FILE = "graph.sqlite"
 
-const storageBindingFor = (storage: "json" | "sqlite"): ProjectConfig["storage"] =>
-  storage === "json" ? { location: ".", type: "json" } : { location: SQLITE_DATABASE_FILE, type: "sqlite" }
+const storageBindingFor = (storage: "json" | "md" | "org" | "sqlite"): ProjectConfig["storage"] => {
+  if (storage === "json") return { location: ".", type: "json" }
+  if (storage === "sqlite") return { location: SQLITE_DATABASE_FILE, type: "sqlite" }
+  return { location: ".", type: storage }
+}
 
 const resolveProjectName = (projectRoot: string, name?: string): string => {
   const trimmed = name?.trim()
@@ -66,7 +69,7 @@ export type ProjectRootInitialize = (
 
 export interface ProjectRootInitializeOptions {
   readonly name?: string | undefined
-  readonly storage: "json" | "sqlite"
+  readonly storage: "json" | "md" | "org" | "sqlite"
 }
 
 export interface ProjectRootServiceApi {
