@@ -1,6 +1,6 @@
 # Quickstart: Readable Semantic Wiki
 
-**Date**: 2026-06-29 | **Feature**: Readable Semantic Wiki | **Spec**: [spec.md](../spec.md)
+**Date**: 2026-06-29 | **Feature**: Readable Semantic Wiki | **Spec**: [spec.md](./spec.md)
 
 This quickstart validates the Markdown and Org wiki backends end-to-end. Run from the repository root after `pnpm build`.
 
@@ -61,7 +61,7 @@ specable init /tmp/demo-org --storage org
 
 **Expected outcome**:
 - Same directory layout as Markdown, but with `.org` files expected
-- `specable.json` records `"storage": {"type": "org"}`
+- `specable.json` records `"storage": {"type": "org", "location": "."}`
 
 ### 6. Create and read on the Org backend
 
@@ -78,16 +78,19 @@ specable primitive get /tmp/demo-org --id <id-from-list>
 ### 7. Manual edit round-trip
 
 ```sh
-# Edit the body of the .md file created in step 2
-echo -e "---\n$(tail -n +2 /tmp/demo-wiki/capabilities/cap-*.md | head -n 20)\n\nEdited body content." > /tmp/demo-wiki/capabilities/cap-*.md
+# Identify the .md file from step 2
+FILE=$(ls /tmp/demo-wiki/capabilities/cap-*.md | head -1)
+
+# Append body text after the frontmatter (preserves all existing metadata)
+sed -i '' 's/$/\n\nEdited body content added via manual edit./' "$FILE"
 
 # Re-read with specable
-specable primitive get /tmp/demo-wiki --id <id-from-list>
+specable primitive get /tmp/demo-wiki --id "$(basename "$FILE" .md)"
 ```
 
 **Expected outcome**:
 - The primitive ID, type, name, and status remain unchanged
-- The body reflects the edited content
+- The body reflects the edited content appended to the original body prose
 
 ### 8. All four backends pass the same test suite
 

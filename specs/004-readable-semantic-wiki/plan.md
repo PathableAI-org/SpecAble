@@ -195,7 +195,7 @@ These decisions are **design choices** rather than research unknowns. They are d
 | Confirm no special handling needed for YAML frontmatter empty body or leading whitespace | js-yaml docs | `js-yaml.load("---\nkey: val\n---\n")` returns `{key: "val"}` and leaves the body after the closing `---` as the remainder — perfect for frontmatter extraction |
 | Confirm Org property drawer regex approach for flat key-value pairs | Org mode spec | Org property drawers are explicitly flat key-value: one property per line, `:KEY: VALUE`. No nesting. Colons in values are allowed (e.g., `:description: "some: text"`). A line-by-line parser handles this cleanly |
 
-All three confirmed. Phase 0 is complete — no research document needed for these straightforward decisions.
+All three confirmed. Phase 0 is complete — findings are recorded in `research.md`.
 
 ## Phase 1: Design & Contracts
 
@@ -217,7 +217,7 @@ See `quickstart.md` for end-to-end validation commands.
 
 The following artifacts will be generated:
 - `research.md` — Phase 0 consolidated findings (minimal, all knowns confirmed)
-- `data-model.md` — Wiki file document model (in contracts/)
+- `data-model.md` — Wiki file document model (in feature root)
 - `contracts/README.md` — StorageBackend interface reference for wiki backends
 - `quickstart.md` — Runnable validation scenarios
 - Agent context update (SPECKIT markers in `.cursor/rules/specify-rules.mdc`)

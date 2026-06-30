@@ -49,14 +49,15 @@ No unresolved NEEDS CLARIFICATION markers existed in the spec. All major archite
 Confirmed from `JsonStorageBackend.ts`:
 
 ```typescript
-export const makeMarkdownStorageBackend = Effect.gen(function*() {
+// Pattern from JsonStorageBackend.ts — each wiki backend will follow the same pattern
+export const makeJsonStorageBackend = Effect.gen(function*() {
   const fs = yield* FileSystem.FileSystem
   return { bootstrap, create, describe, get, list } satisfies StorageBackendService
 })
-export const MarkdownStorageBackendLive = Layer.effect(StorageBackend, makeMarkdownStorageBackend)
+export const JsonStorageBackendLive = Layer.effect(StorageBackend, makeJsonStorageBackend)
 ```
 
-The `satisfies` keyword ensures the returned object matches the interface at compile time. Each method captures `fs` from the outer scope. All methods have `R = never`.
+The analogous wiki backends (`makeMarkdownStorageBackend` / `MarkdownStorageBackendLive` and `makeOrgStorageBackend` / `OrgStorageBackendLive`) will follow the exact same pattern. The `satisfies` keyword ensures the returned object matches the interface at compile time. Each method captures `fs` from the outer scope. All methods have `R = never`.
 
 ### Schema Decoding Pattern
 
@@ -79,18 +80,18 @@ Existing errors reused:
 
 ### Test Layer Pattern
 
-Confirmed from `packages/core/test/fixtures/project/layers.ts`:
+The existing test layers at `packages/core/test/fixtures/project/layers.ts` demonstrate the pattern:
 
 ```typescript
-export const mdStorageTestLayer: Layer.Layer<StorageBackend> = MarkdownStorageBackendLive.pipe(
+export const jsonStorageTestLayer: Layer.Layer<StorageBackend> = JsonStorageBackendLive.pipe(
   Layer.provide(nodeFileSystemLayer)
 )
-export const orgStorageTestLayer: Layer.Layer<StorageBackend> = OrgStorageBackendLive.pipe(
+export const sqliteStorageTestLayer: Layer.Layer<StorageBackend> = SqliteStorageBackendLive.pipe(
   Layer.provide(nodeFileSystemLayer)
 )
 ```
 
-Follows the exact same pattern as `jsonStorageTestLayer` and `sqliteStorageTestLayer`.
+The wiki backends will add analogous test layers (`mdStorageTestLayer` and `orgStorageTestLayer`) following the exact same pattern once the backends exist.
 
 ## Open Questions (Rejected as Non-Blocking)
 

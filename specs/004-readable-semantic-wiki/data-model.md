@@ -1,6 +1,6 @@
 # Data Model: Readable Semantic Wiki
 
-**Date**: 2026-06-29 | **Spec**: [spec.md](../spec.md)
+**Date**: 2026-06-29 | **Spec**: [spec.md](./spec.md)
 
 ## Overview
 
@@ -176,7 +176,7 @@ This capability automates the scheduling process.
 - Find first `:PROPERTIES:\n` ... `\n:END:\n` block
 - For each line between, split on `: ` (first occurrence) to get key + value
 - Handle colons in values (split only on first `: ` after leading `:`)
-- Parse list values: comma-separated or space-separated? Determine from domain schema array fields
+- Parse list values: space-separated values on one line (matching the contract at `contracts/README.md`)
 - Validate parsed object against domain schema via `decodePrimitiveUnknown`
 - Body is everything after `:END:\n` (preserved verbatim)
 
@@ -194,7 +194,7 @@ Key:   "description"
 Value: "This is a description: with colons"
 ```
 
-List-typed values (like `actors`, `expectedResults`, etc.) are stored as comma-separated strings in the property drawer line. On decode, they are split back into arrays.
+List-typed values (like `actors`, `expectedResults`, etc.) are stored as space-separated values on one line in the property drawer. On decode, they are split back into arrays by whitespace.
 
 ## Wiki File Layout Module
 

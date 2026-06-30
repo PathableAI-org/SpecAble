@@ -16,12 +16,12 @@ A product owner or engineer wants to create a new SpecAble project where product
 
 **Why this priority**: This is the entry point for the entire wiki workflow. Without project initialization, no primitives can be created or read in the wiki format. It also proves the storage backends are wired end-to-end.
 
-**Independent Test**: Run `specable init ./demo-wiki --storage md` and verify a project root is created with per-type directories (capabilities/, actors/, etc.) and an empty specable.json. Repeat with `--storage org` and confirm the same layout with .org directories. Can be fully tested by file system inspection without creating any primitives.
+**Independent Test**: Run `specable init ./demo-wiki --storage md` and verify a project root is created with per-type directories (capabilities/, actors/, etc.) and a `specable.json` recording `"storage": {"type": "md", "location": "."}`. Repeat with `--storage org` and confirm the same per-type directories with `.org` file extension expected. Can be fully tested by file system inspection without creating any primitives.
 
 **Acceptance Scenarios**:
 
-1. **Given** no existing project at the target path, **When** the user runs `specable init ./my-project --storage md`, **Then** a project root is created with per-type directories (`capabilities/`, `actors/`, `objectives/`, `personas/`, `domain-concepts/`, `expected-results/`, `workflows/`, `stories/`, `capability-concept-links/`) and a `specable.json` manifest recording `"storage": {"type": "md"}`.
-2. **Given** no existing project at the target path, **When** the user runs `specable init ./my-project --storage org`, **Then** a project root is created with the same per-type directory layout and a `specable.json` manifest recording `"storage": {"type": "org"}`.
+1. **Given** no existing project at the target path, **When** the user runs `specable init ./my-project --storage md`, **Then** a project root is created with per-type directories (`capabilities/`, `actors/`, `objectives/`, `personas/`, `domain-concepts/`, `expected-results/`, `workflows/`, `stories/`, `capability-concept-links/`) and a `specable.json` manifest recording `"storage": {"type": "md", "location": "."}`.
+2. **Given** no existing project at the target path, **When** the user runs `specable init ./my-project --storage org`, **Then** a project root is created with the same per-type directory layout and a `specable.json` manifest recording `"storage": {"type": "org", "location": "."}`.
 3. **Given** no existing project, **When** the user runs `specable init ./my-project --storage json` or `--storage sqlite`, **Then** the existing JSON and SQLite backends continue to work with no behavior change.
 4. **Given** a project already exists at the target path, **When** the user attempts init, **Then** the command fails with a clear error explaining the path is already initialized.
 5. **Given** `specable init --storage md`, **When** init completes, **Then** `specable project show` reports the storage type as `md` and confirms the wiki file layout.
@@ -34,12 +34,12 @@ A product owner creates a product primitive (e.g., a Capability, Actor, or Story
 
 **Why this priority**: Primitive creation is the core write path. Without it, the wiki is an empty shell. Combined with User Story 1, this delivers the full create-and-read-authoring loop.
 
-**Independent Test**: Run `specable init ./demo --storage md`, then `specable primitive create ./demo --type Capability --name "Schedule session" --status Draft`. Verify the file `capabilities/cap-schedule-session.md` exists with YAML frontmatter containing id, type, name, and status. Open it in a text editor and confirm it is human-readable. Repeat with `--storage org` and verify `capabilities/cap-schedule-session.org` with a property drawer.
+**Independent Test**: Run `specable init ./demo --storage md`, then `specable primitive create ./demo --type Capability --name "Schedule session" --status Draft`. Verify a file `<id>.md` exists in `capabilities/` with YAML frontmatter containing id, type, name, and status. Open it in a text editor and confirm it is human-readable. Repeat with `--storage org` and verify `<id>.org` with a property drawer.
 
 **Acceptance Scenarios**:
 
-1. **Given** a Markdown-backed project root, **When** the user creates a Capability primitive with name "Schedule session" and status "Draft", **Then** a file `capabilities/cap-schedule-session.md` is written with YAML frontmatter containing `id`, `type`, `name`, `status`, and type-specific relationship fields (actors, expectedResults, workflows, domainConcepts) — all decodable back to the domain schema.
-2. **Given** an Org-backed project root, **When** the user creates the same Capability primitive, **Then** a file `capabilities/cap-schedule-session.org` is written with an Org property drawer containing the same structured metadata fields — all decodable back to the domain schema.
+1. **Given** a Markdown-backed project root, **When** the user creates a Capability primitive with name "Schedule session" and status "Draft", **Then** a file `<id>.md` is written in `capabilities/` with YAML frontmatter containing `id`, `type`, `name`, `status`, and type-specific relationship fields (actors, expectedResults, workflows, domainConcepts) — all decodable back to the domain schema.
+2. **Given** an Org-backed project root, **When** the user creates the same Capability primitive, **Then** a file `<id>.org` is written in `capabilities/` with an Org property drawer containing the same structured metadata fields — all decodable back to the domain schema.
 3. **Given** a wiki-backed project, **When** the user creates a primitive of any supported type (Actor, Persona, Domain Concept, Workflow, Story, etc.), **Then** the file lands in the correct per-type directory with the correct extension and decodable metadata.
 4. **Given** a wiki-backed project, **When** the user creates a primitive with prose body content, **Then** that body is preserved as-is below the frontmatter/property drawer on round-trip, with no encoding transformations applied.
 5. **Given** a wiki-backed project, **When** a primitive is created, **Then** its ID is derived from the primitive name in a sanitized, filesystem-safe format and is stable across renames (the ID does not change when the display name changes).
