@@ -53,10 +53,10 @@ Per constitution v1.3.0, plan.md, and
 
 **Purpose**: Extend existing schemas and add the YAML dependency needed by both wiki backends
 
-- [ ] T001 Add `js-yaml` and `@types/js-yaml` dependencies to `packages/core/package.json` (scoped to Markdown backend only — will be imported only in MarkdownStorageBackend.ts)
-- [ ] T002 [P] Extend `StorageType` schema literal in `packages/core/src/project/ProjectConfig.ts` to include `"md"` and `"org"` alongside existing `"json"` and `"sqlite"`
-- [ ] T003 [P] Extend `storageBindingFor` helper in `packages/core/src/project/ProjectRootService.ts` to handle `"md"` and `"org"` storage types (both map to `location: "."`)
-- [ ] T004 Extend `parseStorageType` in `packages/cli/src/cli/InitCommand.ts` to accept `"md"` and `"org"` values (currently only accepts `"json"` / `"sqlite"`)
+- [X] T001 Add `js-yaml` and `@types/js-yaml` dependencies to `packages/core/package.json` (scoped to Markdown backend only — will be imported only in MarkdownStorageBackend.ts)
+- [X] T002 [P] Extend `StorageType` schema literal in `packages/core/src/project/ProjectConfig.ts` to include `"md"` and `"org"` alongside existing `"json"` and `"sqlite"`
+- [X] T003 [P] Extend `storageBindingFor` helper in `packages/core/src/project/ProjectRootService.ts` to handle `"md"` and `"org"` storage types (both map to `location: "."`)
+- [X] T004 Extend `parseStorageType` in `packages/cli/src/cli/InitCommand.ts` to accept `"md"` and `"org"` values (currently only accepts `"json"` / `"sqlite"`)
 
 **Checkpoint**: Setup complete — StorageType extended, `js-yaml` available, CLI accepts `--storage md` and `--storage org` values (will fail at Layer composition until backends exist).
 

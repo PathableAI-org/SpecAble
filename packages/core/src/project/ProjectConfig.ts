@@ -2,7 +2,7 @@ import { Schema } from "@effect/schema"
 
 import { CANONICAL_PRIMITIVE_TYPES } from "../storage/PrimitiveTypes.js"
 
-export const StorageType = Schema.Literal("json", "sqlite").annotations({
+export const StorageType = Schema.Literal("json", "sqlite", "md", "org").annotations({
   description: "Pluggable storage backend discriminator for project roots",
   identifier: "StorageType",
   title: "Storage Type"

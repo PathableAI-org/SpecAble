@@ -37,7 +37,7 @@ describe("InitCommand", () => {
 
     expect(resolution).toEqual({
       code: 2,
-      message: "Unsupported storage type \"postgres\". Supported types: json, sqlite."
+      message: "Unsupported storage type \"postgres\". Supported types: json, sqlite, md, org."
     })
   })
 
