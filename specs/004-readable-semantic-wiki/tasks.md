@@ -68,14 +68,14 @@ Per constitution v1.3.0, plan.md, and
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete. The wiki file layout provides type→directory mapping, ID→filename conversion, directory scanning, and filesystem-safe ID validation that both backends use.
 
-- [ ] T005 Create `packages/core/src/storage/wiki-file-layout.ts` with `PRIMITIVE_TYPE_DIRECTORIES` mapping (all 9 canonical types → pluralized kebab-case directory names matching existing `PRIMITIVE_TYPE_FILES` convention)
-- [ ] T006 [P] Export `WIKI_TYPE_DIRECTORY_ENTRIES` for all 9 canonical types and `ALPHA_WIKI_TYPE_DIRECTORY_ENTRIES` (excluding `CapabilityConceptLink`)
-- [ ] T007 [P] Export `directoryForType(type)` — returns directory name for a primitive type
-- [ ] T008 [P] Export `idToFilename(id, extension)` and `filenameToId(filename)` — converts between IDs and filenames
-- [ ] T009 [P] Export `filePathFor(projectRoot, type, id, extension)` — returns full file path
-- [ ] T010 [P] Export `scanTypeDirectory(fs, projectRoot, directory, extension)` — scans directory for matching files, returns filenames
-- [ ] T011 [P] Export `sanitizeIdForFile(id)` — validates/cleans ID for filesystem safety (pass-through with validation warning)
-- [ ] T012 Export `WikiFileLayoutError` tagged error type for filesystem-unsafe ID or missing directory errors
+- [X] T005 Create `packages/core/src/storage/wiki-file-layout.ts` with `PRIMITIVE_TYPE_DIRECTORIES` mapping (all 9 canonical types → pluralized kebab-case directory names matching existing `PRIMITIVE_TYPE_FILES` convention)
+- [X] T006 [P] Export `WIKI_TYPE_DIRECTORY_ENTRIES` for all 9 canonical types and `ALPHA_WIKI_TYPE_DIRECTORY_ENTRIES` (excluding `CapabilityConceptLink`)
+- [X] T007 [P] Export `directoryForType(type)` — returns directory name for a primitive type
+- [X] T008 [P] Export `idToFilename(id, extension)` and `filenameToId(filename)` — converts between IDs and filenames
+- [X] T009 [P] Export `filePathFor(projectRoot, type, id, extension)` — returns full file path
+- [X] T010 [P] Export `scanTypeDirectory(fs, projectRoot, directory, extension)` — scans directory for matching files, returns filenames
+- [X] T011 [P] Export `sanitizeIdForFile(id)` — validates/cleans ID for filesystem safety (pass-through with validation warning)
+- [X] T012 Export `WikiFileLayoutError` tagged error type for filesystem-unsafe ID or missing directory errors
 
 **Checkpoint**: Foundation ready — wiki file-layout module provides all shared helpers for directory resolution, filename conversion, directory scanning, and ID sanitization. Both backend implementations can now import from this single source of truth.
 
