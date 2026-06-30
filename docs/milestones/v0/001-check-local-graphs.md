@@ -1,6 +1,6 @@
 # Check local primitive graphs
 
-**Release:** [docs/releases/v0.md](../releases/v0.md)
+**Release:** [docs/releases/v0.md](../../releases/v0.md)
 
 One GitHub Milestone should correspond to this document. The GitHub Milestone
 description should link here and to the parent release definition. GitHub
@@ -156,7 +156,7 @@ implementation and test suite.
 
 ## Links
 
-- Release: [docs/releases/v0.md](../releases/v0.md)
+- Release: [docs/releases/v0.md](../../releases/v0.md)
 - GitHub Milestone: TBD
 - Spec Kit spec: `specs/001-product-primitives-v0/`
 - Issues: TBD

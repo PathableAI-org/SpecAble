@@ -1,42 +1,47 @@
 # Readable semantic wiki
 
-**Release:** [docs/releases/alpha.md](../releases/alpha.md)
+**Release:** [docs/releases/alpha.md](../../releases/alpha.md)
 
 One GitHub Milestone should correspond to this document. The GitHub Milestone
 description should link here and to the parent release definition.
 
 ## Goal
 
-Establish the **semantic document model** — the canonical, human-editable
-representation of product knowledge that every storage adapter must satisfy.
-By the end of this milestone, SpecAble has a clear contract for what makes a
-document a semantic node, how metadata and body divide responsibility, how
-relationships are expressed, which identities and provenance must survive
-round-trip, and what “readable yet machine-processable” means — without
-committing to a specific file format or parser.
+Build a **Markdown storage backend** and an **Org storage backend** that write
+product primitives as human-readable wiki files in a SpecAble project root. By
+the end of this milestone, `specable init --storage md` and `specable init --storage org`
+produce editable file layouts where each primitive is a separate `.md` or `.org`
+file with typed metadata (frontmatter) separable from body prose, typed
+relationships by stable ID, provenance fields, and lifecycle status — all
+recoverable by `specable primitive list` and `specable primitive get`.
 
-This slice bridges completed primitive create/inspect work and the structured
-product wiki that later milestones interpret, validate, project, and expose.
+Having two backends at the same abstraction level (Markdown + Org, like
+JSON + SQLite before them) proves the StorageBackend contract is truly
+adapter-independent and forces the wiki semantics to be format-invariant.
 
 ## Why this matters
 
 Milestones 1 and 2 proved that product primitives persist as structured data
-in local project roots. Alpha’s thesis is stronger: **product knowledge should
-live in documents humans can read and edit directly**, with formal semantics
-SpecAble can interpret.
+in local project roots via JSON and SQLite. Alpha's thesis is stronger:
+**product knowledge should live in documents humans can read and edit directly**,
+with formal semantics SpecAble can interpret.
 
-Without a defined semantic document model, every adapter (Markdown, Org,
-Notion, JSON, SQLite) would invent its own shape and leak presentation concerns
-into the ontology. A shared contract keeps the existing product primitive
-ontology authoritative while making the wiki the primary authoring surface and
-the graph a derived interpretation — not a parallel artifact authors must
-maintain.
+JSON and SQLite store primitives in opaque containers (file arrays, database
+tables). Markdown and Org let authors open files in ordinary editors, read
+product intent without SpecAble, and edit prose while keeping structured
+metadata machine-decodable.
+
+Building two readable backends in one milestone mirrors the strategy that
+worked for milestones 1–2, where JSON + SQLite forced the storage abstraction
+to be clean. Here, Markdown + Org force the wiki document semantics to be
+format-invariant and prove that switching between local Markdown files and
+future Notion / Confluence adapters follows the same pattern.
 
 ## Semantic document model
 
-The following is the **conceptual contract** this milestone ratifies. Later
-milestones implement adapters, graph derivation, validation, and MCP exposure
-against this model. No serialization syntax is prescribed here.
+The following is the **design contract** this milestone implements across both
+Markdown and Org backends. Each backend MUST produce and consume files that
+satisfy these rules.
 
 ### Semantic node
 
@@ -58,10 +63,12 @@ A document is a semantic node when SpecAble can:
 ### Structured metadata
 
 **Metadata** carries formal semantics SpecAble needs to interpret the document
-without inferring meaning from prose alone. It belongs outside the narrative
-body and maps to the existing primitive schemas from `@specable/domain`.
+without inferring meaning from prose alone. In Markdown this is YAML
+frontmatter (between `---` delimiters); in Org this is a property drawer
+(`:PROPERTIES:` … `:END:`). Both map to the existing primitive schemas from
+`@specable/domain`.
 
-Metadata SHOULD include, at minimum:
+Metadata MUST include, at minimum:
 
 - **stable primitive identity** — durable across storage backends and edits;
 - **primitive type** — which ontology type the document represents;
@@ -71,8 +78,8 @@ Metadata SHOULD include, at minimum:
   defined by the primitive type (not free-form tags invented by the adapter).
 
 Metadata MUST NOT embed adapter-specific identifiers (file paths, database
-row keys, Notion page IDs) as the canonical primitive identity. Adapters MAY
-store such references for sync or indexing, but they are not the semantic ID.
+row keys) as the canonical primitive identity. Adapters MAY store such
+references for sync or indexing, but they are not the semantic ID.
 
 ### Document body
 
@@ -94,7 +101,7 @@ The body:
 
 **Relationships** connect semantic documents by **stable primitive identity** and
 **relationship kind** from the canonical product primitive ontology (for
-example, story→actor, story→capability, capability→workflow).
+example, story→actor, capability→workflow).
 
 Conceptually:
 
@@ -109,10 +116,6 @@ Conceptually:
 - Removing or editing a relationship MUST NOT silently reassign primitive
   identity.
 
-The [semantic interpretation layer](semantic-interpretation-layer.md) in the
-next milestone defines how SpecAble understands these relationships as explicit,
-traceable edges derived from wiki content.
-
 ### Stable identity
 
 The following MUST have **stable, adapter-independent identity**:
@@ -126,7 +129,7 @@ Identity MUST survive:
 
 - round-trip through a storage adapter;
 - human edits to body prose and non-identity metadata fields;
-- projection to JSON or SQLite representations used as proving adapters.
+- projection to Markdown, Org, JSON, or SQLite representations.
 
 Identity MUST NOT depend on display name, file name, or storage location.
 
@@ -166,131 +169,264 @@ It is **machine-processable** when SpecAble can:
 Readability and processability are joint requirements: neither unstructured
 prose alone nor opaque structured stores satisfy the wiki thesis.
 
+## File layouts and naming conventions
+
+### Markdown backend
+
+A Markdown-backed project root stores one file per primitive under a
+type-named directory:
+
+```
+project-root/
+├── specable.json              # unchanged project manifest
+├── capabilities/
+│   ├── cap-schedule-session.md
+│   └── cap-...
+├── actors/
+│   ├── actor-care-coach.md
+│   └── actor-client.md
+├── objectives/
+├── personas/
+├── domain-concepts/
+├── expected-results/
+├── workflows/
+├── stories/
+└── capability-concept-links/
+```
+
+Each `.md` file uses YAML frontmatter for metadata and a Markdown body:
+
+```markdown
+---
+id: cap-schedule-session
+type: Capability
+name: Schedule coaching session
+status: Active
+actors:
+  - actor-care-coach
+expectedResults:
+  - result-less-manual-scheduling
+workflows:
+  - workflow-session-scheduling
+domainConcepts:
+  - concept-session
+description: >
+  Let coaches create, update, and confirm coaching sessions.
+---
+Body prose explaining intent, context, and rationale goes here.
+Human-readable without SpecAble.
+```
+
+### Org backend
+
+An Org-backed project root uses the same type-named directory layout with
+`.org` file extensions and Org-mode property drawers for metadata:
+
+```
+project-root/
+├── specable.json
+├── capabilities/
+│   ├── cap-schedule-session.org
+│   └── cap-...
+├── actors/
+│   ├── actor-care-coach.org
+│   └── actor-client.org
+└── ...
+```
+
+Each `.org` file uses a property drawer and Org headings:
+
+```org
+#+TITLE: Schedule coaching session
+
+:PROPERTIES:
+:id:       cap-schedule-session
+:type:     Capability
+:status:   Active
+:actors:   actor-care-coach
+:expectedResults: result-less-manual-scheduling
+:workflows: workflow-session-scheduling
+:domainConcepts: concept-session
+:END:
+
+Body prose explaining intent, context, and rationale goes here.
+Human-readable without SpecAble.
+```
+
+## What this milestone builds
+
+### Storage backend implementations
+
+Two new implementations of the `StorageBackend` contract from
+`@specable/core`:
+
+1. **`MarkdownStorageBackend`** — reads and writes `specable.json`-configured
+   project roots as per-type directories of `.md` files with YAML frontmatter.
+2. **`OrgStorageBackend`** — same contract, same layout, `.org` file extension
+   with Org property drawers.
+
+Each backend supports `bootstrap`, `describe`, `create`, `list`, and `get`
+exactly like the existing `JsonStorageBackend` and `SqliteStorageBackend`.
+
+### Schema wiring
+
+- `StorageType` gains `"md"` and `"org"` literals alongside `"json"` and
+  `"sqlite"`.
+- `PrimitiveTypes.ts` maps canonical primitive types to file naming
+  conventions (directory name + file extension).
+- Frontmatter/property-drawer encoding derives from the same
+  `schemaByType` registry used by JSON decode.
+- A shared `wiki-file-layout.ts` module (or equivalent) provides the
+  per-type directory→file mapping and name-sanitization logic common to
+  both backends.
+
+### Routing and CLI
+
+- `RoutedStorageBackend` routes to Markdown or Org backends by
+  `config.storage.type`.
+- `specable init --storage md` and `specable init --storage org` select
+  the new backends at project creation.
+- `specable primitive create`, `list`, and `get` work identically across
+  all four backends (JSON, SQLite, Markdown, Org).
+- `specable project show` reports the storage type and file layout for
+  wiki-backed roots.
+
+### Round-trip contracts
+
+Every primitive type supported by create/list/get must round-trip through
+both Markdown and Org without semantic loss:
+
+- `create` ⟶ `.md` / `.org` file on disk with decodable metadata
+- `list` ⟶ reads all type files, returns summaries
+- `get` ⟶ reads single file by ID, returns full decoded primitive
+- `describe` ⟶ reports type counts from file system
+
+## Demo
+
+```sh
+# Initialize a Markdown-backed project root
+specable init ./demo-wiki --storage md
+
+# Create primitives as readable .md files
+specable primitive create ./demo-wiki --type Capability --name "Schedule session" --status Draft
+specable primitive create ./demo-wiki --type Actor --name "Care coach" --status Active
+
+# Inspect output — human-readable .md files exist on disk
+cat ./demo-wiki/capabilities/cap-schedule-session.md
+cat ./demo-wiki/actors/actor-care-coach.md
+
+# List and get work identically to JSON/SQLite
+specable primitive list ./demo-wiki
+specable primitive get ./demo-wiki --id cap-schedule-session
+
+# Repeat with Org backend
+specable init ./demo-org --storage org
+specable primitive create ./demo-org --type Capability --name "Schedule session" --status Draft
+cat ./demo-org/capabilities/cap-schedule-session.org
+
+# Prove parity: create the same primitive on both backends, get output matches
+```
+
+## Expected result
+
+- Markdown and Org storage backends exist as `StorageBackend` implementations
+  in `@specable/core`.
+- `specable init --storage md` and `specable init --storage org` produce
+  correct per-type directory layouts.
+- `specable primitive create|list|get` work identically on wiki-backed roots.
+- YAML frontmatter (Markdown) and Org property drawers encode the same
+  structured metadata, decoded at the domain boundary via existing `Schema`.
+- Wiki files are human-readable in ordinary editors without SpecAble.
+- JSON/SQLite backends remain fully operational — all four backends pass the
+  same storage round-trip test suite.
+
 ## Architectural placement
 
 ```text
-Human-editable semantic documents (wiki)
+Human-editable semantic documents (wiki)          ← this milestone
         │
         ▼  interpret
-Semantic graph (primitives + typed relationships)
+Semantic graph (primitives + typed relationships)  ← next milestone
         │
         ▼  derive
 Validation · PRD projection · MCP resources
 ```
 
-- **Wiki** — primary editable representation of product knowledge.
+- **Wiki files** — primary editable representation of product knowledge;
+  authors edit `.md` or `.org` files in ordinary editors.
 - **Graph** — semantic interpretation of wiki content, not a separately
-  authored parallel source of truth.
-- **Adapters** — Markdown, Org, Notion, Confluence, JSON, SQLite, and future
-  formats are interchangeable storage and presentation implementations over the
-  same semantic document model.
-- **JSON and SQLite** (milestones 1–2) — remain useful as local proving
-  adapters and illustrative mappings; they are not the defining authoring
-  experience for alpha.
-
-## Demo
-
-Conceptual walkthrough with **synthetic** product knowledge only:
-
-1. Start from example primitives aligned with milestone 2 (Capability, Actor,
-   Story, or similar) — drawn from existing JSON or SQLite fixtures or
-   equivalent acceptance examples.
-2. Show how each primitive **maps** to a semantic document under the model:
-   identity and type in metadata, formal fields separated from explanatory
-   body, relationships referencing other primitives by stable ID, provenance
-   attached where applicable.
-3. Present a human-readable example document and confirm a reviewer can
-   understand product intent **without SpecAble**.
-4. Walk through how the model would be **interpreted** into typed primitives at
-   the domain boundary — illustrating recoverability of required semantics
-   without running an adapter or parser.
-5. Sketch a second representation perspective (for example, structured storage
-   vs human-readable prose) expressing the **same semantic contract** —
-   proving the model is adapter-agnostic.
-
-This demo ratifies the conceptual model. CLI commands, parsers, and executable
-round-trip belong in later milestones.
-
-## Expected result
-
-- The semantic document model is documented and ratified as the alpha wiki
-  contract.
-- Every core alpha primitive type has a defined mapping: metadata fields, body
-  role, relationship participation, identity rules, and provenance expectations.
-- Milestone 2 primitives can be **represented** by the model without losing
-  typed semantics or stable IDs in principle.
-- Reviewers agree the model is sufficient for later milestones to derive a
-  graph, run validation, project a PRD, and expose MCP resources — without
-  revisiting ontology boundaries.
-
-## User-visible or agent-visible behavior
-
-- Authors work with **readable semantic documents** as the primary mental model
-  for product knowledge, not opaque graph records.
-- Each document clearly represents one typed primitive with separable metadata
-  and body.
-- Relationships are understandable as connections between known primitives,
-  not adapter implementation details.
-- Errors reference semantic fields and primitive identity, not parser internals.
-- Future agents consume the same interpreted primitives whether the backing
-  store is a wiki page, JSON fixture, or SQLite index.
+  authored parallel source of truth (next milestone).
+- **JSON and SQLite** — remain as proving adapters; four-backend parity
+  proves the StorageBackend contract is format-independent.
+- **Markdown and Org** — are the readable wiki backends for alpha; additional
+  backends (Notion, Confluence) follow the same adapter pattern.
 
 ## Acceptance criteria
 
-- [ ] The semantic document model answers: what makes a document a semantic
-  node; what belongs in metadata vs body; how relationships are represented; what
-  must have stable identity; what provenance is preserved; and what makes
-  documents human-readable yet machine-processable.
-- [ ] Product knowledge can be **authored** as human-readable semantic
-  documents that encode existing product primitive types — not a new wiki-only
-  primitive layer.
-- [ ] Documents carry **sufficient formal structure** for SpecAble to interpret
-  them into typed primitives at the domain boundary without prose-only
-  inference for required fields.
-- [ ] The representation is **local-first** and **tool-agnostic**: documents
-  remain meaningful in ordinary editors without network services or
-  vendor-specific runtimes.
-- [ ] **Contract examples or acceptance fixtures** show at least two
-  representation perspectives (for example, structured storage plus
-  human-readable prose) satisfying the **same semantic contract** without
-  adapter-specific concepts in the ontology.
-- [ ] The model's identity and recoverability requirements preserve stable
-  primitive identity, type, status, required formal fields, typed
-  relationships, and available provenance when representations change.
+- [ ] `StorageType` includes `"md"` and `"org"` alongside `"json"` and
+      `"sqlite"`.
+- [ ] `MarkdownStorageBackend` implements `bootstrap`, `create`, `list`, `get`,
+      and `describe` per the `StorageBackend` contract.
+- [ ] `OrgStorageBackend` implements the same contract.
+- [ ] YAML frontmatter encoding and decoding for Markdown maps to existing
+      `@specable/domain` primitive schemas.
+- [ ] Org property drawer encoding and decoding maps to the same schemas.
+- [ ] `specable init --storage md` creates type directories and empty
+      initialization.
+- [ ] `specable init --storage org` creates type directories and empty
+      initialization.
+- [ ] `specable primitive create` on a Markdown root writes a valid `.md` file
+      with YAML frontmatter.
+- [ ] `specable primitive create` on an Org root writes a valid `.org` file
+      with property drawer.
+- [ ] `specable primitive list` returns correct summaries from both backends.
+- [ ] `specable primitive get` returns the full decoded primitive from both
+      backends.
+- [ ] Created `.md` files are human-readable in an ordinary editor without
+      SpecAble.
+- [ ] Created `.org` files are human-readable in an ordinary editor without
+      SpecAble.
+- [ ] Storage round-trip tests exist for both backends covering all alpha
+      primitive types.
+- [ ] All four backends (JSON, SQLite, Markdown, Org) pass the same
+      storage round-trip test suite with no backend-specific test branches.
 - [ ] Demo uses synthetic product knowledge only.
 
 ## Scope
 
-- Semantic document model definition and alpha wiki contract
-- Mapping from existing product primitive types to document structure
-  (metadata, body, relationships, provenance)
-- Identity and recoverability requirements the contract imposes on any adapter
-- Contract examples or acceptance fixtures showing milestone 2 primitives can
-  be represented by the model
-- Reference mappings or example document models per primitive type
-- Documentation preparing Notion, Confluence, and additional readable backends
-  as future adapters over the same contract
+- Markdown storage backend (YAML frontmatter, per-type directory layout)
+- Org storage backend (property drawer, same directory layout)
+- `StorageType` schema extension (`"md"` / `"org"`)
+- `RoutedStorageBackend` wiring for new backends
+- CLI `--storage md` / `--storage org` in `specable init`
+- CLI `primitive create|list|get` on wiki-backed roots (no changes needed,
+  already delegates to `PrimitiveService` + `StorageBackend`)
+- Shared wiki file-layout module (directory names, file naming, ID-to-filename)
+- Storage round-trip tests for Markdown and Org backends
+- Documentation of the file layouts and frontmatter/property-drawer schemas
 
 ## Out of scope
 
-- Choosing or specifying Markdown vs Org vs other concrete syntax
-- Frontmatter keys, property drawers, parser algorithms, or file layout
-- Reference adapter or parser implementation
-- Automated contract or parity tests (later milestones prove executable
-  round-trip)
-- CLI commands that read or write wiki documents
-- Semantic interpretation layer definition (next milestone:
-  [semantic-interpretation-layer.md](semantic-interpretation-layer.md))
+- Semantic interpretation layer (next milestone:
+  [semantic-interpretation-layer.md](004-semantic-interpretation-layer.md))
 - Validation rules and PRD readiness checks
 - PRD projection templates
 - MCP resources and tools
-- Notion or Confluence production adapters
+- Notion or Confluence adapters
 - Introducing new ontology primitives unless a gap in the existing model is
   proven necessary
+- Writing Org property drawers in Emacs-specific binary formats — plain-text
+  `.org` files only
+- Complex Org features (tables, source blocks, LaTeX, timestamps) — only
+  property drawers and body prose are required
 
 ## Dependencies
 
-- [Create and inspect primitives](create-inspect-primitives.md)
+- [Create and inspect primitives](002-create-inspect-primitives.md) — provides
+  the `PrimitiveService`, `StorageBackend` contract, and CLI `primitive`
+  commands this milestone extends.
+- [Initialize JSON and SQLite project roots](001-initialize-project-roots.md) —
+  establishes the project init flow and `specable.json` format extended here.
 
 ## Inputs to Spec Kit
 
@@ -298,96 +434,97 @@ round-trip belong in later milestones.
 
 ### Build
 
-Formalize the **semantic document model** as the alpha wiki contract: specify
-how each supported product primitive type maps to a semantic document (metadata,
-body, relationships, identity, provenance), define interpretation and
-recoverability requirements at the domain boundary, and deliver reference
-mappings or example document models plus contract examples or acceptance
-fixtures demonstrating that milestone 2 primitives can be represented by the
-model. Prepare for additional readable backends without prescribing their
-syntax or building parsers in this milestone.
+Implement two new `StorageBackend` implementations — **Markdown** and **Org** —
+that store each product primitive as a separate human-readable wiki file in a
+type-named subdirectory of the project root. Markdown files use YAML frontmatter
+for structured metadata; Org files use property drawers. Extend `StorageType`
+with `"md"` and `"org"`, wire through `RoutedStorageBackend`, and support
+`specable init --storage md|org`. All four backends (JSON, SQLite, Markdown,
+Org) must pass the same storage round-trip test suite with no backend-specific
+test branches.
 
 ### Users / actors
 
-- Product owners and engineers authoring product knowledge as readable semantic
-  documents
-- Maintainers defining adapter contracts before graph, validation, and MCP
-  milestones
-- Future AI clients consuming interpreted primitives regardless of storage form
+- Product owners and engineers authoring product knowledge as readable wiki
+  files they can open in ordinary editors
+- Developers verifying the `StorageBackend` abstraction is truly adapter-
+  independent by testing parity across Markdown and Org
+- Future Notion/Confluence adapter authors who follow the same pattern
 
 ### Required behavior
 
-- Each semantic document represents exactly one product primitive with stable
-  identity, explicit type, display name, lifecycle status, and type-specific
-  formal fields in structured metadata
-- Body prose explains intent and context; required semantics are not body-only
-- Typed relationships reference other primitives by stable ID and explicit
-  relationship kind from the canonical ontology
-- Provenance and source references attach where available; gaps are detectable
-  later, not silently invented
-- The model must allow recovery of milestone 2 primitive semantics (identity,
-  type, status, required fields) at the domain boundary without prose-only
-  inference for required fields
-- A human can read and understand example documents without SpecAble; the
-  contract defines how SpecAble would interpret required semantics without NLP
-  on the body
-- JSON and SQLite adapters remain valid proving implementations; the semantic
-  contract does not inherit storage-format-specific concepts
+- `specable init --storage md` creates a project root with per-type `.md` file
+  directories and an empty `specable.json`
+- `specable init --storage org` creates the same layout with `.org` extensions
+- `specable primitive create` on a Markdown root writes a file like
+  `capabilities/cap-schedule-session.md` with YAML frontmatter
+- `specable primitive create` on an Org root writes a file like
+  `capabilities/cap-schedule-session.org` with a property drawer
+- `specable primitive list` and `get` read back the same structured data from
+  both formats
+- JSON and SQLite backends remain fully operational with no behavior change
+- Created files pass the same `Schema.decodeUnknown` round-trip as JSON and
+  SQLite records
+- Round-trip tests cover all alpha primitive types on all four backends
 
 ### Constraints
 
-- Extend the existing primitive ontology — the wiki is a representation, not a
-  new primitive type
-- Local-first; synthetic fixtures only in demos and contract examples
-- Adapter-based: core semantics stay in domain schemas; parsers live at adapter
-  boundaries only
-- Traceability: provenance and stable IDs support later projection and
-  validation
-- No concrete wiki syntax or parser design in this milestone — those are
-  implementation decisions for later milestones unless the spec explicitly
-  records open choices as decisions to make, not decisions made
+- Extend the existing `StorageBackend` contract — do not create a separate
+  wiki-only service interface
+- YAML frontmatter decoding must use a YAML parser (not hand-rolled); Org
+  property drawer parsing may use a lightweight parser since the subset is
+  small (flat key-value pairs only)
+- File names derive from primitive IDs, not display names, to stay stable
+  across renames
+- Body prose is preserved as-is on round-trip; no body-level encoding/
+  transformation
+- Relationships reference stable IDs, not file paths or wiki links
+- Local-first; synthetic demo data only
 
 ### Non-goals
 
-- Reference adapter, parser, or CLI wiki read/write implementation
-- Automated contract or parity tests
-- Defining the semantic interpretation layer (next milestone)
-- Active-status validation and PRD readiness rules
-- MCP exposure
-- External tool sync (Notion, Confluence, Jira, etc.)
-- Destructive lifecycle operations beyond what milestone 2 already provides
+- Human-friendly wiki links (e.g. `[[actor-care-coach]]`) — relationship
+  resolution is the interpretation layer's job in the next milestone
+- Body content parsing or NLP
+- Org-mode complex features beyond property drawers and prose
+- Notion or Confluence adapters
+- Relationship CRUD or graph traversal
+- CLI wiki-specific subcommands — `primitive create|list|get` is sufficient
 
 ### Success definition
 
-The semantic document model is ratified, contract examples or acceptance
-fixtures demonstrate that milestone 2 primitives can be represented without
-semantic loss, and reviewers confirm the model is ready for semantic
-interpretation and adapter implementation in later milestones.
+All four backends pass the same storage round-trip test suite. A reviewer can
+`specable init --storage md`, create a few primitives, open the `.md` files in
+any text editor, confirm they are readable, and re-read them via `specable
+primitive list` and `get` — then repeat the same steps with `--storage org`
+and confirm semantic parity.
 
 ## Links
 
-- Release: [docs/releases/alpha.md](../releases/alpha.md)
+- Release: [docs/releases/alpha.md](../../releases/alpha.md)
 - GitHub Milestone: https://github.com/PathableAI-org/SpecAble/milestone/3
-- Prior milestone (superseded): [link-primitive-graph.md](link-primitive-graph.md)
+<!-- Superseded: link-primitive-graph.md deleted -->
 - Spec Kit spec: TBD
 - Issues: https://github.com/PathableAI-org/SpecAble/issues/91 (pivot),
   https://github.com/PathableAI-org/SpecAble/issues/69 (setup — to be revised)
 
 ## Risks or blockers
 
-- Tension between keeping the spec format-agnostic and wanting executable proof
-  — mitigate by separating contract ratification (this milestone) from adapter
-  implementation and automated parity tests (later milestones)
-- Product Decision, Product Risk, and Evidence boundary (core primitive vs
-  operating metadata) may affect metadata vs provenance split
-- Minimum required fields per primitive type must stay aligned with milestone 2
-  and future Active-status validation
+- YAML frontmatter parsing adds a new dependency (`js-yaml` or equivalent)
+  — lightweight but must be scoped to the Markdown backend only
+- Org property drawer parsing is non-standard; the subset used here (flat
+  key-value) is simple enough to parse with regex, but a purpose-built
+  sub-parser must be tested for edge cases (colons in values, multi-line)
+- Per-type directory layout means `list` must scan multiple directories;
+  already handled by the `StorageBackend.list` pattern from JSON/SQLite
+- File names derived from IDs must be filesystem-safe (no `/`, no nulls,
+  length limits) — enforce at ID assignment or in the wiki file module
 
 ## Completion evidence
 
-- [ ] Semantic document model section reviewed and accepted as alpha wiki contract
-- [ ] Demo walkthrough completed with synthetic data
+- [ ] Markdown and Org backends pass all storage round-trip tests
+- [ ] Demo completed as described above
 - [ ] Acceptance criteria satisfied
-- [ ] Contract examples or acceptance fixtures demonstrate adapter-agnostic
-  semantic parity at the model level
 - [ ] Related GitHub issues closed or retargeted for revised scope
+- [ ] JSON and SQLite backends unchanged and passing existing tests
+- [ ] File layout and frontmatter/property-drawer schemas documented

@@ -1,6 +1,6 @@
 # Create and inspect primitives
 
-**Release:** [docs/releases/alpha.md](../releases/alpha.md)
+**Release:** [docs/releases/alpha.md](../../releases/alpha.md)
 
 ## Goal
 
@@ -54,14 +54,14 @@ Repeat with Actor, Objective, or other core types using synthetic names.
 
 ## Out of scope
 
-- Semantic wiki document model ([readable semantic wiki](readable-semantic-wiki.md)); [semantic interpretation layer](semantic-interpretation-layer.md) (following milestone)
+- Semantic wiki document model ([readable semantic wiki](003-readable-semantic-wiki.md)); [semantic interpretation layer](004-semantic-interpretation-layer.md) (following milestone)
 - Full validation rule engine (later milestone)
 - Update, delete/archive (may be minimal; full lifecycle in MCP milestone)
 - MCP exposure
 
 ## Dependencies
 
-- [Initialize JSON and SQLite project roots](initialize-project-roots.md)
+- [Initialize JSON and SQLite project roots](001-initialize-project-roots.md)
 
 ## Inputs to Spec Kit
 
@@ -112,7 +112,7 @@ matching structured output and automated tests at storage boundary.
 
 ## Links
 
-- Release: [docs/releases/alpha.md](../releases/alpha.md)
+- Release: [docs/releases/alpha.md](../../releases/alpha.md)
 - GitHub Milestone: https://github.com/PathableAI-org/SpecAble/milestone/2
 - Spec Kit spec: [specs/003-create-inspect-primitives/spec.md](../../specs/003-create-inspect-primitives/spec.md)
 - Issues: https://github.com/PathableAI-org/SpecAble/issues/68 (setup)

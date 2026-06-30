@@ -21,7 +21,7 @@ Naming: docs/milestones/<milestone-slug>.md
 
 # <Milestone name>
 
-**Release:** [docs/releases/<release-slug>.md](../releases/<release-slug>.md)
+**Release:** [docs/releases/<release-slug>.md](../../releases/<release-slug>.md)
 
 One GitHub Milestone should correspond to this document. The GitHub Milestone
 description should link here and to the parent release definition. GitHub
@@ -129,7 +129,7 @@ REPLACE_ME
 
 <!-- Add links as they become available. -->
 
-- Release: [docs/releases/<release-slug>.md](../releases/<release-slug>.md)
+- Release: [docs/releases/<release-slug>.md](../../releases/<release-slug>.md)
 - GitHub Milestone: REPLACE_ME
 - Spec Kit spec: `specs/REPLACE_ME/`
 - Issues: REPLACE_ME

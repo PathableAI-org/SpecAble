@@ -1,6 +1,6 @@
 # PRD readiness validation
 
-**Release:** [docs/releases/alpha.md](../releases/alpha.md)
+**Release:** [docs/releases/alpha.md](../../releases/alpha.md)
 
 One GitHub Milestone should correspond to this document. The GitHub Milestone
 description should link here and to the parent release definition.
@@ -337,8 +337,8 @@ later milestones.
 
 ## Dependencies
 
-- [Readable semantic wiki](readable-semantic-wiki.md)
-- [Semantic interpretation layer](semantic-interpretation-layer.md)
+- [Readable semantic wiki](003-readable-semantic-wiki.md)
+- [Semantic interpretation layer](004-semantic-interpretation-layer.md)
 
 ## Inputs to Spec Kit
 
@@ -427,11 +427,11 @@ a competing editable source of truth or collapsing validation into parser rules.
 
 ## Links
 
-- Release: [docs/releases/alpha.md](../releases/alpha.md)
+- Release: [docs/releases/alpha.md](../../releases/alpha.md)
 - GitHub Milestone: https://github.com/PathableAI-org/SpecAble/milestone/5 (title and
   description to be updated after merge per [#93](https://github.com/PathableAI-org/SpecAble/issues/93))
-- Prior milestones: [readable-semantic-wiki.md](readable-semantic-wiki.md),
-  [semantic-interpretation-layer.md](semantic-interpretation-layer.md)
+- Prior milestones: [readable-semantic-wiki.md](003-readable-semantic-wiki.md),
+  [semantic-interpretation-layer.md](004-semantic-interpretation-layer.md)
 - Supersedes prior graph-first validation scope in this document
 - Spec Kit spec: TBD
 - Issues: https://github.com/PathableAI-org/SpecAble/issues/93 (pivot),

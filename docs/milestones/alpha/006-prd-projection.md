@@ -1,6 +1,6 @@
 # PRD projection
 
-**Release:** [docs/releases/alpha.md](../releases/alpha.md)
+**Release:** [docs/releases/alpha.md](../../releases/alpha.md)
 
 One GitHub Milestone should correspond to this document. The GitHub Milestone
 description should link here and to the parent release definition.
@@ -212,7 +212,7 @@ Milestone 5: PRD readiness validation (whether understanding is sufficient)
 Milestone 6: PRD projection (first major human-readable derived artifact)  ← this milestone
         │
         ▼
-Later: [MCP adapter](mcp-adapter.md) and additional views over the same semantic model
+Later: [MCP adapter](007-mcp-adapter.md) and additional views over the same semantic model
 ```
 
 - **Wiki** — canonical editable representation; humans edit semantic documents only.
@@ -328,9 +328,9 @@ rendering pipelines, and automated projection tests belong in later milestones.
 
 ## Dependencies
 
-- [Readable semantic wiki](readable-semantic-wiki.md)
-- [Semantic interpretation layer](semantic-interpretation-layer.md)
-- [PRD readiness validation](validate-desired-product-state.md)
+- [Readable semantic wiki](003-readable-semantic-wiki.md)
+- [Semantic interpretation layer](004-semantic-interpretation-layer.md)
+- [PRD readiness validation](005-validate-desired-product-state.md)
 
 ## Inputs to Spec Kit
 
@@ -418,11 +418,11 @@ independent source of truth or prescribing templates and rendering technology.
 
 ## Links
 
-- Release: [docs/releases/alpha.md](../releases/alpha.md)
+- Release: [docs/releases/alpha.md](../../releases/alpha.md)
 - GitHub Milestone: https://github.com/PathableAI-org/SpecAble/milestone/6
-- Prior milestones: [readable-semantic-wiki.md](readable-semantic-wiki.md),
-  [semantic-interpretation-layer.md](semantic-interpretation-layer.md),
-  [validate-desired-product-state.md](validate-desired-product-state.md)
+- Prior milestones: [readable-semantic-wiki.md](003-readable-semantic-wiki.md),
+  [semantic-interpretation-layer.md](004-semantic-interpretation-layer.md),
+  [validate-desired-product-state.md](005-validate-desired-product-state.md)
 - Spec Kit spec: TBD
 - Issues: https://github.com/PathableAI-org/SpecAble/issues/94
 
