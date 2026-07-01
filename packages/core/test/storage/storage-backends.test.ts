@@ -142,3 +142,41 @@ describe("Storage backends", () => {
       yield* Effect.promise(() => removeTempDir(projectRoot))
     }).pipe(Effect.provide(mdStorageTestLayer)))
 })
+
+describe("Wiki backend describe", () => {
+  it.effect("Markdown describe returns empty graph after bootstrap", () =>
+    Effect.gen(function*() {
+      const projectRoot = yield* Effect.promise(() => makeTempProjectDir("specable-md-describe-"))
+      const config = sampleMdConfig()
+      const storage = yield* StorageBackend
+
+      yield* storage.bootstrap(projectRoot, config)
+      const summary = yield* storage.describe(projectRoot, config)
+
+      expect(summary.empty).toBe(true)
+      expect(summary.totalPrimitives).toBe(0)
+      for (const type of CANONICAL_PRIMITIVE_TYPES) {
+        expect(summary.countsByType[type]).toBe(0)
+      }
+
+      yield* Effect.promise(() => removeTempDir(projectRoot))
+    }).pipe(Effect.provide(mdStorageTestLayer)))
+
+  it.effect("Org describe returns empty graph after bootstrap", () =>
+    Effect.gen(function*() {
+      const projectRoot = yield* Effect.promise(() => makeTempProjectDir("specable-org-describe-"))
+      const config = sampleOrgConfig()
+      const storage = yield* StorageBackend
+
+      yield* storage.bootstrap(projectRoot, config)
+      const summary = yield* storage.describe(projectRoot, config)
+
+      expect(summary.empty).toBe(true)
+      expect(summary.totalPrimitives).toBe(0)
+      for (const type of CANONICAL_PRIMITIVE_TYPES) {
+        expect(summary.countsByType[type]).toBe(0)
+      }
+
+      yield* Effect.promise(() => removeTempDir(projectRoot))
+    }).pipe(Effect.provide(orgStorageTestLayer)))
+})
