@@ -10,7 +10,12 @@ import type { ProjectConfig } from "../../../src/project/ProjectConfig.js"
 import { ProjectRootService } from "../../../src/project/ProjectRootService.js"
 import { CANONICAL_PRIMITIVE_TYPES } from "../../../src/storage/PrimitiveTypes.js"
 import { makeTempProjectDir, removeTempDir } from "../project/helpers.js"
-import { projectRootJsonTestLayer, projectRootSqliteTestLayer } from "../project/layers.js"
+import {
+  projectRootJsonTestLayer,
+  projectRootMdTestLayer,
+  projectRootOrgTestLayer,
+  projectRootSqliteTestLayer
+} from "../project/layers.js"
 
 export const sampleCreateInput = (
   rootPath: string,
@@ -90,7 +95,63 @@ export const initSqliteProjectRoot = async (name = "demo-sqlite"): Promise<{
   return { config, parentDir, projectRoot }
 }
 
+export const initMdProjectRoot = async (name = "demo-md"): Promise<{
+  readonly config: ProjectConfig
+  readonly parentDir: string
+  readonly projectRoot: string
+}> => {
+  const parentDir = await makeTempProjectDir("specable-primitive-md-")
+  const projectRoot = `${parentDir}/${name}`
+
+  const config = await Effect.runPromise(
+    Effect.gen(function*() {
+      const service = yield* ProjectRootService
+
+      return yield* service.initialize(projectRoot, { name, storage: "md" })
+    }).pipe(Effect.provide(projectRootMdTestLayer))
+  )
+
+  return { config, parentDir, projectRoot }
+}
+
+export const initOrgProjectRoot = async (name = "demo-org"): Promise<{
+  readonly config: ProjectConfig
+  readonly parentDir: string
+  readonly projectRoot: string
+}> => {
+  const parentDir = await makeTempProjectDir("specable-primitive-org-")
+  const projectRoot = `${parentDir}/${name}`
+
+  const config = await Effect.runPromise(
+    Effect.gen(function*() {
+      const service = yield* ProjectRootService
+
+      return yield* service.initialize(projectRoot, { name, storage: "org" })
+    }).pipe(Effect.provide(projectRootOrgTestLayer))
+  )
+
+  return { config, parentDir, projectRoot }
+}
+
 export const cleanupProjectRoot = async (parentDir: string): Promise<void> => removeTempDir(parentDir)
+
+export const withMdProjectRoot = <A, E, R>(
+  use: (fixture: Awaited<ReturnType<typeof initMdProjectRoot>>) => Effect.Effect<A, E, R>
+): Effect.Effect<A, E, R> =>
+  Effect.acquireUseRelease(
+    Effect.promise(() => initMdProjectRoot()),
+    use,
+    ({ parentDir }) => Effect.promise(() => cleanupProjectRoot(parentDir))
+  )
+
+export const withOrgProjectRoot = <A, E, R>(
+  use: (fixture: Awaited<ReturnType<typeof initOrgProjectRoot>>) => Effect.Effect<A, E, R>
+): Effect.Effect<A, E, R> =>
+  Effect.acquireUseRelease(
+    Effect.promise(() => initOrgProjectRoot()),
+    use,
+    ({ parentDir }) => Effect.promise(() => cleanupProjectRoot(parentDir))
+  )
 
 export const withJsonProjectRoot = <A, E, R>(
   use: (fixture: Awaited<ReturnType<typeof initJsonProjectRoot>>) => Effect.Effect<A, E, R>

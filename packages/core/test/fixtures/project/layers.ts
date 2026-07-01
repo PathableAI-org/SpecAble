@@ -52,6 +52,18 @@ export const projectRootSqliteTestLayer: Layer.Layer<ProjectRootService> = Proje
   Layer.provide(nodeFileSystemLayer)
 )
 
+/** Project root service with Markdown storage for init contract tests. */
+export const projectRootMdTestLayer: Layer.Layer<ProjectRootService> = ProjectRootServiceTag.Default.pipe(
+  Layer.provide(MarkdownStorageBackendLive),
+  Layer.provide(nodeFileSystemLayer)
+)
+
+/** Project root service with Org storage for init contract tests. */
+export const projectRootOrgTestLayer: Layer.Layer<ProjectRootService> = ProjectRootServiceTag.Default.pipe(
+  Layer.provide(OrgStorageBackendLive),
+  Layer.provide(nodeFileSystemLayer)
+)
+
 /** Primitive service with JSON storage for create contract tests. */
 export const primitiveServiceJsonTestLayer: Layer.Layer<PrimitiveService> = PrimitiveServiceTag.Default.pipe(
   Layer.provide(JsonStorageBackendLive),
