@@ -4,6 +4,8 @@ import type { Layer } from "effect"
 import type { StorageBackend } from "./StorageBackend.js"
 
 import { JsonStorageBackendLive } from "./JsonStorageBackend.js"
+import { MarkdownStorageBackendLive } from "./MarkdownStorageBackend.js"
+import { OrgStorageBackendLive } from "./OrgStorageBackend.js"
 import { RoutedStorageBackendLive } from "./RoutedStorageBackend.js"
 import { SqliteStorageBackendLive } from "./SqliteStorageBackend.js"
 
@@ -25,10 +27,32 @@ export { RoutedStorageBackendLive }
  */
 export { SqliteStorageBackendLive }
 
+/**
+ * Live Layer for Markdown (wiki) storage. Requires `FileSystem` when composing;
+ * bootstrap creates per-type directories under the project root.
+ */
+export { MarkdownStorageBackendLive }
+
+/**
+ * Live Layer for Org (wiki) storage. Requires `FileSystem` when composing;
+ * bootstrap creates per-type directories under the project root.
+ */
+export { OrgStorageBackendLive }
+
 export type JsonStorageBackendLiveLayer = Layer.Layer<StorageBackend, never, JsonStorageBackendLiveR>
 
 /** Requirements for building {@link JsonStorageBackendLive}. */
 export type JsonStorageBackendLiveR = FileSystem.FileSystem
+
+export type MarkdownStorageBackendLiveLayer = Layer.Layer<StorageBackend, never, MarkdownStorageBackendLiveR>
+
+/** Requirements for building {@link MarkdownStorageBackendLive}. */
+export type MarkdownStorageBackendLiveR = FileSystem.FileSystem
+
+export type OrgStorageBackendLiveLayer = Layer.Layer<StorageBackend, never, OrgStorageBackendLiveR>
+
+/** Requirements for building {@link OrgStorageBackendLive}. */
+export type OrgStorageBackendLiveR = FileSystem.FileSystem
 
 export type SqliteStorageBackendLiveLayer = Layer.Layer<StorageBackend, never, SqliteStorageBackendLiveR>
 
