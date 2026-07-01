@@ -5,7 +5,13 @@ import { Layer } from "effect"
 import { GraphLoader } from "../graph/GraphLoader.js"
 import { GraphRepository } from "../graph/GraphRepository.js"
 
-const { JsonStorageBackendLive, RoutedStorageBackendLive, SqliteStorageBackendLive } = layers
+const {
+  JsonStorageBackendLive,
+  MarkdownStorageBackendLive,
+  OrgStorageBackendLive,
+  RoutedStorageBackendLive,
+  SqliteStorageBackendLive
+} = layers
 
 export const FileSystemLive = NodeFileSystem.layer
 
@@ -25,9 +31,22 @@ export const primitiveServiceLiveLayer = PrimitiveService.PrimitiveService.Defau
   Layer.provide(FileSystemLive)
 )
 
+const storageBackendForType = (storage: "json" | "md" | "org" | "sqlite") => {
+  switch (storage) {
+    case "json":
+      return JsonStorageBackendLive
+    case "md":
+      return MarkdownStorageBackendLive
+    case "org":
+      return OrgStorageBackendLive
+    case "sqlite":
+      return SqliteStorageBackendLive
+  }
+}
+
 export const projectRootLiveLayer = (storage: "json" | "md" | "org" | "sqlite") =>
   ProjectRootService.ProjectRootService.Default.pipe(
-    Layer.provide(storage === "json" ? JsonStorageBackendLive : SqliteStorageBackendLive),
+    Layer.provide(storageBackendForType(storage)),
     Layer.provide(FileSystemLive)
   )
 
