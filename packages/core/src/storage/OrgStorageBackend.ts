@@ -6,12 +6,11 @@ import { Effect, Layer } from "effect"
 import { randomUUID } from "node:crypto"
 import * as path from "node:path"
 
-import type { PrimitiveValidationError } from "../primitive/errors.js"
 import type { PrimitiveSummary } from "../primitive/PrimitiveSummary.js"
 import type { CanonicalPrimitiveType } from "./PrimitiveTypes.js"
 import type { StorageBackendService } from "./StorageBackend.js"
 
-import { DuplicatePrimitiveIdError, PrimitiveNotFoundError } from "../primitive/errors.js"
+import { DuplicatePrimitiveIdError, PrimitiveNotFoundError, PrimitiveValidationError } from "../primitive/errors.js"
 import { IncompleteProjectError, StorageBootstrapError } from "../project/errors.js"
 import { emptyCountsByType, type GraphStoreSummary } from "../project/ProjectDescriptor.js"
 import { decodePrimitiveUnknown, summaryFromPrimitive } from "./PrimitiveSchemas.js"
@@ -67,7 +66,13 @@ export const makeOrgStorageBackend = Effect.gen(function*() {
       }
 
       let strVal: string
-      if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+      if (typeof value === "string") {
+        // JSON-encode multi-line strings so they fit on a single property
+        // drawer line; the decoder uses JSON.parse for object values but also
+        // handles plain strings.  Single-line strings are written verbatim
+        // for readability.
+        strVal = value.includes("\n") ? JSON.stringify(value) : value
+      } else if (typeof value === "number" || typeof value === "boolean") {
         strVal = String(value)
       } else {
         strVal = JSON.stringify(value)
@@ -95,7 +100,7 @@ export const makeOrgStorageBackend = Effect.gen(function*() {
     filePath: string,
     type: CanonicalPrimitiveType,
     content: string
-  ): Effect.Effect<Primitive, IncompleteProjectError | PrimitiveValidationError> =>
+  ): Effect.Effect<Primitive, PrimitiveValidationError> =>
     Effect.gen(function*() {
       const lines = content.split("\n")
 
@@ -113,9 +118,10 @@ export const makeOrgStorageBackend = Effect.gen(function*() {
 
       if (propsStart === -1) {
         return yield* Effect.fail(
-          new IncompleteProjectError({
+          new PrimitiveValidationError({
             message: `Missing :PROPERTIES: line in Org file: ${path.basename(filePath)}`,
-            path: filePath
+            path: filePath,
+            type
           })
         )
       }
@@ -134,9 +140,10 @@ export const makeOrgStorageBackend = Effect.gen(function*() {
 
       if (endLine === -1) {
         return yield* Effect.fail(
-          new IncompleteProjectError({
+          new PrimitiveValidationError({
             message: `Missing :END: line in Org file: ${path.basename(filePath)}`,
-            path: filePath
+            path: filePath,
+            type
           })
         )
       }
@@ -155,7 +162,14 @@ export const makeOrgStorageBackend = Effect.gen(function*() {
         const match = propertyLineRegex.exec(line)
 
         if (!match) {
-          continue
+          // Unparseable line inside the property drawer — report error (T053)
+          return yield* Effect.fail(
+            new PrimitiveValidationError({
+              message: `Unparseable line in Org property drawer: "${line.trim()}" in ${path.basename(filePath)}`,
+              path: filePath,
+              type
+            })
+          )
         }
 
         const key = match[1]!
@@ -166,12 +180,18 @@ export const makeOrgStorageBackend = Effect.gen(function*() {
 
         let value: unknown = match[2] ?? ""
 
-        // Try to parse JSON values (objects and arrays only)
+        // Try to parse JSON values. JSON-encoded strings handle multi-line
+        // values (e.g. descriptions with newlines); objects and arrays are
+        // also round-tripped through JSON.
         if (typeof value === "string" && value.length > 0) {
           try {
             const parsedJson: unknown = JSON.parse(value)
 
-            if (typeof parsedJson === "object" && parsedJson !== null) {
+            if (typeof parsedJson === "string") {
+              // JSON-encoded string (e.g. multi-line description)
+              value = parsedJson
+            } else if (typeof parsedJson === "object" && parsedJson !== null) {
+              // JSON-encoded object or array
               value = parsedJson
             }
           } catch {
@@ -204,8 +224,13 @@ export const makeOrgStorageBackend = Effect.gen(function*() {
         body = body.slice(0, -1)
       }
 
+      // Preserve body prose as the description when present, overriding any
+      // description that may be embedded in the property drawer. This ensures
+      // manual edits to the body survive round-trip (US4 — T049).
       if (body.length > 0) {
         parsed.description = body
+      } else if (parsed.description === undefined) {
+        parsed.description = ""
       }
 
       return yield* decodePrimitiveUnknown(type, filePath, parsed)

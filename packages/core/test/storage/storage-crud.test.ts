@@ -421,4 +421,140 @@ Line three with trailing space.  `
 
       yield* Effect.promise(() => cleanupProjectRoot(parentDir))
     }).pipe(Effect.provide(orgStorageTestLayer)))
+
+  it.effect("manual edit of body prose in .md file survives round-trip (T055)", () =>
+    Effect.gen(function*() {
+      const { config, parentDir, projectRoot } = yield* Effect.promise(() => initMdProjectRoot())
+      const storage = yield* StorageBackend
+      const capability = makeSamplePrimitive("Capability", "cap-manual-edit-a1b2", "Manual Edit", {
+        fields: { description: "Original body" }
+      })
+
+      yield* storage.create(projectRoot, config, capability)
+
+      // Manually edit the .md file to change the body prose
+      yield* Effect.promise(() =>
+        fs.writeFile(
+          path.join(projectRoot, "capabilities", "cap-manual-edit-a1b2.md"),
+          "---\nid: cap-manual-edit-a1b2\nname: Manual Edit\nstatus: Draft\ntype: Capability\n---\nUpdated body prose after manual edit\n",
+          "utf8"
+        )
+      )
+
+      const loaded = yield* storage.get(projectRoot, config, "cap-manual-edit-a1b2")
+      expect(loaded.description).toBe("Updated body prose after manual edit")
+      expect(loaded.name).toBe("Manual Edit")
+      expect(loaded.status).toBe("Draft")
+      expect(loaded.type).toBe("Capability")
+
+      yield* Effect.promise(() => cleanupProjectRoot(parentDir))
+    }).pipe(Effect.provide(mdStorageTestLayer)))
+
+  it.effect("manual edit of body prose in .org file survives round-trip (T056)", () =>
+    Effect.gen(function*() {
+      const { config, parentDir, projectRoot } = yield* Effect.promise(() => initOrgProjectRoot())
+      const storage = yield* StorageBackend
+      const actor = makeSamplePrimitive("Actor", "actor-org-edit-b1c2", "Org Edit", {
+        fields: { description: "Original body" }
+      })
+
+      yield* storage.create(projectRoot, config, actor)
+
+      // Manually edit the .org file to change the body prose
+      yield* Effect.promise(() =>
+        fs.writeFile(
+          path.join(projectRoot, "actors", "actor-org-edit-b1c2.org"),
+          ":PROPERTIES:\n:id: actor-org-edit-b1c2\n:name: Org Edit\n:status: Draft\n:type: Actor\n:END:\nUpdated body prose after manual org edit\n",
+          "utf8"
+        )
+      )
+
+      const loaded = yield* storage.get(projectRoot, config, "actor-org-edit-b1c2")
+      expect(loaded.description).toBe("Updated body prose after manual org edit")
+      expect(loaded.name).toBe("Org Edit")
+      expect(loaded.status).toBe("Draft")
+      expect(loaded.type).toBe("Actor")
+
+      yield* Effect.promise(() => cleanupProjectRoot(parentDir))
+    }).pipe(Effect.provide(orgStorageTestLayer)))
+
+  it.effect("missing frontmatter in .md file produces PrimitiveValidationError (T057)", () =>
+    Effect.gen(function*() {
+      const { config, parentDir, projectRoot } = yield* Effect.promise(() => initMdProjectRoot())
+      const storage = yield* StorageBackend
+
+      // Write a .md file without frontmatter delimiters
+      yield* Effect.promise(() =>
+        fs.writeFile(
+          path.join(projectRoot, "capabilities", "cap-bad-frontmatter-z9z9.md"),
+          "This is just plain text without frontmatter.\n",
+          "utf8"
+        )
+      )
+
+      const exit = yield* Effect.exit(storage.get(projectRoot, config, "cap-bad-frontmatter-z9z9"))
+      expectFailure(exit, PrimitiveValidationError)
+
+      yield* Effect.promise(() => cleanupProjectRoot(parentDir))
+    }).pipe(Effect.provide(mdStorageTestLayer)))
+
+  it.effect("missing property drawer in .org file produces PrimitiveValidationError (T058)", () =>
+    Effect.gen(function*() {
+      const { config, parentDir, projectRoot } = yield* Effect.promise(() => initOrgProjectRoot())
+      const storage = yield* StorageBackend
+
+      // Write a .org file without :PROPERTIES: block
+      yield* Effect.promise(() =>
+        fs.writeFile(
+          path.join(projectRoot, "actors", "actor-bad-drawer-z9z9.org"),
+          "This is just plain text without a property drawer.\n",
+          "utf8"
+        )
+      )
+
+      const exit = yield* Effect.exit(storage.get(projectRoot, config, "actor-bad-drawer-z9z9"))
+      expectFailure(exit, PrimitiveValidationError)
+
+      yield* Effect.promise(() => cleanupProjectRoot(parentDir))
+    }).pipe(Effect.provide(orgStorageTestLayer)))
+
+  it.effect("malformed YAML in frontmatter produces PrimitiveValidationError (T059)", () =>
+    Effect.gen(function*() {
+      const { config, parentDir, projectRoot } = yield* Effect.promise(() => initMdProjectRoot())
+      const storage = yield* StorageBackend
+
+      // Write a .md file with malformed YAML
+      yield* Effect.promise(() =>
+        fs.writeFile(
+          path.join(projectRoot, "capabilities", "cap-bad-yaml-z9z9.md"),
+          "---\nid: cap-bad-yaml-z9z9\nname: \"Bad YAML\nstatus: Draft\ntype: Capability\n---\nBody text\n",
+          "utf8"
+        )
+      )
+
+      const exit = yield* Effect.exit(storage.get(projectRoot, config, "cap-bad-yaml-z9z9"))
+      expectFailure(exit, PrimitiveValidationError)
+
+      yield* Effect.promise(() => cleanupProjectRoot(parentDir))
+    }).pipe(Effect.provide(mdStorageTestLayer)))
+
+  it.effect("malformed Org property drawer (missing :END:) produces PrimitiveValidationError (T060)", () =>
+    Effect.gen(function*() {
+      const { config, parentDir, projectRoot } = yield* Effect.promise(() => initOrgProjectRoot())
+      const storage = yield* StorageBackend
+
+      // Write a .org file with :PROPERTIES: but no :END:
+      yield* Effect.promise(() =>
+        fs.writeFile(
+          path.join(projectRoot, "actors", "actor-no-end-z9z9.org"),
+          ":PROPERTIES:\n:id: actor-no-end-z9z9\n:name: No End\n:status: Draft\n:type: Actor\nBody text without :END:\n",
+          "utf8"
+        )
+      )
+
+      const exit = yield* Effect.exit(storage.get(projectRoot, config, "actor-no-end-z9z9"))
+      expectFailure(exit, PrimitiveValidationError)
+
+      yield* Effect.promise(() => cleanupProjectRoot(parentDir))
+    }).pipe(Effect.provide(orgStorageTestLayer)))
 })

@@ -12,7 +12,7 @@ import type { PrimitiveSummary } from "../primitive/PrimitiveSummary.js"
 import {
   DuplicatePrimitiveIdError,
   PrimitiveNotFoundError,
-  type PrimitiveValidationError,
+  PrimitiveValidationError,
   type StorageReadError
 } from "../primitive/errors.js"
 import { IncompleteProjectError, StorageBootstrapError } from "../project/errors.js"
@@ -69,29 +69,31 @@ const encodeToMarkdown = (primitive: Primitive): string => {
 const splitFrontmatter = (
   filePath: string,
   content: string
-): Effect.Effect<{ body: string; yaml: string }, IncompleteProjectError> =>
+): Effect.Effect<{ body: string; yaml: string }, PrimitiveValidationError> =>
   Effect.gen(function*() {
     // Find opening "---\n" delimiter
     const openIdx = content.indexOf("---\n")
 
     if (openIdx !== 0) {
       return yield* Effect.fail(
-        new IncompleteProjectError({
-          message: "Markdown file must start with frontmatter delimiter `---`",
-          path: filePath
+        new PrimitiveValidationError({
+          message: `File does not start with frontmatter delimiter \`---\`: ${filePath}`,
+          path: filePath,
+          type: "unknown"
         })
       )
     }
 
-    // Find closing delimiter: prefer "---\n" then "\n---" or "---" at the end
+    // Find closing delimiter: prefer "\n---"
     const afterOpen = content.slice(3) // skip opening "---\n"
     const closeIdx = afterOpen.indexOf("\n---")
 
     if (closeIdx === -1) {
       return yield* Effect.fail(
-        new IncompleteProjectError({
-          message: "Markdown file missing closing frontmatter delimiter `---`",
-          path: filePath
+        new PrimitiveValidationError({
+          message: `Markdown file missing closing frontmatter delimiter \`---\`: ${filePath}`,
+          path: filePath,
+          type: "unknown"
         })
       )
     }
@@ -120,31 +122,43 @@ const decodeMarkdownFile = (
   filePath: string,
   type: CanonicalPrimitiveType,
   content: string
-): Effect.Effect<Primitive, IncompleteProjectError | PrimitiveValidationError> =>
+): Effect.Effect<Primitive, PrimitiveValidationError> =>
   Effect.gen(function*() {
-    const { yaml } = yield* splitFrontmatter(filePath, content)
+    const { body, yaml } = yield* splitFrontmatter(filePath, content)
 
     const parsed: unknown = yield* Effect.try({
       catch: (cause) =>
-        new IncompleteProjectError({
+        new PrimitiveValidationError({
           message: cause instanceof Error ? cause.message : "Invalid YAML frontmatter",
-          path: filePath
+          path: filePath,
+          type
         }),
       try: () => jsYaml.load(yaml)
     })
 
     if (typeof parsed !== "object" || parsed === null) {
       return yield* Effect.fail(
-        new IncompleteProjectError({
+        new PrimitiveValidationError({
           message: "YAML frontmatter did not decode to an object",
-          path: filePath
+          path: filePath,
+          type
         })
       )
     }
 
+    // Preserve body prose as the description when present, overriding any
+    // description that may be embedded in the YAML frontmatter. This ensures
+    // manual edits to the body survive round-trip (US4 — T049).
+    const raw = parsed as Record<string, unknown>
+    if (body.length > 0) {
+      raw.description = body
+    } else if (raw.description === undefined) {
+      raw.description = ""
+    }
+
     // js-yaml may preserve BrandedString values as plain strings from the
     // serialized form; decodePrimitiveUnknown handles the schema validation
-    return yield* decodePrimitiveUnknown(type, filePath, parsed)
+    return yield* decodePrimitiveUnknown(type, filePath, raw)
   })
 
 /**
