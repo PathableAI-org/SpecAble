@@ -157,21 +157,21 @@ Per constitution v1.3.0, plan.md, and
 
 ### Implementation for User Story 4
 
-- [ ] T049 [US4] Ensure body-preservation on round-trip in both backends — `get` returns the body as stored verbatim (body is never validated or transformed by the backend)
-- [ ] T050 [P] [US4] Implement decode error handling for missing frontmatter in `MarkdownStorageBackend.ts` — file without `---` delimiters produces `PrimitiveValidationError` identifying the affected file
-- [ ] T051 [P] [US4] Implement decode error handling for missing property drawer in `OrgStorageBackend.ts` — file without `:PROPERTIES:` block produces `PrimitiveValidationError`
-- [ ] T052 [P] [US4] Implement decode error for malformed YAML in Markdown backend — `js-yaml.load` failure mapped to `PrimitiveValidationError` with file path and specific YAML error
-- [ ] T053 [P] [US4] Implement decode error for malformed property drawer in Org backend — unparseable drawer content produces `PrimitiveValidationError` with file path and field-level detail
-- [ ] T054 [US4] Ensure file extension filtering — Markdown backend only scans `.md` files, Org backend only scans `.org` files (files with wrong extension in wrong backend are silently ignored)
+- [X] T049 [US4] Ensure body-preservation on round-trip in both backends — `get` returns the body as stored verbatim (body is never validated or transformed by the backend)
+- [X] T050 [P] [US4] Implement decode error handling for missing frontmatter in `MarkdownStorageBackend.ts` — file without `---` delimiters produces `PrimitiveValidationError` identifying the affected file
+- [X] T051 [P] [US4] Implement decode error handling for missing property drawer in `OrgStorageBackend.ts` — file without `:PROPERTIES:` block produces `PrimitiveValidationError`
+- [X] T052 [P] [US4] Implement decode error for malformed YAML in Markdown backend — `js-yaml.load` failure mapped to `PrimitiveValidationError` with file path and specific YAML error
+- [X] T053 [P] [US4] Implement decode error for malformed property drawer in Org backend — unparseable drawer content produces `PrimitiveValidationError` with file path and field-level detail
+- [X] T054 [US4] Ensure file extension filtering — Markdown backend only scans `.md` files, Org backend only scans `.org` files (files with wrong extension in wrong backend are silently ignored)
 
 ### Tests for User Story 4
 
-- [ ] T055 [P] [US4] Test manual edit round-trip — create primitive, modify body prose in the `.md` file on disk, `get` returns updated body with unchanged metadata
-- [ ] T056 [P] [US4] Test manual edit round-trip on Org backend — same scenario with `.org` file
-- [ ] T057 [US4] Test missing frontmatter in `.md` file produces `PrimitiveValidationError` with file path
-- [ ] T058 [US4] Test missing property drawer in `.org` file produces `PrimitiveValidationError` with file path
-- [ ] T059 [US4] Test malformed YAML in frontmatter produces `PrimitiveValidationError` with specific YAML error message
-- [ ] T060 [US4] Test malformed Org property drawer (missing `:END:`) produces `PrimitiveValidationError`
+- [X] T055 [P] [US4] Test manual edit round-trip — create primitive, modify body prose in the `.md` file on disk, `get` returns updated body with unchanged metadata
+- [X] T056 [P] [US4] Test manual edit round-trip on Org backend — same scenario with `.org` file
+- [X] T057 [US4] Test missing frontmatter in `.md` file produces `PrimitiveValidationError` with file path
+- [X] T058 [US4] Test missing property drawer in `.org` file produces `PrimitiveValidationError` with file path
+- [X] T059 [US4] Test malformed YAML in frontmatter produces `PrimitiveValidationError` with specific YAML error message
+- [X] T060 [US4] Test malformed Org property drawer (missing `:END:`) produces `PrimitiveValidationError`
 
 **Checkpoint**: At this point, wiki files are truly human-editable and resilient to manual edits. Decode errors are actionable.
 
